@@ -75,17 +75,33 @@
             100% { transform: translate(15%, 15%) scale(1.2) rotate(10deg); }
         }
 
-        /* Identity Card */
-        .identity-card {
-            background: rgba(15, 15, 17, 0.5);
-            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-top: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 2.5rem;
-            position: relative; overflow: hidden;
-            transform-style: preserve-3d; perspective: 1000px;
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.5), 0 20px 40px -10px rgba(0,0,0,0.8);
-        }
+       /* Identity Card Container */
+.identity-card {
+    background: rgba(15, 15, 17, 0.5);
+    backdrop-filter: blur(24px); 
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.1); 
+    border-radius: 2.5rem;
+    position: relative; 
+    overflow: hidden;
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.5), 0 20px 40px -10px rgba(0,0,0,0.8);
+    /* Note: perspective and transform-style were removed to prevent any 3D behavior */
+}
+
+/* The Image inside the card - Black and White by default */
+.identity-card img {
+    width: 100%; /* Adjust based on your specific layout needs */
+    height: auto;
+    display: block;
+    filter: grayscale(100%); /* Turns the image completely black and white */
+    transition: filter 0.4s ease-in-out; /* Creates a smooth fade effect */
+}
+
+/* Return to full color when hovering over the card */
+.identity-card:hover img {
+    filter: grayscale(0%); /* Restores the original colors */
+}
 
         /* 3D Transform Utility */
         .transform-style-3d { transform-style: preserve-3d; perspective: 1000px; }
