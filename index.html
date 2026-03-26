@@ -1,14 +1,357 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Saniyat Mahmud | Full Stack Engineer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saniyat Mahmud | SHINYY | Developer</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Modern Typography: Upgraded to mature, professional tech fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Manrope', 'sans-serif'],
+                    },
+                    colors: {
+                        bgDark: '#050505',
+                        cardDark: '#0f0f11',
+                        accent: '#6366f1', // Premium Indigo
+                        accent2: '#38bdf8', // Clean Light blue
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050505;
+            color: #fafafa;
+            overflow-x: hidden;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+
+        /* Premium Noise Texture */
+        .bg-noise {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.04"/%3E%3C/svg%3E');
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Animated Background Gradients */
+        .bg-mesh {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float-blob 20s infinite ease-in-out alternate;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, #8b5cf6, transparent 70%); }
+        .blob-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, #0ea5e9, transparent 70%); animation-delay: -5s; }
+
+        @keyframes float-blob {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(10%, 10%) scale(1.1); }
+        }
+
+        /* Bento Card Styles */
+        .bento-card {
+            background: rgba(24, 24, 27, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .bento-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+            background: rgba(24, 24, 27, 0.8);
+        }
+
+        /* Glowing border effect on hover */
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+            transform: skewX(-20deg);
+            transition: left 0.7s ease;
+            pointer-events: none;
+        }
+        .bento-card:hover::before {
+            left: 200%;
+        }
+
+        /* Gradient Text */
+        .text-shinyy {
+            background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        /* Scrolling Tech Stack */
+        .scroller {
+            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        }
+        .scroller-inner {
+            display: flex;
+            width: max-content;
+            animation: scroll 20s linear infinite;
+        }
+        @keyframes scroll {
+            to { transform: translateX(calc(-50% - 1.5rem)); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 flex items-center justify-center selection:bg-white selection:text-black">
+
+    <!-- Premium Noise Overlay -->
+    <div class="bg-noise"></div>
+
+    <!-- Background meshes -->
+    <div class="bg-mesh">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <!-- Main Bento Grid Container -->
+    <main class="w-full max-w-[1400px] mx-auto py-10">
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 auto-rows-auto">
+            
+            <!-- 1. Identity Card -->
+            <div class="bento-card md:col-span-2 row-span-2 p-8 lg:p-10 flex flex-col justify-between group bento-item opacity-0">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold tracking-widest uppercase mb-8 shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        Available for Deployment
+                    </div>
+                    <h1 class="font-display text-5xl lg:text-7xl font-extrabold tracking-tight mb-3 text-white">
+                        SANIYAT MAHMUD
+                    </h1>
+                    <h2 class="font-sans text-lg lg:text-xl text-gray-400 mb-8 flex items-center gap-3">
+                        Operating as 
+                        <span class="px-3 py-1 rounded-md bg-white/10 text-white font-display font-bold tracking-widest text-sm uppercase border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]">
+                            Shinyy
+                        </span>
+                    </h2>
+                    <p class="text-gray-400 text-lg leading-relaxed max-w-lg font-light">
+                        19-year-old Full Stack Architect. I specialize in crafting high-performance web ecosystems and engineering immensely complex, flawlessly automated Discord systems. 
+                    </p>
+                </div>
+                
+                <div class="mt-10 flex gap-4">
+                    <button class="px-8 py-3.5 bg-white text-black font-display font-bold rounded-xl hover:bg-gray-200 transition-all flex items-center gap-2 transform hover:scale-105 shadow-lg">
+                        Initialize Project <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                    <a href="#" class="w-14 h-14 rounded-xl border border-white/10 bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors text-xl">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 2. Mastery: Discord Bots -->
+            <div class="bento-card md:col-span-2 row-span-1 p-8 flex items-center justify-between group overflow-hidden bento-item opacity-0 cursor-pointer h-full min-h-[220px]">
+                <div class="relative z-10 w-2/3">
+                    <div class="text-[#5865F2] text-xs font-bold tracking-widest uppercase mb-3">Primary Mastery</div>
+                    <h3 class="font-display text-3xl font-bold mb-3 text-white tracking-tight">Discord Architecture</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Intensely complex automation. Custom economies, heavy moderation logic, and seamless external API integrations crafted to perfection.</p>
+                </div>
+                <div class="relative z-10 text-[#5865F2]/80 group-hover:text-[#5865F2] group-hover:scale-125 group-hover:rotate-12 transition-all duration-500">
+                    <i class="fab fa-discord text-7xl lg:text-8xl drop-shadow-[0_0_20px_rgba(88,101,242,0.2)] group-hover:drop-shadow-[0_0_30px_rgba(88,101,242,0.6)]"></i>
+                </div>
+                <!-- Interactive hover gradient -->
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-[#5865F2]/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+            </div>
+
+            <!-- 3. Tech Stack Marquee -->
+            <div class="bento-card col-span-1 md:col-span-1 lg:col-span-2 row-span-1 p-6 flex flex-col justify-center overflow-hidden bento-item opacity-0 h-full min-h-[220px]">
+                <div class="text-gray-500 text-xs font-bold tracking-widest uppercase mb-6 text-center">Weapons of Choice</div>
+                
+                <div class="scroller w-full">
+                    <div class="scroller-inner gap-10 items-center">
+                        <i class="fab fa-js text-4xl text-gray-400 hover:text-yellow-400 transition-colors"></i>
+                        <i class="fab fa-python text-4xl text-gray-400 hover:text-blue-500 transition-colors"></i>
+                        <i class="fab fa-html5 text-4xl text-gray-400 hover:text-orange-500 transition-colors"></i>
+                        <i class="fab fa-css3-alt text-4xl text-gray-400 hover:text-blue-400 transition-colors"></i>
+                        <i class="fab fa-react text-4xl text-gray-400 hover:text-cyan-400 transition-colors"></i>
+                        <i class="fab fa-node-js text-4xl text-gray-400 hover:text-green-500 transition-colors"></i>
+                        <i class="fas fa-database text-4xl text-gray-400 hover:text-white transition-colors"></i>
+                        
+                        <i class="fab fa-js text-4xl text-gray-400 hover:text-yellow-400 transition-colors"></i>
+                        <i class="fab fa-python text-4xl text-gray-400 hover:text-blue-500 transition-colors"></i>
+                        <i class="fab fa-html5 text-4xl text-gray-400 hover:text-orange-500 transition-colors"></i>
+                        <i class="fab fa-css3-alt text-4xl text-gray-400 hover:text-blue-400 transition-colors"></i>
+                        <i class="fab fa-react text-4xl text-gray-400 hover:text-cyan-400 transition-colors"></i>
+                        <i class="fab fa-node-js text-4xl text-gray-400 hover:text-green-500 transition-colors"></i>
+                        <i class="fas fa-database text-4xl text-gray-400 hover:text-white transition-colors"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Divider / Header -->
+            <div class="md:col-span-3 lg:col-span-4 mt-6 mb-2 flex items-end justify-between bento-item opacity-0 px-2">
+                <div>
+                    <h2 class="font-display text-3xl text-white font-bold tracking-tight">Capabilities & Showcase</h2>
+                    <p class="text-gray-400 text-sm mt-1">Live prototypes and production-ready architectures.</p>
+                </div>
+                <div class="hidden md:block w-full max-w-md h-[1px] bg-gradient-to-r from-white/10 to-transparent ml-8 mb-2"></div>
+            </div>
+
+            <!-- 4. Project Card: E-Commerce -->
+            <div class="bento-card col-span-1 row-span-1 p-5 flex flex-col group bento-item opacity-0 cursor-pointer">
+                <div class="w-full h-36 rounded-xl bg-white/5 border border-white/5 mb-5 flex items-center justify-center relative overflow-hidden group-hover:border-white/20 transition-all">
+                    <!-- Replace the icon below with an actual <img> tag when your design is ready -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <i class="fas fa-shopping-bag text-4xl text-white/10 group-hover:text-orange-400 group-hover:scale-110 transition-all duration-500"></i>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-display text-xl font-bold text-white tracking-tight">E-Commerce</h3>
+                    <i class="fas fa-arrow-right text-sm text-gray-600 group-hover:text-white -rotate-45 transition-colors"></i>
+                </div>
+                <p class="text-gray-400 text-sm line-clamp-2 leading-relaxed">High-conversion storefronts, dynamic carts, and seamless payment gateways.</p>
+            </div>
+
+            <!-- 5. Project Card: Social Media -->
+            <div class="bento-card col-span-1 row-span-1 p-5 flex flex-col group bento-item opacity-0 cursor-pointer">
+                <div class="w-full h-36 rounded-xl bg-white/5 border border-white/5 mb-5 flex items-center justify-center relative overflow-hidden group-hover:border-white/20 transition-all">
+                    <div class="absolute inset-0 bg-gradient-to-br from-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <i class="fas fa-network-wired text-4xl text-white/10 group-hover:text-pink-400 group-hover:scale-110 transition-all duration-500"></i>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-display text-xl font-bold text-white tracking-tight">Social Platforms</h3>
+                    <i class="fas fa-arrow-right text-sm text-gray-600 group-hover:text-white -rotate-45 transition-colors"></i>
+                </div>
+                <p class="text-gray-400 text-sm line-clamp-2 leading-relaxed">Real-time interactions, feed algorithms, and complex user relationship databases.</p>
+            </div>
+
+            <!-- 6. Project Card: Enterprise SaaS -->
+            <div class="bento-card col-span-1 row-span-1 p-5 flex flex-col group bento-item opacity-0 cursor-pointer">
+                <div class="w-full h-36 rounded-xl bg-white/5 border border-white/5 mb-5 flex items-center justify-center relative overflow-hidden group-hover:border-white/20 transition-all">
+                    <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <i class="fas fa-chart-pie text-4xl text-white/10 group-hover:text-cyan-400 group-hover:scale-110 transition-all duration-500"></i>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-display text-xl font-bold text-white tracking-tight">Enterprise SaaS</h3>
+                    <i class="fas fa-arrow-right text-sm text-gray-600 group-hover:text-white -rotate-45 transition-colors"></i>
+                </div>
+                <p class="text-gray-400 text-sm line-clamp-2 leading-relaxed">Data-rich dashboards, administrative tools, and scalable software architectures.</p>
+            </div>
+
+            <!-- 7. Project Card: Corporate / Agency -->
+            <div class="bento-card col-span-1 row-span-1 p-5 flex flex-col group bento-item opacity-0 cursor-pointer">
+                <div class="w-full h-36 rounded-xl bg-white/5 border border-white/5 mb-5 flex items-center justify-center relative overflow-hidden group-hover:border-white/20 transition-all">
+                    <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <i class="fas fa-building text-4xl text-white/10 group-hover:text-emerald-400 group-hover:scale-110 transition-all duration-500"></i>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-display text-xl font-bold text-white tracking-tight">Corporate Sites</h3>
+                    <i class="fas fa-arrow-right text-sm text-gray-600 group-hover:text-white -rotate-45 transition-colors"></i>
+                </div>
+                <p class="text-gray-400 text-sm line-clamp-2 leading-relaxed">Blazing-fast, SEO-optimized landing pages that establish authority.</p>
+            </div>
+
+            <!-- 8. Contact & Socials -->
+            <div class="bento-card md:col-span-3 lg:col-span-4 row-span-1 p-8 md:p-10 flex flex-col md:flex-row items-center justify-between group bento-item opacity-0 mt-2">
+                <div class="mb-6 md:mb-0 text-center md:text-left">
+                    <h3 class="font-display text-2xl lg:text-3xl font-bold text-white mb-2 tracking-tight">Ready to construct your vision?</h3>
+                    <p class="text-gray-400">Ping my comms. Let's discuss architecture.</p>
+                </div>
+                
+                <div class="flex items-center gap-4 w-full md:w-auto">
+                    <a href="#" class="flex-1 md:flex-none px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl transition-all duration-300 text-center border border-white/10 hover:border-white/30">
+                        <i class="far fa-envelope mr-2"></i> transmission@shinyy.dev
+                    </a>
+                    <a href="#" class="w-14 h-14 rounded-xl bg-[#5865F2]/10 text-[#5865F2] hover:bg-[#5865F2] hover:text-white flex items-center justify-center text-2xl transition-all duration-300 border border-[#5865F2]/20 hover:border-[#5865F2] hover:shadow-[0_0_20px_rgba(88,101,242,0.3)]">
+                        <i class="fab fa-discord"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Animation Script -->
+    <script>
+        window.addEventListener("DOMContentLoaded", (event) => {
+            // GSAP Staggered entry animation for the Bento Grid
+            gsap.fromTo(".bento-item", 
+                { 
+                    y: 50, 
+                    opacity: 0,
+                    scale: 0.95
+                },
+                { 
+                    y: 0, 
+                    opacity: 1, 
+                    scale: 1,
+                    duration: 0.8, 
+                    stagger: 0.1, 
+                    ease: "back.out(1.2)",
+                    delay: 0.2
+                }
+            );
+
+            // Add subtle mouse-move parallax effect to the bento cards
+            const cards = document.querySelectorAll('.bento-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    // Optional: Calculate rotation based on mouse position
+                    // Only applying subtle rotation on desktop sizes
+                    if (window.innerWidth > 768) {
+                        const centerX = rect.width / 2;
+                        const centerY = rect.height / 2;
+                        const rotateX = ((y - centerY) / centerY) * -2; 
+                        const rotateY = ((x - centerX) / centerX) * 2;
+                        
+                        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02) translateY(-5px)`;
+                    }
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = ''; // Resets to hover state defined in CSS
+                });
+            });
+        });
+    </script>
+</body>
 </html>
