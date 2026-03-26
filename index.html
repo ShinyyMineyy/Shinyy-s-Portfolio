@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saniyat Mahmud | SHINYY | Developer</title>
-
+    <title>Saniyat Mahmud | SHINYY | Developer & Editor</title>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
+    
     <!-- GSAP for Animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Modern Typography: Upgraded to mature, professional tech fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Manrope:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -26,10 +27,9 @@
                         display: ['Manrope', 'sans-serif'],
                     },
                     colors: {
-                        bgDark: '#050505',
-                        cardDark: '#0f0f11',
-                        accent: '#6366f1', // Premium Indigo
-                        accent2: '#38bdf8', // Clean Light blue
+                        bgDark: '#020202',
+                        accent: '#6366f1', 
+                        accent2: '#38bdf8', 
                     }
                 }
             }
@@ -37,144 +37,136 @@
     </script>
 
     <style>
-        body {
-            background-color: #050505;
+        body, html {
+            background-color: #020202;
             color: #fafafa;
             overflow-x: hidden;
-            background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 32px 32px;
+            cursor: none; 
         }
 
-        /* Premium Noise Texture */
+        /* Cinematic Vignette */
+        .vignette {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.9) 100%);
+            pointer-events: none; z-index: 40;
+        }
+
+        /* Premium Film Grain */
         .bg-noise {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.04"/%3E%3C/svg%3E');
-            z-index: -1;
-            pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.06"/%3E%3C/svg%3E');
+            z-index: 45; pointer-events: none; mix-blend-mode: overlay;
         }
 
-        /* Animated Background Gradients */
+        /* Animated Background Lighting */
         .bg-mesh {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: -1;
-            overflow: hidden;
-            pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; overflow: hidden; pointer-events: none;
         }
         .blob {
-            position: absolute;
-            filter: blur(80px);
-            opacity: 0.4;
-            animation: float-blob 20s infinite ease-in-out alternate;
+            position: absolute; filter: blur(120px); opacity: 0.2;
+            animation: float-blob 25s infinite cubic-bezier(0.4, 0, 0.2, 1) alternate;
         }
-        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, #8b5cf6, transparent 70%); }
-        .blob-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, #0ea5e9, transparent 70%); animation-delay: -5s; }
+        .blob-1 { top: -20%; left: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(99, 102, 241, 0.8), transparent 70%); }
+        .blob-2 { bottom: -20%; right: -10%; width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(56, 189, 248, 0.6), transparent 70%); animation-delay: -7s; }
 
         @keyframes float-blob {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(10%, 10%) scale(1.1); }
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            100% { transform: translate(15%, 15%) scale(1.2) rotate(10deg); }
         }
 
-        /* Bento Card Styles */
-        .bento-card {
-            background: rgba(24, 24, 27, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 2rem;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* Identity Card */
+        .identity-card {
+            background: rgba(15, 15, 17, 0.5);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 2.5rem;
+            position: relative; overflow: hidden;
+            transform-style: preserve-3d; perspective: 1000px;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.5), 0 20px 40px -10px rgba(0,0,0,0.8);
         }
 
-        .bento-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
-            background: rgba(24, 24, 27, 0.8);
-        }
+        /* 3D Transform Utility */
+        .transform-style-3d { transform-style: preserve-3d; perspective: 1000px; }
+        .translate-z-10 { transform: translateZ(10px); }
+        .translate-z-20 { transform: translateZ(20px); }
+        .translate-z-30 { transform: translateZ(30px); }
+        .translate-z-40 { transform: translateZ(40px); }
+        .hover-3d { will-change: transform; }
 
-        /* Glowing border effect on hover */
-        .bento-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
-            transform: skewX(-20deg);
-            transition: left 0.7s ease;
-            pointer-events: none;
+        /* Floating Animation for Name */
+        @keyframes float-name {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-6px) rotate(1deg); }
+            66% { transform: translateY(4px) rotate(-1deg); }
         }
-        .bento-card:hover::before {
-            left: 200%;
-        }
+        .animate-float-name { animation: float-name 8s cubic-bezier(0.4, 0, 0.2, 1) infinite; display: inline-block; transform-origin: center; }
 
-        /* Gradient Text */
-        .text-shinyy {
-            background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
+        /* Shimmer Badge */
+        .shimmer-badge { position: relative; overflow: hidden; }
+        .shimmer-badge::after {
+            content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.5), transparent);
+            transform: skewX(-20deg); animation: shimmer 4s infinite cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        /* Interactive Spotlight & Tech Grid */
-        #tech-stack-card {
-            --mouse-x: 50%;
-            --mouse-y: 50%;
-        }
-        .tech-spotlight {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.08) 0%, transparent 50%);
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            pointer-events: none;
-            z-index: 0;
-        }
-        #tech-stack-card:hover .tech-spotlight {
-            opacity: 1;
-        }
-        .tech-tile {
-            transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.2s, box-shadow 0.2s;
-            will-change: transform;
-        }
+        @keyframes shimmer { 0% { left: -150%; } 20%, 100% { left: 200%; } }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #555; }
 
-        /* Floating Animation for Name - Made more noticeable */
-        @keyframes float-name {
-            0% { transform: translateY(0px) rotate(0deg); }
-            33% { transform: translateY(-10px) rotate(1.5deg); }
-            66% { transform: translateY(6px) rotate(-1.5deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
+        /* Tech Tiles Physics */
+        .tech-tile { will-change: transform; transform-style: preserve-3d; }
+        .magnetic-wrap { display: inline-block; cursor: none; }
+
+        /* Toast Notifications */
+        .toast-enter { animation: slideInUp 0.4s forwards cubic-bezier(0.16, 1, 0.3, 1); }
+        .toast-leave { animation: fadeOutDown 0.4s forwards cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideInUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeOutDown { from { transform: translateY(0); opacity: 1; } to { transform: translateY(20px); opacity: 0; } }
+        
+        /* Custom Cinematic Cursor */
+        #cursor-dot, #cursor-ring {
+            position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%); border-radius: 50%;
         }
-        .animate-float-name {
-            animation: float-name 6s ease-in-out infinite;
-            display: inline-block; /* Required for transform to work on text */
-            transform-origin: center;
+        #cursor-dot { width: 6px; height: 6px; background-color: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.8); }
+        #cursor-ring {
+            width: 34px; height: 34px; border: 1px solid rgba(255,255,255,0.4);
+            transition: width 0.3s, height 0.3s, background-color 0.3s, border-color 0.3s;
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
+        }
+        body:hover #cursor-ring, body:hover #cursor-dot { opacity: 1; }
+        a:hover ~ #cursor-ring, button:hover ~ #cursor-ring, .cursor-pointer:hover ~ #cursor-ring {
+            width: 50px; height: 50px; background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.8);
+        }
+        
+        /* AI Animated Mesh Background */
+        .ai-mesh-bg {
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(168, 85, 247, 0.15) 0px, transparent 60%),
+                radial-gradient(at 100% 100%, rgba(217, 70, 239, 0.15) 0px, transparent 60%);
+            background-size: 200% 200%;
+            animation: breathing-mesh 10s ease-in-out infinite alternate;
+        }
+        @keyframes breathing-mesh {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
         }
 
-        /* Floating Animation for Tech Tiles */
-        @keyframes float-1 { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-12px); } }
-        @keyframes float-2 { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
-        @keyframes float-3 { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-16px); } }
-
-        .float-delay-1 { animation: float-1 4s ease-in-out infinite; }
-        .float-delay-2 { animation: float-2 5s ease-in-out infinite 1s; }
-        .float-delay-3 { animation: float-3 4.5s ease-in-out infinite 0.5s; }
-        .float-delay-4 { animation: float-2 5.5s ease-in-out infinite 1.5s; }
-        .float-delay-5 { animation: float-1 4.2s ease-in-out infinite 0.2s; }
-        .float-delay-6 { animation: float-3 4.8s ease-in-out infinite 0.8s; }
-        .float-delay-7 { animation: float-2 5.2s ease-in-out infinite 1.2s; }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8 flex items-center justify-center selection:bg-white selection:text-black">
+<body class="min-h-screen flex flex-col items-center selection:bg-white/20 selection:text-white">
 
-    <!-- Premium Noise Overlay -->
+    <!-- Cinematic Custom Cursor -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+
+    <!-- Cinematic Overlays -->
+    <div class="vignette"></div>
     <div class="bg-noise"></div>
 
     <!-- Background meshes -->
@@ -183,390 +175,509 @@
         <div class="blob blob-2"></div>
     </div>
 
-    <!-- Main Bento Grid Container -->
-    <main class="w-full max-w-[1400px] mx-auto py-10">
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 auto-rows-auto">
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none"></div>
 
-            <!-- 1. Identity Card -->
-            <div class="bento-card md:col-span-2 row-span-2 p-8 lg:p-10 flex flex-col justify-between group bento-item opacity-0">
-                <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold tracking-widest uppercase mb-8 shadow-sm">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        Available for Work
+    <!-- Main Container -->
+    <main id="main-container" class="w-full max-w-[1400px] mx-auto py-10 px-4 md:px-8 relative z-10 scale-105 opacity-0 flex flex-col gap-24"> 
+
+        <!-- ================= 1. THE IDENTITY CARD ================= -->
+        <div class="identity-card w-full max-w-5xl mx-auto p-10 lg:p-14 group hover-3d mt-10">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_var(--mouse-x,50%)_var(--mouse-y,50%),rgba(255,255,255,0.06)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-800 pointer-events-none z-0"></div>
+            
+            <div class="flex flex-col md:flex-row items-center gap-12 md:gap-20 relative z-10 transform-style-3d">
+                
+                <!-- PHOTO CONTAINER -->
+                <div class="relative shrink-0 translate-z-40 order-2 md:order-2 px-4">
+                    <div class="absolute inset-0 bg-blue-500/10 filter blur-3xl animate-pulse"></div>
+                    <div class="w-56 h-72 md:w-64 md:h-80 rounded-[2.5rem] border border-white/20 overflow-hidden relative shadow-2xl backdrop-blur-xl group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
+                        <img src="SANIYAT.png" alt="Saniyat Mahmud" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 grayscale group-hover:grayscale-0 transform scale-x-[-1]">
+                        <div class="absolute top-0 left-0 w-full h-full border-t border-l border-white/30 rounded-[2.5rem] z-20 pointer-events-none"></div>
                     </div>
+                </div>
 
-                    <!-- Clickable Name with Hover Effect -->
-                    <div class="relative inline-block group/name cursor-pointer" onclick="openAboutModal()">
-                        <span class="absolute -top-6 left-0 text-xs text-accent2 opacity-0 group-hover/name:opacity-100 transition-opacity duration-300 font-sans tracking-widest uppercase flex items-center gap-2">
-                            <i class="fas fa-book-open"></i> Read Origin Story
+                <!-- INFO SECTION -->
+                <div class="flex-1 transform-style-3d order-1 md:order-1">
+                    <div class="flex flex-wrap items-center gap-3 mb-12 translate-z-10">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold tracking-widest uppercase shadow-sm backdrop-blur-md">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
+                            Available for Work
+                        </div>
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold tracking-widest uppercase shadow-sm text-gray-400 backdrop-blur-md">
+                            <i class="fas fa-map-marker-alt text-gray-500"></i> Dhaka <span class="mx-1 text-white/20">|</span> <span id="live-time" class="font-mono">00:00:00 AM</span>
+                        </div>
+                    </div>
+                    
+                    <div class="relative inline-block group/name cursor-pointer translate-z-30 mt-10" onclick="openAboutModal()">
+                        <span class="absolute -top-12 left-0 text-xs text-accent2 opacity-0 group-hover/name:opacity-100 transition-all duration-500 font-sans tracking-widest uppercase flex items-center gap-2 translate-y-2 group-hover/name:translate-y-0">
+                            <i class="fas fa-video text-sm"></i> View Documentary
                         </span>
-                        <h1 class="font-display text-5xl lg:text-7xl font-extrabold tracking-tight mb-3 text-white animate-float-name group-hover/name:text-accent2 transition-colors duration-300">
-                            SANIYAT MAHMUD
+                        <h1 class="font-display text-5xl md:text-6xl lg:text-[5.5rem] font-black tracking-tighter mb-4 text-white animate-float-name group-hover/name:text-accent2 transition-colors duration-500 drop-shadow-2xl flex flex-col leading-[0.95]">
+                            <span id="name-first" class="block">SANIYAT</span>
+                            <span id="name-last" class="block">MAHMUD</span>
                         </h1>
                     </div>
 
-                    <h2 class="font-sans text-lg lg:text-xl text-gray-400 mb-8 flex items-center gap-3">
-                        Operating as
-                        <span class="px-3 py-1 rounded-md bg-white/10 text-white font-display font-bold tracking-widest text-sm uppercase border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]">
+                    <h2 class="font-sans text-xl lg:text-2xl text-gray-400 mb-8 flex items-center gap-3 drop-shadow-md translate-z-20">
+                        Operating as 
+                        <span class="shimmer-badge px-4 py-1.5 rounded-lg bg-white/10 text-white font-display font-bold tracking-widest text-sm uppercase border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] backdrop-blur-md">
                             Shinyy
                         </span>
                     </h2>
-                    <p class="text-gray-400 hover:text-gray-100 transition-colors duration-500 cursor-default text-lg leading-relaxed max-w-lg font-light">
-                        19-year-old Full Stack Architect. I specialize in crafting high-performance web ecosystems and engineering immensely complex, flawlessly automated Discord systems.
+                    <p class="text-gray-400 hover:text-gray-200 transition-colors duration-500 cursor-default text-lg md:text-xl leading-relaxed max-w-2xl font-light drop-shadow-md translate-z-10">
+                        19-year-old Full Stack Architect & Video Editor. I specialize in crafting high-performance web ecosystems, engineering immensely complex Discord systems, and cinematic video editing. 
                     </p>
-                </div>
-
-                <div class="mt-10 flex gap-4">
-                    <button class="px-8 py-3.5 bg-white text-black font-display font-bold rounded-xl hover:bg-gray-200 transition-all flex items-center gap-2 transform hover:scale-105 shadow-lg">
-                        Let's Talk <i class="fas fa-arrow-right ml-1"></i>
-                    </button>
-                    <a href="#" class="w-14 h-14 rounded-xl border border-white/10 bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors text-xl">
-                        <i class="fab fa-github"></i>
-                    </a>
-                </div>
-            </div>
-
-            <!-- 2. Mastery: Swapping Card (Full Stack & Discord) -->
-            <div class="bento-card md:col-span-2 row-span-1 group overflow-hidden bento-item opacity-0 cursor-pointer h-full min-h-[220px] relative">
-
-                <!-- Item 1: Full Stack Web Engineering -->
-                <div id="swap-item-1" class="absolute inset-0 p-6 md:p-8 flex items-center justify-between gap-4 md:gap-8 transition-all duration-700 ease-in-out opacity-100 translate-y-0 z-10">
-                    <div class="relative z-10 flex-1">
-                        <div class="text-emerald-400 text-xs font-bold tracking-widest uppercase mb-2 md:mb-3">My Specialty</div>
-                        <h3 class="font-display text-2xl md:text-3xl font-bold mb-2 md:mb-3 text-white tracking-tight leading-tight">Full Stack Web Engineer</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed max-w-md">End-to-end web architecture. From dynamic, high-conversion frontends to robust, scalable backend infrastructures and databases.</p>
-                    </div>
-                    <div class="relative z-10 text-emerald-500/80 group-hover:text-emerald-400 group-hover:scale-110 transition-all duration-500 shrink-0">
-                        <i class="fas fa-layer-group text-6xl md:text-7xl lg:text-8xl drop-shadow-[0_0_20px_rgba(16,185,129,0.2)] group-hover:drop-shadow-[0_0_30px_rgba(16,185,129,0.6)]"></i>
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 -z-10"></div>
-                </div>
-
-                <!-- Item 2: Discord Automation -->
-                <div id="swap-item-2" class="absolute inset-0 p-6 md:p-8 flex items-center justify-between gap-4 md:gap-8 transition-all duration-700 ease-in-out opacity-0 translate-y-8 z-0 pointer-events-none">
-                    <div class="relative z-10 flex-1">
-                        <div class="text-[#5865F2] text-xs font-bold tracking-widest uppercase mb-2 md:mb-3">Automation Mastery</div>
-                        <h3 class="font-display text-2xl md:text-3xl font-bold mb-2 md:mb-3 text-white tracking-tight leading-tight">Fully Customized Discord Bots</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed max-w-md">Intensely complex automation. Custom economies, heavy moderation logic, and seamless external API integrations crafted to perfection.</p>
-                    </div>
-                    <div class="relative z-10 text-[#5865F2]/80 group-hover:text-[#5865F2] group-hover:scale-110 transition-all duration-500 shrink-0">
-                        <i class="fab fa-discord text-6xl md:text-7xl lg:text-8xl drop-shadow-[0_0_20px_rgba(88,101,242,0.2)] group-hover:drop-shadow-[0_0_30px_rgba(88,101,242,0.6)]"></i>
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-[#5865F2]/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 -z-10"></div>
-                </div>
-
-            </div>
-
-            <!-- 3. Advanced Tech Stack (Scattered Floating Glass Tiles in Empty Space) -->
-            <div class="col-span-1 md:col-span-1 lg:col-span-2 row-span-1 p-4 md:p-6 flex flex-col justify-center items-center bento-item opacity-0 h-full min-h-[320px] relative" id="tech-stack-card">
-
-                <h2 class="font-display text-2xl lg:text-3xl font-extrabold text-white tracking-widest uppercase mb-8 md:mb-12 text-center z-10 drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">Technologies I Work With</h2>
-
-                <div class="flex flex-wrap justify-center gap-6 md:gap-8 z-10 relative w-full px-2 py-4">
-
-                    <!-- JS - Slight tilt left -->
-                    <div class="transform rotate-[-4deg] -translate-y-2 hover:z-20 relative">
-                        <div class="float-delay-1">
-                            <div onclick="openTechModal('js')" class="tech-tile flex flex-col items-center justify-center group/tech w-[85px] h-[85px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 relative cursor-pointer overflow-hidden shadow-lg" data-color="rgba(250,204,21,0.3)">
-                                <div class="absolute inset-0 bg-gradient-to-b from-yellow-400/0 to-yellow-400/10 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-300"></div>
-                                <i class="fab fa-js text-4xl text-gray-400 group-hover/tech:text-yellow-400 transition-all duration-300 group-hover/tech:-translate-y-3 relative z-10"></i>
-                                <span class="text-[10px] font-bold uppercase tracking-widest text-yellow-400 transition-all duration-300 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10">JavaScript</span>
+                    
+                    <div class="mt-12 flex flex-wrap gap-4 relative z-10 translate-z-20">
+                        <div class="magnetic-wrap" data-strength="40">
+                            <button onclick="openContactModal()" class="px-10 py-4 bg-white text-black font-display font-black tracking-wide uppercase rounded-xl hover:bg-gray-300 transition-colors flex items-center gap-3 shadow-[0_0_30px_rgba(255,255,255,0.2)] w-full h-full cursor-pointer">
+                                Let's Talk <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Main Header Socials (Symmetrical sizing) -->
+                        <div class="flex gap-4">
+                            <div class="magnetic-wrap" data-strength="30">
+                                <a href="https://github.com/ShinyyMineyy" target="_blank" class="w-16 h-16 rounded-xl border border-white/20 bg-white/5 flex items-center justify-center hover:bg-white/20 transition-colors text-3xl text-white cursor-pointer shadow-lg backdrop-blur-md">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                            </div>
+                            <div class="magnetic-wrap" data-strength="30">
+                                <a href="https://www.instagram.com/chindichorsani/" target="_blank" class="w-16 h-16 rounded-xl border border-white/20 bg-white/5 flex items-center justify-center hover:bg-white/20 transition-colors text-3xl text-white cursor-pointer shadow-lg backdrop-blur-md">
+                                    <i class="fab fa-instagram text-pink-500"></i>
+                                </a>
+                            </div>
+                            <div class="magnetic-wrap" data-strength="30">
+                                <a href="https://www.facebook.com/saniyat.mahmud.2025/" target="_blank" class="w-16 h-16 rounded-xl border border-white/20 bg-white/5 flex items-center justify-center hover:bg-white/20 transition-colors text-3xl text-white cursor-pointer shadow-lg backdrop-blur-md">
+                                    <i class="fab fa-facebook text-blue-500"></i>
+                                </a>
+                            </div>
+                            <div class="magnetic-wrap" data-strength="30">
+                                <a href="https://discordapp.com/users/shinyymineyy" target="_blank" class="w-16 h-16 rounded-xl border border-white/20 bg-white/5 flex items-center justify-center hover:bg-white/20 transition-colors text-3xl text-white cursor-pointer shadow-lg backdrop-blur-md">
+                                    <i class="fab fa-discord text-[#5865F2]"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Python - Slight tilt right, staggered down -->
-                    <div class="transform rotate-[3deg] translate-y-3 hover:z-20 relative">
-                        <div class="float-delay-2">
-                            <div onclick="openTechModal('python')" class="tech-tile flex flex-col items-center justify-center group/tech w-[85px] h-[85px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 relative cursor-pointer overflow-hidden shadow-lg" data-color="rgba(59,130,246,0.3)">
-                                <div class="absolute inset-0 bg-gradient-to-b from-blue-500/0 to-blue-500/10 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-300"></div>
-                                <i class="fab fa-python text-4xl text-gray-400 group-hover/tech:text-blue-500 transition-all duration-300 group-hover/tech:-translate-y-3 relative z-10"></i>
-                                <span class="text-[10px] font-bold uppercase tracking-widest text-blue-500 transition-all duration-300 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10">Python</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- HTML - Tilt left, staggered up -->
-                    <div class="transform rotate-[-3deg] -translate-y-3 hover:z-20 relative">
-                        <div class="float-delay-3">
-                            <div onclick="openTechModal('html')" class="tech-tile flex flex-col items-center justify-center group/tech w-[85px] h-[85px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 relative cursor-pointer overflow-hidden shadow-lg" data-color="rgba(249,115,22,0.3)">
-                                <div class="absolute inset-0 bg-gradient-to-b from-orange-500/0 to-orange-500/10 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-300"></div>
-                                <i class="fab fa-html5 text-4xl text-gray-400 group-hover/tech:text-orange-500 transition-all duration-300 group-hover/tech:-translate-y-3 relative z-10"></i>
-                                <span class="text-[10px] font-bold uppercase tracking-widest text-orange-500 transition-all duration-300 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10">HTML5</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- CSS - Tilt right, staggered down -->
-                    <div class="transform rotate-[4deg] translate-y-2 hover:z-20 relative">
-                        <div class="float-delay-4">
-                            <div onclick="openTechModal('css')" class="tech-tile flex flex-col items-center justify-center group/tech w-[85px] h-[85px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 relative cursor-pointer overflow-hidden shadow-lg" data-color="rgba(96,165,250,0.3)">
-                                <div class="absolute inset-0 bg-gradient-to-b from-blue-400/0 to-blue-400/10 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-300"></div>
-                                <i class="fab fa-css3-alt text-4xl text-gray-400 group-hover/tech:text-blue-400 transition-all duration-300 group-hover/tech:-translate-y-3 relative z-10"></i>
-                                <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400 transition-all duration-300 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10">CSS3</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- React - Tilt left, relatively flat -->
-                    <div class="transform rotate-[-5deg] -translate-y-1 hover:z-20 relative mt-2 md:mt-0">
-                        <div class="float-delay-5">
-                            <div onclick="openTechModal('react')" class="tech-tile flex flex-col items-center justify-center group/tech w-[85px] h-[85px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 relative cursor-pointer overflow-hidden shadow-lg" data-color="rgba(34,211,238,0.3)">
-                                <div class="absolute inset-0 bg-gradient-to-b from-cyan-400/0 to-cyan-400/10 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-300"></div>
-                                <i class="fab fa-react text-4xl text-gray-400 group-hover/tech:text-cyan-400 transition-all duration-300 group-hover/tech:-translate-y-3 relative z-10"></i>
-                                <span class="text-[10px] font-bold uppercase tracking-widest text-cyan-400 transition-all duration-300 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10">React</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Node - Tilt right, staggered up slightly -->
-                    <div class="transform rotate-[2deg] translate-y-3 hover:z-20 relative mt-2 md:mt-0">
-                        <div class="float-delay-6">
-                            <div onclick="openTechModal('node')" class="tech-tile flex flex-col items-center justify-center group/tech w-[85px] h-[85px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 relative cursor-pointer overflow-hidden shadow-lg" data-color="rgba(34,197,94,0.3)">
-                                <div class="absolute inset-0 bg-gradient-to-b from-green-500/0 to-green-500/10 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-300"></div>
-                                <i class="fab fa-node-js text-4xl text-gray-400 group-hover/tech:text-green-500 transition-all duration-300 group-hover/tech:-translate-y-3 relative z-10"></i>
-                                <span class="text-[10px] font-bold uppercase tracking-widest text-green-500 transition-all duration-300 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10">Node.js</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Database - Tilt left, staggered down -->
-                    <div class="transform rotate-[-3deg] -translate-y-2 hover:z-20 relative mt-2 md:mt-0">
-                        <div class="float-delay-7">
-                            <div onclick="openTechModal('db')" class="tech-tile flex flex-col items-center justify-center group/tech w-[85px] h-[85px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 relative cursor-pointer overflow-hidden shadow-lg" data-color="rgba(129,140,248,0.3)">
-                                <div class="absolute inset-0 bg-gradient-to-b from-indigo-400/0 to-indigo-400/10 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-300"></div>
-                                <i class="fas fa-database text-4xl text-gray-400 group-hover/tech:text-indigo-400 transition-all duration-300 group-hover/tech:-translate-y-3 relative z-10"></i>
-                                <span class="text-[10px] font-bold uppercase tracking-widest text-indigo-400 transition-all duration-300 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10">Database</span>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
-
-            <!-- Section Divider / Header -->
-            <div class="md:col-span-3 lg:col-span-4 mt-6 mb-2 flex items-end justify-between bento-item opacity-0 px-2">
-                <div>
-                    <h2 class="font-display text-3xl text-white font-bold tracking-tight">What I can provide</h2>
-                    <p class="text-gray-400 text-sm mt-1">Live prototypes and production-ready architectures.</p>
-                </div>
-                <div class="hidden md:block w-full max-w-md h-[1px] bg-gradient-to-r from-white/10 to-transparent ml-8 mb-2"></div>
-            </div>
-
-            <!-- 4. Project Card: E-Commerce -->
-            <div onclick="openPreviewModal('ecommerce.html', 'E-Commerce')" class="bento-card col-span-1 row-span-1 p-5 flex flex-col group bento-item opacity-0 cursor-pointer">
-                <div class="w-full h-36 rounded-xl bg-white/5 border border-white/5 mb-5 flex items-center justify-center relative overflow-hidden group-hover:border-white/20 transition-all">
-                    <!-- Replace the icon below with an actual <img> tag when your design is ready -->
-                    <div class="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <i class="fas fa-shopping-bag text-4xl text-white/10 group-hover:text-orange-400 group-hover:scale-110 transition-all duration-500 relative z-10"></i>
-
-                    <!-- Interactive Preview Overlay -->
-                    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 z-20">
-                        <span class="px-5 py-2.5 bg-white/10 border border-white/20 rounded-full text-white text-xs font-bold uppercase tracking-widest transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 flex items-center gap-2 shadow-xl">
-                            <i class="fas fa-eye"></i> Preview
-                        </span>
-                    </div>
-                </div>
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="font-display text-xl font-bold text-white tracking-tight">E-Commerce</h3>
-                    <i class="fas fa-arrow-right text-sm text-gray-600 group-hover:text-white -rotate-45 transition-colors"></i>
-                </div>
-                <p class="text-gray-400 text-sm line-clamp-2 leading-relaxed">High-conversion storefronts, dynamic carts, and seamless payment gateways.</p>
-            </div>
-
-            <!-- 5. Project Card: Social Media -->
-            <div onclick="openPreviewModal('social.html', 'Social Platforms')" class="bento-card col-span-1 row-span-1 p-5 flex flex-col group bento-item opacity-0 cursor-pointer">
-                <div class="w-full h-36 rounded-xl bg-white/5 border border-white/5 mb-5 flex items-center justify-center relative overflow-hidden group-hover:border-white/20 transition-all">
-                    <div class="absolute inset-0 bg-gradient-to-br from-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <i class="fas fa-network-wired text-4xl text-white/10 group-hover:text-pink-400 group-hover:scale-110 transition-all duration-500 relative z-10"></i>
-
-                    <!-- Interactive Preview Overlay -->
-                    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 z-20">
-                        <span class="px-5 py-2.5 bg-white/10 border border-white/20 rounded-full text-white text-xs font-bold uppercase tracking-widest transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 flex items-center gap-2 shadow-xl">
-                            <i class="fas fa-eye"></i> Preview
-                        </span>
-                    </div>
-                </div>
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="font-display text-xl font-bold text-white tracking-tight">Social Platforms</h3>
-                    <i class="fas fa-arrow-right text-sm text-gray-600 group-hover:text-white -rotate-45 transition-colors"></i>
-                </div>
-                <p class="text-gray-400 text-sm line-clamp-2 leading-relaxed">Real-time interactions, feed algorithms, and complex user relationship databases.</p>
-            </div>
-
-            <!-- 6. Project Card: Enterprise SaaS -->
-            <div onclick="openPreviewModal('enterprise.html', 'Enterprise SaaS')" class="bento-card col-span-1 row-span-1 p-5 flex flex-col group bento-item opacity-0 cursor-pointer">
-                <div class="w-full h-36 rounded-xl bg-white/5 border border-white/5 mb-5 flex items-center justify-center relative overflow-hidden group-hover:border-white/20 transition-all">
-                    <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <i class="fas fa-chart-pie text-4xl text-white/10 group-hover:text-cyan-400 group-hover:scale-110 transition-all duration-500 relative z-10"></i>
-
-                    <!-- Interactive Preview Overlay -->
-                    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 z-20">
-                        <span class="px-5 py-2.5 bg-white/10 border border-white/20 rounded-full text-white text-xs font-bold uppercase tracking-widest transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 flex items-center gap-2 shadow-xl">
-                            <i class="fas fa-eye"></i> Preview
-                        </span>
-                    </div>
-                </div>
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="font-display text-xl font-bold text-white tracking-tight">Enterprise SaaS</h3>
-                    <i class="fas fa-arrow-right text-sm text-gray-600 group-hover:text-white -rotate-45 transition-colors"></i>
-                </div>
-                <p class="text-gray-400 text-sm line-clamp-2 leading-relaxed">Data-rich dashboards, administrative tools, and scalable software architectures.</p>
-            </div>
-
-            <!-- 7. Project Card: Corporate / Agency -->
-            <div onclick="openPreviewModal('corporate.html', 'Corporate Sites')" class="bento-card col-span-1 row-span-1 p-5 flex flex-col group bento-item opacity-0 cursor-pointer">
-                <div class="w-full h-36 rounded-xl bg-white/5 border border-white/5 mb-5 flex items-center justify-center relative overflow-hidden group-hover:border-white/20 transition-all">
-                    <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <i class="fas fa-building text-4xl text-white/10 group-hover:text-emerald-400 group-hover:scale-110 transition-all duration-500 relative z-10"></i>
-
-                    <!-- Interactive Preview Overlay -->
-                    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 z-20">
-                        <span class="px-5 py-2.5 bg-white/10 border border-white/20 rounded-full text-white text-xs font-bold uppercase tracking-widest transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 flex items-center gap-2 shadow-xl">
-                            <i class="fas fa-eye"></i> Preview
-                        </span>
-                    </div>
-                </div>
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="font-display text-xl font-bold text-white tracking-tight">Corporate Sites</h3>
-                    <i class="fas fa-arrow-right text-sm text-gray-600 group-hover:text-white -rotate-45 transition-colors"></i>
-                </div>
-                <p class="text-gray-400 text-sm line-clamp-2 leading-relaxed">Blazing-fast, SEO-optimized landing pages that establish authority.</p>
-            </div>
-
-            <!-- AI Mastery Card (Full Spanning) -->
-            <div class="bento-card md:col-span-3 lg:col-span-4 row-span-1 p-6 lg:p-10 flex flex-col md:flex-row items-center justify-between group bento-item opacity-0 cursor-pointer overflow-hidden relative mt-2">
-                <div class="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-fuchsia-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                <div class="relative z-10 md:w-2/3 mb-6 md:mb-0">
-                    <div class="text-fuchsia-400 text-xs font-bold tracking-widest uppercase mb-3 flex items-center gap-2">
-                        <i class="fas fa-wand-magic-sparkles"></i> Advanced Capabilities
-                    </div>
-                    <h3 class="font-display text-2xl lg:text-3xl font-bold mb-3 text-white tracking-tight">AI Synthesis & Generation Mastery</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed max-w-2xl">Full command over every genre of modern artificial intelligence. Flawless execution of image generation, text-to-video pipelines, face-swapping, video-swapping, and complex generative workflows.</p>
-                </div>
-                <div class="relative z-10 text-fuchsia-500/80 group-hover:text-fuchsia-400 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 flex gap-4">
-                    <i class="fas fa-brain text-5xl lg:text-6xl drop-shadow-[0_0_20px_rgba(217,70,239,0.2)] group-hover:drop-shadow-[0_0_30px_rgba(217,70,239,0.6)]"></i>
-                    <i class="fas fa-microchip text-5xl lg:text-6xl drop-shadow-[0_0_20px_rgba(217,70,239,0.2)] group-hover:drop-shadow-[0_0_30px_rgba(217,70,239,0.6)] opacity-50"></i>
-                </div>
-            </div>
-
-            <!-- 8. Contact & Socials -->
-            <div class="bento-card md:col-span-3 lg:col-span-4 row-span-1 p-8 md:p-10 flex flex-col md:flex-row items-center justify-between group bento-item opacity-0 mt-2">
-                <div class="mb-6 md:mb-0 text-center md:text-left">
-                    <h3 class="font-display text-2xl lg:text-3xl font-bold text-white mb-2 tracking-tight">Let's build something amazing.</h3>
-                    <p class="text-gray-400">Get in touch to discuss your next project.</p>
-                </div>
-
-                <div class="flex items-center gap-4 w-full md:w-auto">
-                    <a href="#" class="flex-1 md:flex-none px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl transition-all duration-300 text-center border border-white/10 hover:border-white/30">
-                        <i class="far fa-envelope mr-2"></i> hello@shinyy.dev
-                    </a>
-                    <a href="#" class="w-14 h-14 rounded-xl bg-[#5865F2]/10 text-[#5865F2] hover:bg-[#5865F2] hover:text-white flex items-center justify-center text-2xl transition-all duration-300 border border-[#5865F2]/20 hover:border-[#5865F2] hover:shadow-[0_0_20px_rgba(88,101,242,0.3)]">
-                        <i class="fab fa-discord"></i>
-                    </a>
-                </div>
-            </div>
-
         </div>
+
+        <!-- ================= 2. THE MASTERY VOID ================= -->
+        <div class="w-full flex flex-col md:flex-row justify-between items-center md:items-start gap-16 md:gap-4 px-4 lg:px-8 gs-reveal">
+            
+            <!-- Left: Video Editor -->
+            <div class="w-full md:w-1/3 flex flex-col items-center md:items-end text-center md:text-right relative group">
+                <i class="fas fa-film absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:left-auto md:right-0 md:translate-x-1/4 text-[12rem] text-red-500/5 group-hover:text-red-500/10 transition-colors duration-700 -z-10"></i>
+                <div class="text-red-400 text-xs font-bold tracking-widest uppercase mb-4 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span> Cinematic Edits
+                </div>
+                <h3 class="font-display text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter leading-[0.9] mb-6 drop-shadow-2xl">
+                    Video<br><span class="text-red-400">Editor.</span>
+                </h3>
+                <p class="text-gray-400 text-base lg:text-lg font-light leading-relaxed max-w-[260px] md:ml-auto">High-retention, documentary-style editing with flawless 3D motion graphics and sound design.</p>
+            </div>
+
+            <!-- Glowing Divider 1 -->
+            <div class="hidden md:block w-[1px] h-48 bg-gradient-to-b from-transparent via-white/20 to-transparent shadow-[0_0_20px_rgba(255,255,255,0.5)] mt-10"></div>
+
+            <!-- Middle: Full Stack Web -->
+            <div class="w-full md:w-1/3 flex flex-col items-center text-center relative group">
+                <i class="fas fa-layer-group absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12rem] text-emerald-500/5 group-hover:text-emerald-500/10 transition-colors duration-700 -z-10"></i>
+                <div class="text-emerald-400 text-xs font-bold tracking-widest uppercase mb-4 flex items-center justify-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Web Architecture
+                </div>
+                <h3 class="font-display text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter leading-[0.9] mb-6 drop-shadow-2xl">
+                    Full Stack<br><span class="text-emerald-400">Engineer.</span>
+                </h3>
+                <p class="text-gray-400 text-base lg:text-lg font-light leading-relaxed max-w-[260px] mx-auto">End-to-end web ecosystems. High-conversion frontends to massively scalable backends.</p>
+            </div>
+
+            <!-- Glowing Divider 2 -->
+            <div class="hidden md:block w-[1px] h-48 bg-gradient-to-b from-transparent via-white/20 to-transparent shadow-[0_0_20px_rgba(255,255,255,0.5)] mt-10"></div>
+
+            <!-- Right: Discord -->
+            <div class="w-full md:w-1/3 flex flex-col items-center md:items-start text-center md:text-left relative group">
+                <i class="fab fa-discord absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:left-0 md:-translate-x-1/4 text-[12rem] text-[#5865F2]/5 group-hover:text-[#5865F2]/10 transition-colors duration-700 -z-10"></i>
+                <div class="text-[#5865F2] text-xs font-bold tracking-widest uppercase mb-4 flex items-center gap-2">
+                    Automation Mastery <span class="w-2 h-2 rounded-full bg-[#5865F2] animate-pulse"></span>
+                </div>
+                <h3 class="font-display text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter leading-[0.9] mb-6 drop-shadow-2xl">
+                    Discord Bot<br><span class="text-[#5865F2]">Systems.</span>
+                </h3>
+                <p class="text-gray-400 text-base lg:text-lg font-light leading-relaxed max-w-[260px]">Intensely complex automation. Custom economies, AI moderation logic, and seamless APIs.</p>
+            </div>
+        </div>
+
+        <!-- ================= 3. CONSTELLATION TECH STACK ================= -->
+        <div class="w-full flex flex-col justify-center items-center min-h-[400px] relative gs-reveal perspective-[1000px] hover-3d transform-style-3d group mt-16">
+            <div class="text-center mb-16 z-30 translate-z-30 w-full pointer-events-none">
+                 <h2 class="font-display text-4xl md:text-5xl font-bold text-white tracking-widest uppercase drop-shadow-lg">Languages I Work On</h2>
+            </div>
+            <div class="flex flex-wrap justify-center items-center gap-6 md:gap-8 z-10 relative w-full px-2 translate-z-20">
+                <!-- JS -->
+                <div class="transform -rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
+                    <div onclick="openTechModal('js')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl" data-color="rgba(250,204,21,0.4)">
+                        <div class="absolute inset-0 bg-gradient-to-b from-yellow-400/0 to-yellow-400/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
+                        <i class="fab fa-js text-4xl text-gray-500 group-hover/tech:text-yellow-400 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-yellow-400 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">JavaScript</span>
+                    </div>
+                </div>
+                <!-- Python -->
+                <div class="transform rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
+                    <div onclick="openTechModal('python')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl" data-color="rgba(59,130,246,0.4)">
+                        <div class="absolute inset-0 bg-gradient-to-b from-blue-500/0 to-blue-500/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
+                        <i class="fab fa-python text-4xl text-gray-500 group-hover/tech:text-blue-500 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-blue-500 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">Python</span>
+                    </div>
+                </div>
+                <!-- HTML -->
+                <div class="transform -rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
+                    <div onclick="openTechModal('html')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl" data-color="rgba(249,115,22,0.4)">
+                        <div class="absolute inset-0 bg-gradient-to-b from-orange-500/0 to-orange-500/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
+                        <i class="fab fa-html5 text-4xl text-gray-500 group-hover/tech:text-orange-500 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-orange-500 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">HTML5</span>
+                    </div>
+                </div>
+                <!-- CSS -->
+                <div class="transform rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
+                    <div onclick="openTechModal('css')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl" data-color="rgba(96,165,250,0.4)">
+                        <div class="absolute inset-0 bg-gradient-to-b from-blue-400/0 to-blue-400/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
+                        <i class="fab fa-css3-alt text-4xl text-gray-500 group-hover/tech:text-blue-400 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">CSS3</span>
+                    </div>
+                </div>
+                <!-- React -->
+                <div class="transform -rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
+                    <div onclick="openTechModal('react')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl" data-color="rgba(34,211,238,0.4)">
+                        <div class="absolute inset-0 bg-gradient-to-b from-cyan-400/0 to-cyan-400/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
+                        <i class="fab fa-react text-4xl text-gray-500 group-hover/tech:text-cyan-400 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-cyan-400 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">React</span>
+                    </div>
+                </div>
+                <!-- Node -->
+                <div class="transform rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
+                    <div onclick="openTechModal('node')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl" data-color="rgba(34,197,94,0.4)">
+                        <div class="absolute inset-0 bg-gradient-to-b from-green-500/0 to-green-500/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
+                        <i class="fab fa-node-js text-4xl text-gray-500 group-hover/tech:text-green-500 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-green-500 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">Node.js</span>
+                    </div>
+                </div>
+                <!-- Database -->
+                <div class="transform -rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
+                    <div onclick="openTechModal('db')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl" data-color="rgba(129,140,248,0.4)">
+                        <div class="absolute inset-0 bg-gradient-to-b from-indigo-400/0 to-indigo-400/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
+                        <i class="fas fa-database text-4xl text-gray-500 group-hover/tech:text-indigo-400 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-indigo-400 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">Database</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 4. CINEMATIC PROJECT BANNERS ================= -->
+        <div class="w-full flex flex-col gap-6 gs-reveal mt-10">
+            <h2 class="font-display text-4xl lg:text-5xl text-white font-bold tracking-tight drop-shadow-md px-4 mb-4">Selected Architectures</h2>
+            
+            <!-- Project: E-Commerce -->
+            <div onclick="openPreviewModal('ecommerce.html', 'E-Commerce')" class="w-full h-[350px] md:h-[450px] relative group cursor-pointer hover-3d transform-style-3d border border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden">
+                <div class="absolute inset-0 bg-zinc-950"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-[#020202] via-[#020202]/80 to-transparent z-10"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-orange-500/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay z-10"></div>
+                
+                <div class="absolute right-0 top-0 bottom-0 w-1/2 flex items-center justify-center pointer-events-none transform-style-3d z-0 translate-x-12 opacity-40 group-hover:opacity-100 transition-all duration-700">
+                    <div class="w-48 h-64 border border-orange-500/30 bg-orange-500/10 rounded-2xl backdrop-blur-sm transform rotate-[-5deg] group-hover:rotate-[-15deg] group-hover:-translate-x-8 transition-all duration-700 shadow-[0_0_30px_rgba(249,115,22,0.2)]"></div>
+                    <div class="w-40 h-56 border border-white/10 bg-white/5 rounded-2xl backdrop-blur-md absolute transform rotate-[5deg] group-hover:rotate-[10deg] group-hover:translate-x-12 group-hover:translate-y-4 transition-all duration-700 shadow-2xl"></div>
+                    <div class="w-32 h-12 border border-orange-400/40 bg-orange-400/20 rounded-xl backdrop-blur-lg absolute bottom-1/4 transform group-hover:translate-y-8 group-hover:translate-z-40 transition-all duration-700 shadow-[0_0_20px_rgba(249,115,22,0.3)]"></div>
+                </div>
+                
+                <div class="absolute left-8 md:left-16 bottom-10 md:bottom-16 z-30 translate-z-40 pointer-events-none">
+                     <h3 class="font-display text-4xl md:text-6xl lg:text-[5.5rem] font-black text-white tracking-tighter mb-2 group-hover:translate-x-6 transition-transform duration-700 ease-out drop-shadow-2xl">E-Commerce.</h3>
+                     <p class="text-orange-400 text-lg md:text-xl font-light group-hover:translate-x-6 transition-transform duration-700 delay-75 ease-out drop-shadow-md max-w-lg">High-conversion storefronts & payment gateways engineered for massive scale.</p>
+                     <div class="mt-6 opacity-0 group-hover:opacity-100 group-hover:translate-x-6 transition-all duration-700 delay-150 pointer-events-auto">
+                        <span class="px-6 py-3 bg-white text-black text-sm font-bold uppercase tracking-widest rounded-full flex items-center gap-2 w-max shadow-lg">
+                            <i class="fas fa-eye text-orange-500"></i> Open Prototype
+                        </span>
+                     </div>
+                </div>
+            </div>
+
+            <!-- Project: Enterprise SaaS -->
+            <div onclick="openPreviewModal('enterprise.html', 'Enterprise SaaS')" class="w-full h-[350px] md:h-[450px] relative group cursor-pointer hover-3d transform-style-3d border border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden">
+                <div class="absolute inset-0 bg-zinc-950"></div>
+                <div class="absolute inset-0 bg-gradient-to-l from-[#020202] via-[#020202]/80 to-transparent z-10"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-cyan-500/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay z-10"></div>
+                
+                <div class="absolute left-0 top-0 bottom-0 w-1/2 flex items-end justify-center gap-4 pb-16 pointer-events-none transform-style-3d z-0 -translate-x-12 opacity-40 group-hover:opacity-100 transition-all duration-700">
+                    <div class="w-12 h-32 border border-cyan-500/30 bg-cyan-500/10 rounded-t-xl backdrop-blur-sm transform group-hover:h-48 transition-all duration-700 shadow-[0_0_30px_rgba(6,182,212,0.2)]"></div>
+                    <div class="w-12 h-48 border border-white/10 bg-white/5 rounded-t-xl backdrop-blur-md transform group-hover:h-64 transition-all duration-700 delay-75 shadow-2xl"></div>
+                    <div class="w-12 h-24 border border-cyan-400/40 bg-cyan-400/20 rounded-t-xl backdrop-blur-lg transform group-hover:h-40 group-hover:translate-z-40 transition-all duration-700 delay-150 shadow-[0_0_20px_rgba(6,182,212,0.3)]"></div>
+                </div>
+                
+                <div class="absolute right-8 md:right-16 bottom-10 md:bottom-16 z-30 translate-z-40 text-right flex flex-col items-end pointer-events-none">
+                     <h3 class="font-display text-4xl md:text-6xl lg:text-[5.5rem] font-black text-white tracking-tighter mb-2 group-hover:-translate-x-6 transition-transform duration-700 ease-out drop-shadow-2xl">Enterprise SaaS.</h3>
+                     <p class="text-cyan-400 text-lg md:text-xl font-light group-hover:-translate-x-6 transition-transform duration-700 delay-75 ease-out drop-shadow-md max-w-lg">Data-rich, real-time administrative dashboards and scalable software tools.</p>
+                     <div class="mt-6 opacity-0 group-hover:opacity-100 group-hover:-translate-x-6 transition-all duration-700 delay-150 pointer-events-auto">
+                        <span class="px-6 py-3 bg-white text-black text-sm font-bold uppercase tracking-widest rounded-full flex items-center gap-2 w-max shadow-lg">
+                            <i class="fas fa-eye text-cyan-500"></i> Open Prototype
+                        </span>
+                     </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full h-[400px]">
+                <!-- Project: Social Media (Half width) -->
+                <div onclick="openPreviewModal('social.html', 'Social Platforms')" class="w-full h-full relative group cursor-pointer hover-3d transform-style-3d border border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent z-10"></div>
+                    <div class="absolute inset-0 bg-gradient-to-b from-pink-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay z-10"></div>
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none transform-style-3d z-0 opacity-40 group-hover:opacity-100 transition-all duration-700">
+                        <div class="absolute w-24 h-24 border border-pink-500/30 bg-pink-500/10 rounded-full backdrop-blur-sm transform -translate-x-12 -translate-y-12 group-hover:-translate-x-24 group-hover:-translate-y-20 transition-all duration-700 shadow-[0_0_30px_rgba(236,72,153,0.2)]"></div>
+                        <div class="absolute w-32 h-32 border border-white/10 bg-white/5 rounded-full backdrop-blur-md transform translate-x-8 translate-y-8 group-hover:translate-x-20 group-hover:translate-y-16 group-hover:translate-z-30 transition-all duration-700 shadow-2xl"></div>
+                        <div class="w-32 h-[1px] bg-gradient-to-r from-pink-500/0 via-pink-500/80 to-white/0 transform rotate-45 group-hover:scale-150 transition-all duration-700"></div>
+                    </div>
+                    <div class="absolute left-8 bottom-10 z-30 translate-z-40 pointer-events-none">
+                         <h3 class="font-display text-3xl md:text-4xl font-black text-white tracking-tighter mb-1 group-hover:translate-y-[-10px] transition-transform duration-500 ease-out">Social Platforms.</h3>
+                         <p class="text-pink-400 text-sm font-light group-hover:translate-y-[-10px] transition-transform duration-500 delay-75 ease-out">Real-time feeds & user databases.</p>
+                    </div>
+                </div>
+
+                <!-- Project: Corporate (Half width) -->
+                <div onclick="openPreviewModal('corporate.html', 'Corporate Sites')" class="w-full h-full relative group cursor-pointer hover-3d transform-style-3d border border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent z-10"></div>
+                    <div class="absolute inset-0 bg-gradient-to-b from-emerald-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay z-10"></div>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center gap-6 pointer-events-none transform-style-3d z-0 opacity-40 group-hover:opacity-100 transition-all duration-700 p-12">
+                        <div class="w-full max-w-[200px] h-[1px] bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent transform group-hover:scale-x-150 transition-all duration-700"></div>
+                        <div class="w-full max-w-[280px] h-32 border border-white/10 bg-white/5 rounded-2xl backdrop-blur-md transform group-hover:scale-105 group-hover:translate-z-30 transition-all duration-700 shadow-2xl"></div>
+                        <div class="w-full max-w-[150px] h-[1px] bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent transform group-hover:scale-x-150 transition-all duration-700 delay-100"></div>
+                    </div>
+                    <div class="absolute left-8 bottom-10 z-30 translate-z-40 pointer-events-none">
+                         <h3 class="font-display text-3xl md:text-4xl font-black text-white tracking-tighter mb-1 group-hover:translate-y-[-10px] transition-transform duration-500 ease-out">Corporate Sites.</h3>
+                         <p class="text-emerald-400 text-sm font-light group-hover:translate-y-[-10px] transition-transform duration-500 delay-75 ease-out">High-end layouts that command authority.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 5. AI MASTERY VORTEX ================= -->
+        <div onclick="openAiModal()" class="w-full flex flex-col items-center justify-center min-h-[400px] group cursor-pointer overflow-hidden relative gs-reveal ai-mesh-bg rounded-[3rem] border border-white/10 shadow-2xl hover-3d transform-style-3d mt-10">
+            <div class="absolute inset-0 bg-black/60 backdrop-blur-[6px] group-hover:backdrop-blur-sm transition-all duration-1000 z-0"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-fuchsia-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 mix-blend-overlay z-0"></div>
+            
+            <div class="relative z-20 text-center px-4 max-w-4xl mx-auto translate-z-40 pointer-events-none">
+                <div class="text-fuchsia-400 text-sm font-bold tracking-widest uppercase mb-4 flex items-center justify-center gap-2">
+                    <i class="fas fa-wand-magic-sparkles animate-pulse"></i> Generative Services
+                </div>
+                <h3 class="font-display text-4xl md:text-5xl lg:text-6xl font-black mb-6 text-white tracking-tighter drop-shadow-2xl">How I can help you with AI</h3>
+                <p class="text-gray-300 text-lg md:text-xl leading-relaxed font-light mb-8">From complex generative workflows to flawless media synthesis. Click to explore my complete arsenal of artificial intelligence capabilities.</p>
+                <div class="inline-flex items-center gap-3 px-8 py-3.5 rounded-2xl bg-white/5 border border-fuchsia-500/30 text-white font-bold tracking-widest uppercase text-xs backdrop-blur-md transition-all group-hover:bg-fuchsia-500/20 group-hover:border-fuchsia-500/50 group-hover:scale-105 shadow-[0_0_20px_rgba(217,70,239,0.2)]">
+                    <i class="fas fa-layer-group text-fuchsia-400"></i> View AI Capabilities
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 6. CONTACT FOOTER ================= -->
+        <div class="w-full flex flex-col items-center justify-center text-center py-20 gs-reveal relative">
+            <h3 class="font-display text-4xl md:text-6xl font-black text-white mb-6 tracking-tighter drop-shadow-2xl">Let's rebuild your imagination.</h3>
+            <p class="text-gray-400 text-xl font-light mb-12 max-w-2xl">Ready to turn your complex ideas into flawless digital realities? Contact me directly.</p>
+            
+            <div class="flex flex-col items-center justify-center gap-10 w-full relative z-20">
+                <div class="flex flex-wrap items-center justify-center gap-4 md:gap-6">
+                    <div class="magnetic-wrap" data-strength="40">
+                        <a href="https://github.com/ShinyyMineyy" target="_blank" class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 text-white flex items-center justify-center text-3xl transition-all duration-500 hover:bg-white/10 hover:border-white/30 hover:shadow-[0_0_40px_rgba(255,255,255,0.1)] cursor-pointer backdrop-blur-xl">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                    <div class="magnetic-wrap" data-strength="40">
+                        <a href="https://www.instagram.com/chindichorsani/" target="_blank" class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 text-white flex items-center justify-center text-3xl transition-all duration-500 hover:bg-white/10 hover:border-white/30 hover:shadow-[0_0_40px_rgba(255,255,255,0.1)] cursor-pointer backdrop-blur-xl">
+                            <i class="fab fa-instagram text-pink-500"></i>
+                        </a>
+                    </div>
+                    <div class="magnetic-wrap" data-strength="40">
+                        <a href="https://www.facebook.com/saniyat.mahmud.2025/" target="_blank" class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 text-white flex items-center justify-center text-3xl transition-all duration-500 hover:bg-white/10 hover:border-white/30 hover:shadow-[0_0_40px_rgba(255,255,255,0.1)] cursor-pointer backdrop-blur-xl">
+                            <i class="fab fa-facebook text-blue-500"></i>
+                        </a>
+                    </div>
+                    <div class="magnetic-wrap" data-strength="40">
+                        <a href="https://discordapp.com/users/shinyymineyy" target="_blank" class="w-16 h-16 rounded-2xl bg-[#5865F2]/10 border border-[#5865F2]/20 text-[#5865F2] flex items-center justify-center text-3xl transition-all duration-500 hover:bg-[#5865F2]/20 hover:border-[#5865F2]/40 hover:shadow-[0_0_40px_rgba(88,101,242,0.2)] cursor-pointer backdrop-blur-xl">
+                            <i class="fab fa-discord"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="magnetic-wrap" data-strength="40">
+                    <button onclick="copyEmailToClipboard()" class="px-10 py-5 bg-white text-black font-bold tracking-widest uppercase rounded-2xl transition-all duration-500 hover:bg-gray-200 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] cursor-pointer flex items-center gap-3">
+                        <i class="far fa-copy text-zinc-500 transition-colors text-xl"></i> saniyatmahmud11@gmail.com
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </main>
 
-    <!-- About Me Modal -->
-    <div id="about-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
-        <!-- Blurred Backdrop -->
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-md cursor-pointer" onclick="closeAboutModal()"></div>
-
-        <!-- Modal Content Container -->
-        <div id="about-modal-content" class="relative w-full max-w-3xl bg-[#0f0f11]/95 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-8 md:p-12 m-4 shadow-2xl opacity-0 scale-95 transform max-h-[90vh] overflow-y-auto custom-scrollbar">
-
-            <!-- Close Button -->
-            <button onclick="closeAboutModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full flex items-center justify-center group/btn z-10">
-                <i class="fas fa-times group-hover/btn:rotate-90 transition-transform duration-300"></i>
+    <!-- Modals -->
+    <div id="about-modal" class="fixed inset-0 z-[60] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-xl cursor-pointer" onclick="closeAboutModal()"></div>
+        <div id="about-modal-content" class="relative w-full max-w-3xl bg-[#0a0a0c]/95 border border-white/10 rounded-[2rem] p-8 md:p-14 m-4 shadow-2xl opacity-0 scale-95 transform max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <button onclick="closeAboutModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full flex items-center justify-center group/btn z-10 cursor-pointer">
+                <i class="fas fa-times group-hover/btn:rotate-90 transition-transform duration-500"></i>
             </button>
-
-            <div class="mb-8">
+            <div class="mb-10">
                 <div class="flex flex-wrap gap-3 mb-6">
-                    <span class="px-3 py-1 bg-[#5865F2]/10 text-[#5865F2] border border-[#5865F2]/20 rounded-md text-xs font-bold uppercase tracking-widest"><i class="fas fa-map-marker-alt mr-1"></i> Dhaka, BD</span>
-                    <span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-md text-xs font-bold uppercase tracking-widest">19 Years Old</span>
-                    <span class="px-3 py-1 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-md text-xs font-bold uppercase tracking-widest">Alias: SHINYY</span>
+                    <span class="px-3 py-1.5 bg-[#5865F2]/10 text-[#5865F2] border border-[#5865F2]/20 rounded-md text-[10px] font-bold uppercase tracking-widest"><i class="fas fa-map-marker-alt mr-1"></i> Dhaka, BD</span>
+                    <span class="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-md text-[10px] font-bold uppercase tracking-widest">19 Years Old</span>
+                    <span class="px-3 py-1.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-md text-[10px] font-bold uppercase tracking-widest">Alias: SHINYY</span>
                 </div>
-                <h2 class="font-display text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-2">How It Started</h2>
-                <div class="w-20 h-1 bg-gradient-to-r from-accent to-accent2 rounded-full mt-4"></div>
+                <h2 class="font-display text-4xl md:text-6xl font-extrabold text-white tracking-tight mb-4 drop-shadow-lg">How It Started</h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-accent to-accent2 rounded-full mt-4"></div>
             </div>
-
-            <!-- Story Text -->
-            <div class="space-y-6 text-gray-300 font-light leading-relaxed text-lg">
+            <div class="space-y-8 text-gray-300 font-light leading-relaxed text-lg md:text-xl">
                 <p>I wasn't always a programming addict. My journey into development actually began the day I got my first PC. I was looking at the games and software running on it and a simple thought hit me: <span class="text-white font-medium italic">"Wait, I can make these too right?"</span></p>
-
                 <p>That curiosity sparked an obsession. I dove straight into researching coding and programming. For the past three or four years I have just been quietly grinding. I spent all my time learning and building to refine my craft.</p>
-
-                <p>Alongside my core full stack web engineering I have also fully mastered the AI landscape. I know everything from image and video generation to face swapping and complex generative AI.</p>
-
-                <p>I haven't chased a massive client list yet because I wanted to focus purely on improving my skills. Now I feel very confident in my abilities. I am releasing this portfolio so I can show people what I know and provide the absolute best work for my clients.</p>
-
-                <p>My ultimate goal is to be a master developer who can build absolutely anything. I might not know <span class="italic text-gray-400">everything</span> just yet but the skills I have cultivated allow me to deliver exactly what people want. I am here to build the best version of your ideas.</p>
+                <p>Alongside my core full stack web engineering I have also fully mastered the AI landscape. I know everything from image and video generation to face swapping and complex generative AI workflows.</p>
+                <p>I haven't chased a massive client list yet because I wanted to focus purely on improving my skills in the dark. Now I feel very confident in my abilities. I am releasing this portfolio so I can show people what I know and provide the absolute best work for my clients.</p>
+                <p class="text-white font-medium border-l-4 border-accent2 pl-6 py-2 bg-white/5 rounded-r-xl">My ultimate goal is to be a master developer who can build absolutely anything. I might not know everything just yet but the skills I have cultivated allow me to deliver exactly what people want. <br><br>I am here to build the best version of your ideas.</p>
             </div>
         </div>
     </div>
 
-    <!-- Tech Detail Modal -->
-    <div id="tech-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
-        <!-- Blurred Backdrop -->
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-md cursor-pointer" onclick="closeTechModal()"></div>
-
-        <!-- Modal Content Container -->
-        <div id="tech-modal-content" class="relative w-full max-w-xl bg-[#0f0f11]/95 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-8 md:p-10 m-4 shadow-2xl opacity-0 scale-95 transform">
-
-            <!-- Close Button -->
-            <button onclick="closeTechModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full flex items-center justify-center group/btn z-10">
-                <i class="fas fa-times group-hover/btn:rotate-90 transition-transform duration-300"></i>
+    <div id="contact-modal" class="fixed inset-0 z-[70] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-xl cursor-pointer" onclick="closeContactModal()"></div>
+        <div id="contact-modal-content" class="relative w-full max-w-2xl bg-[#0a0a0c]/95 border border-white/10 rounded-[2rem] p-8 md:p-12 m-4 shadow-2xl opacity-0 scale-95 transform max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <button onclick="closeContactModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full flex items-center justify-center group/btn z-10 cursor-pointer">
+                <i class="fas fa-times group-hover/btn:rotate-90 transition-transform duration-500"></i>
             </button>
-
-            <div class="flex flex-col items-center text-center">
-                <!-- Dynamic Icon -->
-                <div id="tech-modal-icon-bg" class="w-24 h-24 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 shadow-lg">
-                    <i id="tech-modal-icon" class="text-5xl"></i>
+            <div class="mb-8">
+                <h2 class="font-display text-3xl md:text-4xl font-extrabold text-white tracking-tight mb-2 drop-shadow-lg">Start a Project</h2>
+                <p class="text-gray-400 font-light">Tell me about your vision, and I'll help you engineer it.</p>
+            </div>
+            <form id="contact-form" onsubmit="submitContactForm(event)" class="space-y-6 relative z-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Client Name / Alias</label>
+                        <input type="text" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent2/50 transition-colors placeholder-gray-600" placeholder="John Doe">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Social Link</label>
+                        <input type="text" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent2/50 transition-colors placeholder-gray-600" placeholder="Discord / Twitter / LinkedIn">
+                    </div>
                 </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Primary Objective</label>
+                    <div class="relative">
+                        <select required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent2/50 transition-colors appearance-none cursor-pointer">
+                            <option value="" disabled selected hidden>Select what you need built...</option>
+                            <option value="fullstack" class="bg-[#0a0a0c]">Full Stack Web Application</option>
+                            <option value="discord" class="bg-[#0a0a0c]">Complex Discord Automation</option>
+                            <option value="video" class="bg-[#0a0a0c]">Cinematic Video Editing</option>
+                            <option value="ai" class="bg-[#0a0a0c]">AI / Generative Workflow</option>
+                            <option value="ui" class="bg-[#0a0a0c]">UI/UX Design & Prototyping</option>
+                            <option value="other" class="bg-[#0a0a0c]">Other / Consultation</option>
+                        </select>
+                        <i class="fas fa-chevron-down absolute right-4 top-4 text-gray-500 pointer-events-none text-xs"></i>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Project Description</label>
+                    <textarea required rows="4" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent2/50 transition-colors placeholder-gray-600 resize-none custom-scrollbar" placeholder="Briefly describe the scale and features of what you're trying to build..."></textarea>
+                </div>
+                <div class="pt-2">
+                    <button type="submit" id="contact-submit-btn" class="w-full py-4 bg-white text-black font-display font-bold rounded-xl hover:bg-gray-300 transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.2)] cursor-pointer">
+                        Send Request <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                <!-- Dynamic Title -->
-                <h2 id="tech-modal-title" class="font-display text-3xl md:text-4xl font-extrabold text-white tracking-tight mb-4">Technology Name</h2>
+    <div id="ai-modal" class="fixed inset-0 z-[60] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-xl cursor-pointer" onclick="closeAiModal()"></div>
+        <div id="ai-modal-content" class="relative w-full max-w-5xl bg-[#0a0a0c]/95 border border-white/10 rounded-[2rem] p-6 md:p-10 m-4 shadow-2xl opacity-0 scale-95 transform max-h-[95vh] overflow-y-auto custom-scrollbar flex flex-col">
+            <button onclick="closeAiModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full flex items-center justify-center group/btn z-20 cursor-pointer">
+                <i class="fas fa-times group-hover/btn:rotate-90 transition-transform duration-500"></i>
+            </button>
+            <div class="mb-8 text-center relative z-10">
+                <div class="text-fuchsia-400 text-xs font-bold tracking-widest uppercase mb-3 flex items-center justify-center gap-2">
+                    <i class="fas fa-microchip"></i> My AI Arsenal
+                </div>
+                <h2 class="font-display text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-2 drop-shadow-lg">Generative Capabilities</h2>
+                <p class="text-gray-400 font-light max-w-2xl mx-auto">A complete suite of cutting-edge artificial intelligence services, ready to be integrated into your business or personal projects.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-fuchsia-500/30 transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-xl bg-fuchsia-500/10 text-fuchsia-400 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-photo-video"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold text-white mb-3">Media Generation Pipelines</h3>
+                    <ul class="space-y-3 text-sm text-gray-400 font-light">
+                        <li class="flex items-start gap-3"><i class="fas fa-check text-fuchsia-500 mt-0.5"></i> <span><strong class="text-white font-medium">Text-to-Image:</strong> High-fidelity generation from tailored prompts.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-check text-fuchsia-500 mt-0.5"></i> <span><strong class="text-white font-medium">Text-to-Video:</strong> Cinematic, coherent video synthesis.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-check text-fuchsia-500 mt-0.5"></i> <span><strong class="text-white font-medium">Image-to-Image:</strong> Style transfer, upscaling, and restyling.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-check text-fuchsia-500 mt-0.5"></i> <span><strong class="text-white font-medium">Image-to-Video:</strong> Bringing static assets to life with AI motion.</span></li>
+                    </ul>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-user-astronaut"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold text-white mb-3">Identity & Deep Synthesis</h3>
+                    <ul class="space-y-3 text-sm text-gray-400 font-light">
+                        <li class="flex items-start gap-3"><i class="fas fa-check text-purple-500 mt-0.5"></i> <span><strong class="text-white font-medium">Face Swapping:</strong> Photorealistic, artifact-free static face replacement.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-check text-purple-500 mt-0.5"></i> <span><strong class="text-white font-medium">Video Face Swapping:</strong> Seamless, temporally consistent identity transfer in high-res video.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-check text-purple-500 mt-0.5"></i> <span><strong class="text-white font-medium">Deep Synthesis:</strong> Advanced deepfake and character generation techniques for media production.</span></li>
+                    </ul>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-blue-500/30 transition-all duration-300 group md:col-span-2 lg:col-span-1">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold text-white mb-3">Custom AI Workflows</h3>
+                    <p class="text-sm text-gray-400 font-light leading-relaxed mb-4">I can create heavily automated, node-based AI workflows using literally any model (ComfyUI, Stable Diffusion, API integrations).</p>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-emerald-500/30 transition-all duration-300 group md:col-span-2 lg:col-span-1">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold text-white mb-3">Model Orchestration</h3>
+                    <p class="text-sm text-gray-400 font-light leading-relaxed mb-4">Build your perfectly running set of AI models. I configure, fine-tune, and deploy custom model architectures tailored precisely to your specific use case.</p>
+                </div>
+            </div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-fuchsia-600/10 filter blur-[100px] pointer-events-none z-0"></div>
+        </div>
+    </div>
 
-                <!-- Dynamic Description -->
-                <p id="tech-modal-desc" class="text-gray-300 font-light leading-relaxed text-lg max-w-md">
-                    Technology description goes here.
-                </p>
+    <div id="tech-modal" class="fixed inset-0 z-[60] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-xl cursor-pointer" onclick="closeTechModal()"></div>
+        <div id="tech-modal-content" class="relative w-full max-w-xl bg-[#0a0a0c]/95 border border-white/10 rounded-[2rem] p-8 md:p-12 m-4 shadow-2xl opacity-0 scale-95 transform">
+            <button onclick="closeTechModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full flex items-center justify-center group/btn z-10 cursor-pointer">
+                <i class="fas fa-times group-hover/btn:rotate-90 transition-transform duration-500"></i>
+            </button>
+            <div class="flex flex-col items-center text-center">
+                <div id="tech-modal-icon-bg" class="w-28 h-28 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mb-8 shadow-2xl backdrop-blur-md">
+                    <i id="tech-modal-icon" class="text-6xl drop-shadow-lg"></i>
+                </div>
+                <h2 id="tech-modal-title" class="font-display text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4 drop-shadow-md">Technology Name</h2>
+                <p id="tech-modal-desc" class="text-gray-300 font-light leading-relaxed text-lg max-w-md">Technology description goes here.</p>
             </div>
         </div>
     </div>
 
-    <!-- Project Preview Modal -->
-    <div id="preview-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
-        <!-- Blurred Backdrop -->
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer" onclick="closePreviewModal()"></div>
-
-        <!-- Massive Modal Content Container for Previewing Websites -->
-        <div id="preview-modal-content" class="relative w-[95vw] h-[90vh] max-w-[1400px] bg-[#0f0f11]/95 backdrop-blur-2xl border border-white/10 rounded-[1.5rem] p-4 flex flex-col shadow-2xl opacity-0 scale-95 transform">
-
-            <!-- Header Area -->
-            <div class="flex justify-between items-center mb-4 px-2">
-                <div class="flex items-center gap-3">
-                    <div class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></div>
+    <div id="preview-modal" class="fixed inset-0 z-[60] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-xl cursor-pointer" onclick="closePreviewModal()"></div>
+        <div id="preview-modal-content" class="relative w-[96vw] h-[92vh] max-w-[1600px] bg-[#0a0a0c]/95 border border-white/10 rounded-[1.5rem] p-4 flex flex-col shadow-2xl opacity-0 scale-95 transform">
+            <div class="flex justify-between items-center mb-4 px-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_rgba(52,211,153,0.8)]"></div>
                     <h2 id="preview-modal-title" class="font-display text-xl md:text-2xl font-bold text-white tracking-tight">Project Preview</h2>
                 </div>
-
-                <button onclick="closePreviewModal()" class="text-gray-400 hover:text-white transition-colors w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full flex items-center justify-center group/btn z-10">
-                    <i class="fas fa-times group-hover/btn:rotate-90 transition-transform duration-300"></i>
+                <button onclick="closePreviewModal()" class="text-gray-400 hover:text-white transition-colors w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full flex items-center justify-center group/btn z-10 cursor-pointer">
+                    <i class="fas fa-times group-hover/btn:rotate-90 transition-transform duration-500"></i>
                 </button>
             </div>
-
-            <!-- Iframe Container to load external HTML -->
-            <div class="flex-1 w-full rounded-xl overflow-hidden border border-white/10 bg-[#050505] relative">
-                <!-- Loading Spinner -->
+            <div class="flex-1 w-full rounded-xl overflow-hidden border border-white/10 bg-[#020202] relative shadow-inner">
                 <div id="preview-loading" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
-                    <i class="fas fa-circle-notch fa-spin text-4xl mb-3 text-accent2"></i>
-                    <span class="text-xs uppercase tracking-widest font-bold">Initializing Environment...</span>
+                    <i class="fas fa-circle-notch fa-spin text-5xl mb-4 text-accent2 drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]"></i>
+                    <span class="text-xs uppercase tracking-widest font-bold">Initializing Render Engine...</span>
                 </div>
-
-                <!-- The actual iframe that loads ecommerce.html, social.html, etc. -->
                 <iframe id="preview-iframe" class="w-full h-full relative z-10" onload="document.getElementById('preview-loading').style.display='none'" src="" frameborder="0"></iframe>
             </div>
         </div>
@@ -574,268 +685,192 @@
 
     <!-- Animation Script -->
     <script>
-        // --- Tech Stack Data ---
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorRing = document.getElementById('cursor-ring');
+        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+        let ringX = mouseX, ringY = mouseY;
+        document.querySelectorAll('a, button, input, textarea, select, .cursor-pointer').forEach(el => el.style.cursor = 'none');
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX; mouseY = e.clientY;
+            cursorDot.style.left = `${mouseX}px`; cursorDot.style.top = `${mouseY}px`;
+        });
+        function animateCursor() {
+            ringX += (mouseX - ringX) * 0.15; ringY += (mouseY - ringY) * 0.15;
+            cursorRing.style.left = `${ringX}px`; cursorRing.style.top = `${ringY}px`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
         const techData = {
-            'js': {
-                name: 'JavaScript',
-                iconClass: 'fab fa-js text-yellow-400',
-                glowColor: 'rgba(250,204,21,0.2)',
-                desc: 'The universal language of the web. It is absolutely essential for adding complex interactivity, dynamic content, and core logic to modern web applications.'
-            },
-            'python': {
-                name: 'Python',
-                iconClass: 'fab fa-python text-blue-500',
-                glowColor: 'rgba(59,130,246,0.2)',
-                desc: 'Highly versatile and readable. I use Python primarily for powerful backend processing, data handling, and building robust AI/machine learning workflows.'
-            },
-            'html': {
-                name: 'HTML5',
-                iconClass: 'fab fa-html5 text-orange-500',
-                glowColor: 'rgba(249,115,22,0.2)',
-                desc: 'The structural foundation of the internet. It defines the semantic layout, accessibility, and SEO-friendly skeleton of every website I construct.'
-            },
-            'css': {
-                name: 'CSS3',
-                iconClass: 'fab fa-css3-alt text-blue-400',
-                glowColor: 'rgba(96,165,250,0.2)',
-                desc: 'The visual engine. CSS is responsible for responsive layouts, precise styling, smooth animations, and ensuring interfaces look stunning on any device.'
-            },
-            'react': {
-                name: 'React',
-                iconClass: 'fab fa-react text-cyan-400',
-                glowColor: 'rgba(34,211,238,0.2)',
-                desc: 'A premier UI library. I leverage React to build incredibly fast, scalable, and highly interactive single-page applications using reusable components.'
-            },
-            'node': {
-                name: 'Node.js',
-                iconClass: 'fab fa-node-js text-green-500',
-                glowColor: 'rgba(34,197,94,0.2)',
-                desc: 'A powerful runtime that brings JavaScript to the server. It enables me to architect fast, event-driven, and highly scalable backend APIs.'
-            },
-            'db': {
-                name: 'Databases',
-                iconClass: 'fas fa-database text-indigo-400',
-                glowColor: 'rgba(129,140,248,0.2)',
-                desc: 'The memory of the application. I design and optimize complex database schemas to securely store, retrieve, and manage massive datasets seamlessly.'
-            }
+            'js': { name: 'JavaScript', iconClass: 'fab fa-js text-yellow-400', glowColor: 'rgba(250,204,21,0.2)', desc: 'The universal language of the web. Essential for adding complex interactivity and core logic to modern web applications.' },
+            'python': { name: 'Python', iconClass: 'fab fa-python text-blue-500', glowColor: 'rgba(59,130,246,0.2)', desc: 'Versatile and readable. I use Python for powerful backend processing, data handling, and building robust AI workflows.' },
+            'html': { name: 'HTML5', iconClass: 'fab fa-html5 text-orange-500', glowColor: 'rgba(249,115,22,0.2)', desc: 'The structural foundation of the internet. It defines the semantic layout and SEO-friendly skeleton of every website.' },
+            'css': { name: 'CSS3', iconClass: 'fab fa-css3-alt text-blue-400', glowColor: 'rgba(96,165,250,0.2)', desc: 'The visual engine. CSS is responsible for responsive layouts, precise styling, and smooth animations.' },
+            'react': { name: 'React', iconClass: 'fab fa-react text-cyan-400', glowColor: 'rgba(34,211,238,0.2)', desc: 'A premier UI library. I leverage React to build fast, scalable, and highly interactive applications using reusable components.' },
+            'node': { name: 'Node.js', iconClass: 'fab fa-node-js text-green-500', glowColor: 'rgba(34,197,94,0.2)', desc: 'A runtime that brings JavaScript to the server, enabling fast, event-driven, and scalable backend APIs.' },
+            'db': { name: 'Databases', iconClass: 'fas fa-database text-indigo-400', glowColor: 'rgba(129,140,248,0.2)', desc: 'The memory of the application. I design optimized schemas to securely store and manage massive datasets.' }
         };
 
-        // --- Modal Control Functions ---
         function openAboutModal() {
             const modal = document.getElementById('about-modal');
             const content = document.getElementById('about-modal-content');
-
             modal.classList.remove('hidden');
-            gsap.to(content, { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.2)" });
+            gsap.to(content, { opacity: 1, scale: 1, duration: 0.8, ease: "expo.out" });
         }
-
         function closeAboutModal() {
             const modal = document.getElementById('about-modal');
             const content = document.getElementById('about-modal-content');
-
-            gsap.to(content, {
-                opacity: 0, scale: 0.95, duration: 0.3, ease: "power2.in",
-                onComplete: () => modal.classList.add('hidden')
-            });
+            gsap.to(content, { opacity: 0, scale: 0.95, duration: 0.4, ease: "power3.in", onComplete: () => modal.classList.add('hidden') });
         }
-
-        // Tech Modal Functions
+        function openContactModal() {
+            const modal = document.getElementById('contact-modal');
+            const content = document.getElementById('contact-modal-content');
+            document.getElementById('contact-form').reset();
+            const btn = document.getElementById('contact-submit-btn');
+            btn.innerHTML = `Send Request <i class="fas fa-paper-plane"></i>`;
+            btn.disabled = false;
+            btn.classList.remove('bg-emerald-500', 'text-white', 'shadow-[0_0_20px_rgba(16,185,129,0.4)]');
+            btn.classList.add('bg-white', 'text-black', 'shadow-[0_0_20px_rgba(255,255,255,0.2)]');
+            modal.classList.remove('hidden');
+            gsap.to(content, { opacity: 1, scale: 1, duration: 0.8, ease: "expo.out" });
+        }
+        function closeContactModal() {
+            const modal = document.getElementById('contact-modal');
+            const content = document.getElementById('contact-modal-content');
+            gsap.to(content, { opacity: 0, scale: 0.95, duration: 0.4, ease: "power3.in", onComplete: () => modal.classList.add('hidden') });
+        }
+        function openAiModal() {
+            const modal = document.getElementById('ai-modal');
+            const content = document.getElementById('ai-modal-content');
+            modal.classList.remove('hidden');
+            gsap.to(content, { opacity: 1, scale: 1, duration: 0.8, ease: "expo.out" });
+        }
+        function closeAiModal() {
+            const modal = document.getElementById('ai-modal');
+            const content = document.getElementById('ai-modal-content');
+            gsap.to(content, { opacity: 0, scale: 0.95, duration: 0.4, ease: "power3.in", onComplete: () => modal.classList.add('hidden') });
+        }
+        function submitContactForm(e) {
+            e.preventDefault(); 
+            const btn = document.getElementById('contact-submit-btn');
+            btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Processing...`;
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.innerHTML = `<i class="fas fa-check"></i> Request Sent Successfully`;
+                btn.classList.add('bg-emerald-500', 'text-white', 'shadow-[0_0_20px_rgba(16,185,129,0.4)]');
+                btn.classList.remove('bg-white', 'text-black', 'shadow-[0_0_20px_rgba(255,255,255,0.2)]');
+                showToast('I have received your request. I will reach out soon!');
+                setTimeout(() => { closeContactModal(); }, 2000);
+            }, 1500);
+        }
         function openTechModal(techKey) {
             const data = techData[techKey];
             if(!data) return;
-
-            // Populate data
             document.getElementById('tech-modal-title').textContent = data.name;
             document.getElementById('tech-modal-desc').textContent = data.desc;
-
             const iconEl = document.getElementById('tech-modal-icon');
-            iconEl.className = `text-5xl ${data.iconClass}`;
-
+            iconEl.className = `text-6xl drop-shadow-lg ${data.iconClass}`;
             const iconBg = document.getElementById('tech-modal-icon-bg');
-            iconBg.style.boxShadow = `0 0 30px ${data.glowColor}`;
-            iconBg.style.borderColor = data.glowColor.replace('0.2', '0.5');
-
-            // Open modal
+            iconBg.style.boxShadow = `0 0 50px ${data.glowColor}`;
+            iconBg.style.borderColor = data.glowColor.replace('0.2', '0.6');
             const modal = document.getElementById('tech-modal');
             const content = document.getElementById('tech-modal-content');
-
             modal.classList.remove('hidden');
-            gsap.to(content, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.2)" });
+            gsap.to(content, { opacity: 1, scale: 1, duration: 0.8, ease: "expo.out" });
         }
-
         function closeTechModal() {
             const modal = document.getElementById('tech-modal');
             const content = document.getElementById('tech-modal-content');
-
-            gsap.to(content, {
-                opacity: 0, scale: 0.95, duration: 0.3, ease: "power2.in",
-                onComplete: () => modal.classList.add('hidden')
-            });
+            gsap.to(content, { opacity: 0, scale: 0.95, duration: 0.4, ease: "power3.in", onComplete: () => modal.classList.add('hidden') });
         }
-
-        // --- Project Preview Modal Functions ---
         function openPreviewModal(url, title) {
             const modal = document.getElementById('preview-modal');
             const content = document.getElementById('preview-modal-content');
             const iframe = document.getElementById('preview-iframe');
             const titleEl = document.getElementById('preview-modal-title');
             const loading = document.getElementById('preview-loading');
-
-            // Set the title
             titleEl.textContent = title + ' Preview';
-
-            // Show loading spinner while iframe connects
-            loading.style.display = 'flex';
-
-            // Set the target HTML file
-            iframe.src = url;
-
-            // Show modal and animate
-            modal.classList.remove('hidden');
-            gsap.to(content, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.2)" });
+            loading.style.display = 'flex'; iframe.src = url; modal.classList.remove('hidden');
+            gsap.to(content, { opacity: 1, scale: 1, duration: 0.8, ease: "expo.out" });
         }
-
         function closePreviewModal() {
             const modal = document.getElementById('preview-modal');
             const content = document.getElementById('preview-modal-content');
             const iframe = document.getElementById('preview-iframe');
-
-            // Animate out
-            gsap.to(content, {
-                opacity: 0, scale: 0.95, duration: 0.3, ease: "power2.in",
-                onComplete: () => {
-                    modal.classList.add('hidden');
-                    // Clear the iframe src to stop audio/video and reset state
-                    iframe.src = '';
-                }
+            gsap.to(content, { opacity: 0, scale: 0.95, duration: 0.4, ease: "power3.in", onComplete: () => {
+                modal.classList.add('hidden'); iframe.src = ''; 
+            }});
+        }
+        function copyEmailToClipboard() {
+            const email = "saniyatmahmud11@gmail.com";
+            navigator.clipboard.writeText(email).then(() => showToast("Email copied to clipboard!")).catch(() => {
+                const textArea = document.createElement("textarea"); textArea.value = email; document.body.appendChild(textArea); textArea.select();
+                try { document.execCommand('copy'); showToast("Email copied to clipboard!"); } catch (err) {}
+                document.body.removeChild(textArea);
             });
         }
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `bg-black/60 backdrop-blur-xl border border-white/10 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-bold toast-enter pointer-events-auto border-l-4 border-l-accent`;
+            toast.innerHTML = `<i class="fas fa-check-circle text-accent2"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('toast-enter'); toast.classList.add('toast-leave');
+                setTimeout(() => toast.remove(), 400); 
+            }, 3000);
+        }
+        function updateLiveClock() {
+            const clockEl = document.getElementById('live-time'); if(!clockEl) return;
+            const options = { timeZone: 'Asia/Dhaka', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            clockEl.textContent = new Intl.DateTimeFormat('en-US', options).format(new Date());
+        }
 
-        window.addEventListener("DOMContentLoaded", (event) => {
-            // GSAP Staggered entry animation for the Bento Grid
-            gsap.fromTo(".bento-item",
-                {
-                    y: 50,
-                    opacity: 0,
-                    scale: 0.95
-                },
-                {
-                    y: 0,
-                    opacity: 1,
-                    scale: 1,
-                    duration: 0.8,
-                    stagger: 0.1,
-                    ease: "back.out(1.2)",
-                    delay: 0.2
-                }
-            );
-
-            // Add subtle mouse-move parallax effect to the bento cards
-            const cards = document.querySelectorAll('.bento-card:not(#tech-stack-card)');
-
-            cards.forEach(card => {
+        window.addEventListener("DOMContentLoaded", () => {
+            updateLiveClock(); setInterval(updateLiveClock, 1000);
+            gsap.to("#main-container", { opacity: 1, scale: 1, duration: 1.5, ease: "expo.out", delay: 0.2 });
+            gsap.fromTo(".gs-reveal", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: "power3.out", delay: 0.4 });
+            document.querySelectorAll('.magnetic-wrap').forEach(elem => {
+                elem.addEventListener('mousemove', (e) => {
+                    const rect = elem.getBoundingClientRect(), strength = elem.dataset.strength || 20; 
+                    const moveX = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2) * strength;
+                    const moveY = (e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2) * strength;
+                    gsap.to(elem, { x: moveX, y: moveY, duration: 0.5, ease: "power3.out" });
+                });
+                elem.addEventListener('mouseleave', () => gsap.to(elem, { x: 0, y: 0, duration: 1, ease: "elastic.out(1, 0.3)" }));
+            });
+            document.querySelectorAll('.hover-3d').forEach(card => {
                 card.addEventListener('mousemove', e => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-
-                    // Optional: Calculate rotation based on mouse position
                     if (window.innerWidth > 768) {
-                        const centerX = rect.width / 2;
-                        const centerY = rect.height / 2;
-                        const rotateX = ((y - centerY) / centerY) * -2;
-                        const rotateY = ((x - centerX) / centerX) * 2;
-
-                        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02) translateY(-5px)`;
+                        const rect = card.getBoundingClientRect();
+                        const rotateX = ((e.clientY - rect.top - rect.height / 2) / (rect.height / 2)) * -2; 
+                        const rotateY = ((e.clientX - rect.left - rect.width / 2) / (rect.width / 2)) * 2;
+                        gsap.to(card, { rotationX: rotateX, rotationY: rotateY, transformPerspective: 1000, duration: 0.6, ease: "power2.out" });
+                        card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+                        card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
                     }
                 });
-
-                card.addEventListener('mouseleave', () => {
-                    card.style.transform = ''; // Resets to hover state defined in CSS
-                });
+                card.addEventListener('mouseleave', () => gsap.to(card, { rotationX: 0, rotationY: 0, duration: 1.2, ease: "elastic.out(1, 0.5)" }));
             });
 
-            // Proximity Tech Stack Logic
-            const techCard = document.getElementById('tech-stack-card');
-            const techTiles = document.querySelectorAll('.tech-tile');
-
-            techCard.addEventListener('mousemove', (e) => {
-                const rect = techCard.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                // Update spotlight position
-                techCard.style.setProperty('--mouse-x', `${x}px`);
-                techCard.style.setProperty('--mouse-y', `${y}px`);
-
-                // Proximity scaling for tiles
-                techTiles.forEach(tile => {
-                    const tileRect = tile.getBoundingClientRect();
-                    const tileCenterX = tileRect.left + tileRect.width / 2;
-                    const tileCenterY = tileRect.top + tileRect.height / 2;
-
-                    const distX = e.clientX - tileCenterX;
-                    const distY = e.clientY - tileCenterY;
-                    const distance = Math.sqrt(distX * distX + distY * distY);
-
-                    const maxDistance = 150; // Radius of magnetic pull
-
-                    if (distance < maxDistance) {
-                        // Calculate pull/scale. The closer to 0 distance, the higher the scale.
-                        const pull = (maxDistance - distance) / maxDistance;
-                        const scale = 1 + (pull * 0.15); // Scales up to 1.15x
-                        const translateY = pull * -8; // Moves up to -8px
-
-                        // Extract brand color from data attribute
-                        const brandColor = tile.getAttribute('data-color');
-
-                        tile.style.transform = `scale(${scale}) translateY(${translateY}px)`;
-                        tile.style.borderColor = brandColor;
-                        tile.style.boxShadow = `0 10px 30px -10px ${brandColor}`;
-                        tile.style.zIndex = "20";
-                    } else {
-                        // Reset if outside radius
-                        tile.style.transform = `scale(1) translateY(0px)`;
-                        tile.style.borderColor = `rgba(255, 255, 255, 0.1)`;
-                        tile.style.boxShadow = `none`;
-                        tile.style.zIndex = "10";
-                    }
-                });
-            });
-
-            techCard.addEventListener('mouseleave', () => {
-                // Reset all tiles when mouse leaves the card entirely
-                techTiles.forEach(tile => {
-                    tile.style.transform = `scale(1) translateY(0px)`;
-                    tile.style.borderColor = `rgba(255, 255, 255, 0.1)`;
-                    tile.style.boxShadow = `none`;
-                    tile.style.zIndex = "10";
-                });
-            });
-
-            // Card Swapping Logic for Specialty Card - Alignment Bug Fixed
-            let isFullStack = true;
-            setInterval(() => {
-                const item1 = document.getElementById('swap-item-1');
-                const item2 = document.getElementById('swap-item-2');
-
-                if(isFullStack) {
-                    // Hide Item 1 (push down), Show Item 2 (pull up)
-                    item1.classList.remove('opacity-100', 'translate-y-0', 'z-10');
-                    item1.classList.add('opacity-0', 'translate-y-8', 'z-0', 'pointer-events-none');
-
-                    item2.classList.remove('opacity-0', 'translate-y-8', 'z-0', 'pointer-events-none');
-                    item2.classList.add('opacity-100', 'translate-y-0', 'z-10');
-                } else {
-                    // Hide Item 2 (push down), Show Item 1 (pull up)
-                    item2.classList.remove('opacity-100', 'translate-y-0', 'z-10');
-                    item2.classList.add('opacity-0', 'translate-y-8', 'z-0', 'pointer-events-none');
-
-                    item1.classList.remove('opacity-0', 'translate-y-8', 'z-0', 'pointer-events-none');
-                    item1.classList.add('opacity-100', 'translate-y-0', 'z-10');
-                }
-                isFullStack = !isFullStack;
-            }, 4000); // Swaps every 4 seconds
+            const firstLine = document.getElementById('name-first'), secondLine = document.getElementById('name-last');
+            const en1 = "SANIYAT", bn1 = "সানিয়াত", hi1 = "सानियात", en2 = "MAHMUD", bn2 = "মাহমুদ", hi2 = "महमूद";
+            function playGlitch() {
+                if (!firstLine || !secondLine) return;
+                const tl = gsap.timeline();
+                tl.set([firstLine, secondLine], { textShadow: "3px 0 #f00, -3px 0 #0ff", skewX: 10, x: -2 })
+                  .call(() => { firstLine.textContent = hi1; secondLine.textContent = hi2; }).to({}, {duration: 0.05})
+                  .set([firstLine, secondLine], { textShadow: "-3px 0 #0f0, 3px 0 #f0f", skewX: -10, x: 2 })
+                  .call(() => { firstLine.textContent = bn1; secondLine.textContent = bn2; }).to({}, {duration: 0.05})
+                  .set([firstLine, secondLine], { textShadow: "none", skewX: 0, x: 0 })
+                  .call(() => { firstLine.textContent = en1; secondLine.textContent = en2; }).to({}, {duration: 0.05})
+                  .set([firstLine, secondLine], { textShadow: "2px 0 #00f", skewX: 5, x: -1 })
+                  .call(() => { firstLine.textContent = bn1; secondLine.textContent = bn2; }).to({}, {duration: 0.03})
+                  .set([firstLine, secondLine], { textShadow: "none", skewX: 0, x: 0 })
+                  .call(() => { firstLine.textContent = en1; secondLine.textContent = en2; });
+                setTimeout(playGlitch, Math.random() * 4000 + 3000);
+            }
+            setTimeout(playGlitch, 3000);
         });
     </script>
 </body>
