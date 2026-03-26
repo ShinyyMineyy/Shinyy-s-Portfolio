@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saniyat Mahmud | SHINYY | Developer & Editor</title>
     
-    <!-- Tailwind CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- GSAP for Animations -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
     
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Modern Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Manrope:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 
     <script>
@@ -42,6 +42,7 @@
             color: #fafafa;
             overflow-x: hidden;
             cursor: none; 
+            scroll-behavior: smooth;
         }
 
         /* Cinematic Vignette */
@@ -62,10 +63,12 @@
         .bg-mesh {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: -1; overflow: hidden; pointer-events: none;
+            will-change: transform;
         }
         .blob {
             position: absolute; filter: blur(120px); opacity: 0.2;
             animation: float-blob 25s infinite cubic-bezier(0.4, 0, 0.2, 1) alternate;
+            will-change: transform;
         }
         .blob-1 { top: -20%; left: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(99, 102, 241, 0.8), transparent 70%); }
         .blob-2 { bottom: -20%; right: -10%; width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(56, 189, 248, 0.6), transparent 70%); animation-delay: -7s; }
@@ -101,7 +104,7 @@
             33% { transform: translateY(-6px) rotate(1deg); }
             66% { transform: translateY(4px) rotate(-1deg); }
         }
-        .animate-float-name { animation: float-name 8s cubic-bezier(0.4, 0, 0.2, 1) infinite; display: inline-block; transform-origin: center; }
+        .animate-float-name { animation: float-name 8s cubic-bezier(0.4, 0, 0.2, 1) infinite; display: inline-block; transform-origin: center; will-change: transform; }
 
         /* Shimmer Badge */
         .shimmer-badge { position: relative; overflow: hidden; }
@@ -109,6 +112,7 @@
             content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%;
             background: linear-gradient(to right, transparent, rgba(255,255,255,0.5), transparent);
             transform: skewX(-20deg); animation: shimmer 4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: left;
         }
         @keyframes shimmer { 0% { left: -150%; } 20%, 100% { left: 200%; } }
 
@@ -118,9 +122,15 @@
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #555; }
 
+        /* Discord Custom Scrollbar */
+        .discord-scrollbar::-webkit-scrollbar { width: 8px; }
+        .discord-scrollbar::-webkit-scrollbar-track { background: #2b2d31; border-radius: 4px; }
+        .discord-scrollbar::-webkit-scrollbar-thumb { background: #1a1b1e; border-radius: 4px; }
+        .discord-scrollbar::-webkit-scrollbar-thumb:hover { background: #111214; }
+
         /* Tech Tiles Physics */
         .tech-tile { will-change: transform; transform-style: preserve-3d; }
-        .magnetic-wrap { display: inline-block; cursor: none; }
+        .magnetic-wrap { display: inline-block; cursor: none; will-change: transform; }
 
         /* Toast Notifications */
         .toast-enter { animation: slideInUp 0.4s forwards cubic-bezier(0.16, 1, 0.3, 1); }
@@ -132,6 +142,7 @@
         #cursor-dot, #cursor-ring {
             position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;
             transform: translate(-50%, -50%); border-radius: 50%;
+            will-change: transform, left, top;
         }
         #cursor-dot { width: 6px; height: 6px; background-color: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.8); }
         #cursor-ring {
@@ -166,53 +177,63 @@
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
 
-        /* Discord Custom Scrollbar */
-        .discord-scrollbar::-webkit-scrollbar { width: 8px; }
-        .discord-scrollbar::-webkit-scrollbar-track { background: #2b2d31; border-radius: 4px; }
-        .discord-scrollbar::-webkit-scrollbar-thumb { background: #1a1b1e; border-radius: 4px; }
-        .discord-scrollbar::-webkit-scrollbar-thumb:hover { background: #111214; }
+        /* Video Cinematic Animations */
+        @keyframes slowPan {
+            0% { transform: scale(1.05) translate(0, 0); }
+            50% { transform: scale(1.15) translate(-2%, -2%); }
+            100% { transform: scale(1.05) translate(0, 0); }
+        }
+        .animate-slow-pan { animation: slowPan 25s ease-in-out infinite; will-change: transform; }
+        
+        @keyframes eq-bar {
+            0%, 100% { height: 4px; }
+            50% { height: 16px; }
+        }
+        .eq-bar { width: 3px; background: white; border-radius: 2px; animation: eq-bar 1.2s ease-in-out infinite; will-change: height; }
+        .eq-bar:nth-child(1) { animation-delay: 0.0s; }
+        .eq-bar:nth-child(2) { animation-delay: 0.2s; }
+        .eq-bar:nth-child(3) { animation-delay: 0.4s; }
+        .eq-bar:nth-child(4) { animation-delay: 0.1s; }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .animate-marquee { display: inline-block; white-space: nowrap; animation: marquee 5s linear infinite; will-change: transform; }
 
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center selection:bg-white/20 selection:text-white">
 
-    <!-- Cinematic Custom Cursor -->
     <div id="cursor-dot"></div>
     <div id="cursor-ring"></div>
 
-    <!-- Cinematic Overlays -->
     <div class="vignette"></div>
     <div class="bg-noise"></div>
 
-    <!-- Background meshes -->
     <div class="bg-mesh">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
     </div>
 
-    <!-- Toast Container -->
     <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none"></div>
 
-    <!-- Main Container -->
     <main id="main-container" class="w-full max-w-[1400px] mx-auto py-10 px-4 md:px-8 relative z-10 scale-105 opacity-0 flex flex-col gap-24"> 
 
-        <!-- ================= 1. THE IDENTITY CARD ================= -->
         <div class="identity-card w-full max-w-5xl mx-auto p-10 lg:p-14 group hover-3d mt-10">
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_var(--mouse-x,50%)_var(--mouse-y,50%),rgba(255,255,255,0.06)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-800 pointer-events-none z-0"></div>
             
             <div class="flex flex-col md:flex-row items-center gap-12 md:gap-20 relative z-10 transform-style-3d">
                 
-               <!-- PHOTO CONTAINER -->
-                <div class="relative shrink-0 translate-z-40 order-2 md:order-2 px-8">
+               <div class="relative shrink-0 translate-z-40 order-2 md:order-2 px-8">
                     <div class="absolute inset-0 bg-blue-500/10 filter blur-3xl animate-pulse"></div>
                     <div class="w-56 h-72 md:w-64 md:h-80 rounded-[2.5rem] border border-white/20 overflow-hidden relative shadow-2xl backdrop-blur-xl group-hover:scale-105 transition-transform duration-700">
                         <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
-                        <!-- Profile Image: SANIYAT.png (Not flipping anymore) -->
-                        <img src="SANIYAT.png" alt="Saniyat Mahmud" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-1000 grayscale group-hover:grayscale-0">
+                        <img src="SANIYAT.png" alt="Saniyat Mahmud" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-1000 grayscale group-hover:grayscale-0">
                         <div class="absolute top-0 left-0 w-full h-full border-t border-l border-white/30 rounded-[2.5rem] z-20 pointer-events-none"></div>
                     </div>
                 </div>
-                <!-- INFO SECTION -->
+                
                 <div class="flex-1 transform-style-3d order-1 md:order-1">
                     <div class="flex flex-wrap items-center gap-3 mb-12 translate-z-10">
                         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold tracking-widest uppercase shadow-sm backdrop-blur-md">
@@ -251,14 +272,12 @@
                             </button>
                         </div>
                         
-                        <!-- Meet The Team Button -->
                         <div class="magnetic-wrap" data-strength="30">
                             <button onclick="openTeamModal()" class="px-6 h-16 bg-white/5 border border-white/10 text-white font-display font-bold tracking-widest text-[11px] uppercase rounded-xl hover:bg-white/10 hover:border-white/30 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg backdrop-blur-md cursor-pointer group">
                                 Meet The Team <i class="fas fa-users text-accent2 group-hover:scale-110 transition-transform text-lg"></i>
                             </button>
                         </div>
 
-                        <!-- Main Header Socials (Symmetrical sizing) -->
                         <div class="flex gap-4">
                             <div class="magnetic-wrap" data-strength="30">
                                 <a href="https://github.com/ShinyyMineyy" target="_blank" class="w-16 h-16 rounded-xl border border-white/20 bg-white/5 flex items-center justify-center hover:bg-white/20 transition-colors text-3xl text-white cursor-pointer shadow-lg backdrop-blur-md">
@@ -286,13 +305,11 @@
             </div>
         </div>
 
-        <!-- ================= 2. THE MASTERY VOID ================= -->
         <div class="w-full text-center mb-6 gs-reveal mt-10">
             <h2 class="font-display text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tighter drop-shadow-lg">What I have for you</h2>
         </div>
         <div class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-12 lg:gap-8 px-4 lg:px-8 gs-reveal">
             
-            <!-- Left: Video Editor -->
             <div id="tab-video" onclick="switchTab('video')" class="w-full flex flex-col items-center text-center relative group cursor-pointer opacity-50 hover:opacity-100 transition-opacity duration-500">
                 <i class="fas fa-film absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10rem] text-red-500/5 group-hover:text-red-500/10 transition-colors duration-700 -z-10"></i>
                 <div class="text-red-400 text-xs font-bold tracking-widest uppercase mb-4 flex items-center justify-center gap-2">
@@ -304,7 +321,6 @@
                 <p class="text-gray-400 text-sm md:text-base font-light leading-relaxed max-w-[240px] mx-auto">High-retention, documentary-style editing with flawless motion graphics and sound design.</p>
             </div>
 
-            <!-- Mid-Left: Minecraft Animation -->
             <div id="tab-minecraft" onclick="switchTab('minecraft')" class="w-full flex flex-col items-center text-center relative group cursor-pointer opacity-50 hover:opacity-100 transition-opacity duration-500">
                 <i class="fas fa-cubes absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10rem] text-cyan-500/5 group-hover:text-cyan-500/10 transition-colors duration-700 -z-10"></i>
                 <div class="text-cyan-400 text-xs font-bold tracking-widest uppercase mb-4 flex items-center justify-center gap-2">
@@ -316,7 +332,6 @@
                 <p class="text-gray-400 text-sm md:text-base font-light leading-relaxed max-w-[240px] mx-auto">Custom Minecraft animations, dynamic camera rigs, and immersive blocky storytelling.</p>
             </div>
 
-            <!-- Mid-Right: Full Stack Web -->
             <div id="tab-fullstack" onclick="switchTab('fullstack')" class="w-full flex flex-col items-center text-center relative group cursor-pointer opacity-100 transition-opacity duration-500">
                 <i class="fas fa-layer-group absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10rem] text-emerald-500/5 group-hover:text-emerald-500/10 transition-colors duration-700 -z-10"></i>
                 <div class="text-emerald-400 text-xs font-bold tracking-widest uppercase mb-4 flex items-center justify-center gap-2">
@@ -328,7 +343,6 @@
                 <p class="text-gray-400 text-sm md:text-base font-light leading-relaxed max-w-[240px] mx-auto">End-to-end web ecosystems. High-conversion frontends to massively scalable backends.</p>
             </div>
 
-            <!-- Right: Discord -->
             <div id="tab-discord" onclick="switchTab('discord')" class="w-full flex flex-col items-center text-center relative group cursor-pointer opacity-50 hover:opacity-100 transition-opacity duration-500">
                 <i class="fab fa-discord absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10rem] text-[#5865F2]/5 group-hover:text-[#5865F2]/10 transition-colors duration-700 -z-10"></i>
                 <div class="text-[#5865F2] text-xs font-bold tracking-widest uppercase mb-4 flex items-center justify-center gap-2">
@@ -340,7 +354,6 @@
                 <p class="text-gray-400 text-sm md:text-base font-light leading-relaxed max-w-[240px] mx-auto">Intensely complex automation. Custom economies, AI moderation logic, and seamless APIs.</p>
             </div>
 
-            <!-- Far Right: Audio Engineer -->
             <div id="tab-audio" onclick="switchTab('audio')" class="w-full flex flex-col items-center text-center relative group cursor-pointer opacity-50 hover:opacity-100 transition-opacity duration-500">
                 <i class="fas fa-headphones absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10rem] text-orange-500/5 group-hover:text-orange-500/10 transition-colors duration-700 -z-10"></i>
                 <div class="text-orange-400 text-xs font-bold tracking-widest uppercase mb-4 flex items-center justify-center gap-2">
@@ -354,196 +367,174 @@
         </div>
 
         <div id="portfolio-container" class="w-full relative">
-            <!-- FULL STACK PORTFOLIO CONTENT -->
             <div id="content-fullstack" class="portfolio-section w-full flex flex-col gap-24">
 
-        <!-- ================= 3. CONSTELLATION TECH STACK ================= -->
-        <div class="w-full flex flex-col justify-center items-center min-h-[400px] relative gs-reveal perspective-[1000px] hover-3d transform-style-3d group mt-16">
-            <div class="text-center mb-16 z-30 translate-z-30 w-full pointer-events-none">
-                 <h2 class="font-display text-4xl md:text-5xl font-bold text-white tracking-widest uppercase drop-shadow-lg">Languages I Work On</h2>
-            </div>
-            <div class="flex flex-wrap justify-center items-center gap-6 md:gap-8 z-10 relative w-full px-2 translate-z-20">
-                <!-- JS -->
-                <div class="transform -rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
-                    <div onclick="openTechModal('js')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl" data-color="rgba(250,204,21,0.4)">
-                        <div class="absolute inset-0 bg-gradient-to-b from-yellow-400/0 to-yellow-400/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
-                        <i class="fab fa-js text-4xl text-gray-500 group-hover/tech:text-yellow-400 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-yellow-400 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">JavaScript</span>
+                <div class="w-full flex flex-col justify-center items-center min-h-[400px] relative gs-reveal perspective-[1000px] hover-3d transform-style-3d group mt-16">
+                    <div class="text-center mb-16 z-30 translate-z-30 w-full pointer-events-none">
+                         <h2 class="font-display text-4xl md:text-5xl font-bold text-white tracking-widest uppercase drop-shadow-lg">Languages I Work On</h2>
+                    </div>
+                    <div class="flex flex-wrap justify-center items-center gap-6 md:gap-8 z-10 relative w-full px-2 translate-z-20">
+                        <div class="transform -rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
+                            <div onclick="openTechModal('js')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl">
+                                <div class="absolute inset-0 bg-gradient-to-b from-yellow-400/0 to-yellow-400/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
+                                <i class="fab fa-js text-4xl text-gray-500 group-hover/tech:text-yellow-400 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-yellow-400 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">JavaScript</span>
+                            </div>
+                        </div>
+                        <div class="transform rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
+                            <div onclick="openTechModal('python')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl">
+                                <div class="absolute inset-0 bg-gradient-to-b from-blue-500/0 to-blue-500/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
+                                <i class="fab fa-python text-4xl text-gray-500 group-hover/tech:text-blue-500 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-blue-500 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">Python</span>
+                            </div>
+                        </div>
+                        <div class="transform -rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
+                            <div onclick="openTechModal('html')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl">
+                                <div class="absolute inset-0 bg-gradient-to-b from-orange-500/0 to-orange-500/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
+                                <i class="fab fa-html5 text-4xl text-gray-500 group-hover/tech:text-orange-500 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-orange-500 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">HTML5</span>
+                            </div>
+                        </div>
+                        <div class="transform rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
+                            <div onclick="openTechModal('css')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl">
+                                <div class="absolute inset-0 bg-gradient-to-b from-blue-400/0 to-blue-400/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
+                                <i class="fab fa-css3-alt text-4xl text-gray-500 group-hover/tech:text-blue-400 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">CSS3</span>
+                            </div>
+                        </div>
+                        <div class="transform -rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
+                            <div onclick="openTechModal('react')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl">
+                                <div class="absolute inset-0 bg-gradient-to-b from-cyan-400/0 to-cyan-400/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
+                                <i class="fab fa-react text-4xl text-gray-500 group-hover/tech:text-cyan-400 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-cyan-400 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">React</span>
+                            </div>
+                        </div>
+                        <div class="transform rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
+                            <div onclick="openTechModal('node')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl">
+                                <div class="absolute inset-0 bg-gradient-to-b from-green-500/0 to-green-500/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
+                                <i class="fab fa-node-js text-4xl text-gray-500 group-hover/tech:text-green-500 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-green-500 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">Node.js</span>
+                            </div>
+                        </div>
+                        <div class="transform -rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
+                            <div onclick="openTechModal('db')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl">
+                                <div class="absolute inset-0 bg-gradient-to-b from-indigo-400/0 to-indigo-400/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
+                                <i class="fas fa-database text-4xl text-gray-500 group-hover/tech:text-indigo-400 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-indigo-400 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">Database</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <!-- Python -->
-                <div class="transform rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
-                    <div onclick="openTechModal('python')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl" data-color="rgba(59,130,246,0.4)">
-                        <div class="absolute inset-0 bg-gradient-to-b from-blue-500/0 to-blue-500/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
-                        <i class="fab fa-python text-4xl text-gray-500 group-hover/tech:text-blue-500 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-blue-500 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">Python</span>
-                    </div>
-                </div>
-                <!-- HTML -->
-                <div class="transform -rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
-                    <div onclick="openTechModal('html')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl" data-color="rgba(249,115,22,0.4)">
-                        <div class="absolute inset-0 bg-gradient-to-b from-orange-500/0 to-orange-500/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
-                        <i class="fab fa-html5 text-4xl text-gray-500 group-hover/tech:text-orange-500 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-orange-500 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">HTML5</span>
-                    </div>
-                </div>
-                <!-- CSS -->
-                <div class="transform rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
-                    <div onclick="openTechModal('css')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl" data-color="rgba(96,165,250,0.4)">
-                        <div class="absolute inset-0 bg-gradient-to-b from-blue-400/0 to-blue-400/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
-                        <i class="fab fa-css3-alt text-4xl text-gray-500 group-hover/tech:text-blue-400 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">CSS3</span>
-                    </div>
-                </div>
-                <!-- React -->
-                <div class="transform -rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
-                    <div onclick="openTechModal('react')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl" data-color="rgba(34,211,238,0.4)">
-                        <div class="absolute inset-0 bg-gradient-to-b from-cyan-400/0 to-cyan-400/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
-                        <i class="fab fa-react text-4xl text-gray-500 group-hover/tech:text-cyan-400 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-cyan-400 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">React</span>
-                    </div>
-                </div>
-                <!-- Node -->
-                <div class="transform rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
-                    <div onclick="openTechModal('node')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl" data-color="rgba(34,197,94,0.4)">
-                        <div class="absolute inset-0 bg-gradient-to-b from-green-500/0 to-green-500/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
-                        <i class="fab fa-node-js text-4xl text-gray-500 group-hover/tech:text-green-500 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-green-500 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">Node.js</span>
-                    </div>
-                </div>
-                <!-- Database -->
-                <div class="transform -rotate-6 hover:z-20 relative magnetic-wrap cursor-pointer" data-strength="30">
-                    <div onclick="openTechModal('db')" class="tech-tile flex flex-col items-center justify-center group/tech w-[90px] h-[90px] rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden shadow-2xl" data-color="rgba(129,140,248,0.4)">
-                        <div class="absolute inset-0 bg-gradient-to-b from-indigo-400/0 to-indigo-400/20 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-500"></div>
-                        <i class="fas fa-database text-4xl text-gray-500 group-hover/tech:text-indigo-400 transition-all duration-500 group-hover/tech:-translate-y-3 relative z-10 drop-shadow-md"></i>
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-indigo-400 transition-all duration-500 opacity-0 group-hover/tech:opacity-100 absolute bottom-3 z-10 drop-shadow-md">Database</span>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- ================= 4. CINEMATIC PROJECT BANNERS ================= -->
-        <div class="w-full flex flex-col gap-6 gs-reveal mt-10">
-            <h2 class="font-display text-4xl lg:text-5xl text-white font-bold tracking-tight drop-shadow-md px-4 mb-4">Selected Architectures</h2>
-            
-            <!-- Project: E-Commerce -->
-            <div onclick="openPreviewModal('ecommerce.html', 'E-Commerce')" class="w-full h-[350px] md:h-[450px] relative group cursor-pointer hover-3d transform-style-3d border border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden">
-                <div class="absolute inset-0 bg-zinc-950"></div>
-                <div class="absolute inset-0 bg-gradient-to-r from-[#020202] via-[#020202]/80 to-transparent z-10"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-orange-500/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay z-10"></div>
+                <div class="w-full flex flex-col gap-6 gs-reveal mt-10">
+                    <h2 class="font-display text-4xl lg:text-5xl text-white font-bold tracking-tight drop-shadow-md px-4 mb-4">Selected Architectures</h2>
+                    
+                    <div onclick="openPreviewModal('ecommerce.html', 'E-Commerce')" class="w-full h-[350px] md:h-[450px] relative group cursor-pointer hover-3d transform-style-3d border border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden">
+                        <div class="absolute inset-0 bg-zinc-950"></div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-[#020202] via-[#020202]/80 to-transparent z-10"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-orange-500/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay z-10"></div>
+                        
+                        <div class="absolute right-0 top-0 bottom-0 w-1/2 flex items-center justify-center pointer-events-none transform-style-3d z-0 translate-x-12 opacity-40 group-hover:opacity-100 transition-all duration-700">
+                            <div class="w-48 h-64 border border-orange-500/30 bg-orange-500/10 rounded-2xl backdrop-blur-sm transform rotate-[-5deg] group-hover:rotate-[-15deg] group-hover:-translate-x-8 transition-all duration-700 shadow-[0_0_30px_rgba(249,115,22,0.2)]"></div>
+                            <div class="w-40 h-56 border border-white/10 bg-white/5 rounded-2xl backdrop-blur-md absolute transform rotate-[5deg] group-hover:rotate-[10deg] group-hover:translate-x-12 group-hover:translate-y-4 transition-all duration-700 shadow-2xl"></div>
+                            <div class="w-32 h-12 border border-orange-400/40 bg-orange-400/20 rounded-xl backdrop-blur-lg absolute bottom-1/4 transform group-hover:translate-y-8 group-hover:translate-z-40 transition-all duration-700 shadow-[0_0_20px_rgba(249,115,22,0.3)]"></div>
+                        </div>
+                        
+                        <div class="absolute left-8 md:left-16 bottom-10 md:bottom-16 z-30 translate-z-40 pointer-events-none">
+                             <h3 class="font-display text-4xl md:text-6xl lg:text-[5.5rem] font-black text-white tracking-tighter mb-2 group-hover:translate-x-6 transition-transform duration-700 ease-out drop-shadow-2xl">E-Commerce.</h3>
+                             <p class="text-orange-400 text-lg md:text-xl font-light group-hover:translate-x-6 transition-transform duration-700 delay-75 ease-out drop-shadow-md max-w-lg">High-conversion storefronts & payment gateways engineered for massive scale.</p>
+                             <div class="mt-6 opacity-0 group-hover:opacity-100 group-hover:translate-x-6 transition-all duration-700 delay-150 pointer-events-auto">
+                                <span class="px-6 py-3 bg-white text-black text-sm font-bold uppercase tracking-widest rounded-full flex items-center gap-2 w-max shadow-lg">
+                                    <i class="fas fa-eye text-orange-500"></i> Open Prototype
+                                </span>
+                             </div>
+                        </div>
+                    </div>
+
+                    <div onclick="openPreviewModal('enterprise.html', 'Enterprise SaaS')" class="w-full h-[350px] md:h-[450px] relative group cursor-pointer hover-3d transform-style-3d border border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden">
+                        <div class="absolute inset-0 bg-zinc-950"></div>
+                        <div class="absolute inset-0 bg-gradient-to-l from-[#020202] via-[#020202]/80 to-transparent z-10"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-cyan-500/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay z-10"></div>
+                        
+                        <div class="absolute left-0 top-0 bottom-0 w-1/2 flex items-end justify-center gap-4 pb-16 pointer-events-none transform-style-3d z-0 -translate-x-12 opacity-40 group-hover:opacity-100 transition-all duration-700">
+                            <div class="w-12 h-32 border border-cyan-500/30 bg-cyan-500/10 rounded-t-xl backdrop-blur-sm transform group-hover:h-48 transition-all duration-700 shadow-[0_0_30px_rgba(6,182,212,0.2)]"></div>
+                            <div class="w-12 h-48 border border-white/10 bg-white/5 rounded-t-xl backdrop-blur-md transform group-hover:h-64 transition-all duration-700 delay-75 shadow-2xl"></div>
+                            <div class="w-12 h-24 border border-cyan-400/40 bg-cyan-400/20 rounded-t-xl backdrop-blur-lg transform group-hover:h-40 group-hover:translate-z-40 transition-all duration-700 delay-150 shadow-[0_0_20px_rgba(6,182,212,0.3)]"></div>
+                        </div>
+                        
+                        <div class="absolute right-8 md:right-16 bottom-10 md:bottom-16 z-30 translate-z-40 text-right flex flex-col items-end pointer-events-none">
+                             <h3 class="font-display text-4xl md:text-6xl lg:text-[5.5rem] font-black text-white tracking-tighter mb-2 group-hover:-translate-x-6 transition-transform duration-700 ease-out drop-shadow-2xl">Enterprise SaaS.</h3>
+                             <p class="text-cyan-400 text-lg md:text-xl font-light group-hover:-translate-x-6 transition-transform duration-700 delay-75 ease-out drop-shadow-md max-w-lg">Data-rich, real-time administrative dashboards and scalable software tools.</p>
+                             <div class="mt-6 opacity-0 group-hover:opacity-100 group-hover:-translate-x-6 transition-all duration-700 delay-150 pointer-events-auto">
+                                <span class="px-6 py-3 bg-white text-black text-sm font-bold uppercase tracking-widest rounded-full flex items-center gap-2 w-max shadow-lg">
+                                    <i class="fas fa-eye text-cyan-500"></i> Open Prototype
+                                </span>
+                             </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full h-[400px]">
+                        <div onclick="openPreviewModal('social.html', 'Social Platforms')" class="w-full h-full relative group cursor-pointer hover-3d transform-style-3d border border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent z-10"></div>
+                            <div class="absolute inset-0 bg-gradient-to-b from-pink-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay z-10"></div>
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none transform-style-3d z-0 opacity-40 group-hover:opacity-100 transition-all duration-700">
+                                <div class="absolute w-24 h-24 border border-pink-500/30 bg-pink-500/10 rounded-full backdrop-blur-sm transform -translate-x-12 -translate-y-12 group-hover:-translate-x-24 group-hover:-translate-y-20 transition-all duration-700 shadow-[0_0_30px_rgba(236,72,153,0.2)]"></div>
+                                <div class="absolute w-32 h-32 border border-white/10 bg-white/5 rounded-full backdrop-blur-md transform translate-x-8 translate-y-8 group-hover:translate-x-20 group-hover:translate-y-16 group-hover:translate-z-30 transition-all duration-700 shadow-2xl"></div>
+                                <div class="w-32 h-[1px] bg-gradient-to-r from-pink-500/0 via-pink-500/80 to-white/0 transform rotate-45 group-hover:scale-150 transition-all duration-700"></div>
+                            </div>
+                            <div class="absolute left-8 bottom-10 z-30 translate-z-40 pointer-events-none">
+                                 <h3 class="font-display text-3xl md:text-4xl font-black text-white tracking-tighter mb-1 group-hover:translate-y-[-10px] transition-transform duration-500 ease-out">Social Platforms.</h3>
+                                 <p class="text-pink-400 text-sm font-light group-hover:translate-y-[-10px] transition-transform duration-500 delay-75 ease-out">Real-time feeds & user databases.</p>
+                            </div>
+                        </div>
+
+                        <div onclick="openPreviewModal('corporate.html', 'Corporate Sites')" class="w-full h-full relative group cursor-pointer hover-3d transform-style-3d border border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent z-10"></div>
+                            <div class="absolute inset-0 bg-gradient-to-b from-emerald-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay z-10"></div>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center gap-6 pointer-events-none transform-style-3d z-0 opacity-40 group-hover:opacity-100 transition-all duration-700 p-12">
+                                <div class="w-full max-w-[200px] h-[1px] bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent transform group-hover:scale-x-150 transition-all duration-700"></div>
+                                <div class="w-full max-w-[280px] h-32 border border-white/10 bg-white/5 rounded-2xl backdrop-blur-md transform group-hover:scale-105 group-hover:translate-z-30 transition-all duration-700 shadow-2xl"></div>
+                                <div class="w-full max-w-[150px] h-[1px] bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent transform group-hover:scale-x-150 transition-all duration-700 delay-100"></div>
+                            </div>
+                            <div class="absolute left-8 bottom-10 z-30 translate-z-40 pointer-events-none">
+                                 <h3 class="font-display text-3xl md:text-4xl font-black text-white tracking-tighter mb-1 group-hover:translate-y-[-10px] transition-transform duration-500 ease-out">Corporate Sites.</h3>
+                                 <p class="text-emerald-400 text-sm font-light group-hover:translate-y-[-10px] transition-transform duration-500 delay-75 ease-out">High-end layouts that command authority.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div onclick="openAiModal()" class="w-full flex flex-col items-center justify-center min-h-[400px] group cursor-pointer overflow-hidden relative gs-reveal ai-mesh-bg rounded-[3rem] border border-white/10 shadow-2xl hover-3d transform-style-3d mt-10">
+                    <div class="absolute inset-0 bg-black/60 backdrop-blur-[6px] group-hover:backdrop-blur-sm transition-all duration-1000 z-0"></div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-fuchsia-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 mix-blend-overlay z-0"></div>
+                    
+                    <div class="relative z-20 text-center px-4 max-w-4xl mx-auto translate-z-40 pointer-events-none">
+                        <div class="text-fuchsia-400 text-sm font-bold tracking-widest uppercase mb-4 flex items-center justify-center gap-2">
+                            <i class="fas fa-wand-magic-sparkles animate-pulse"></i> Generative Services
+                        </div>
+                        <h3 class="font-display text-4xl md:text-5xl lg:text-6xl font-black mb-6 text-white tracking-tighter drop-shadow-2xl">How I can help you with AI</h3>
+                        <p class="text-gray-300 text-lg md:text-xl leading-relaxed font-light mb-8">From complex generative workflows to flawless media synthesis. Click to explore my complete arsenal of artificial intelligence capabilities.</p>
+                        <div class="inline-flex items-center gap-3 px-8 py-3.5 rounded-2xl bg-white/5 border border-fuchsia-500/30 text-white font-bold tracking-widest uppercase text-xs backdrop-blur-md transition-all group-hover:bg-fuchsia-500/20 group-hover:border-fuchsia-500/50 group-hover:scale-105 shadow-[0_0_20px_rgba(217,70,239,0.2)]">
+                            <i class="fas fa-layer-group text-fuchsia-400"></i> View AI Capabilities
+                        </div>
+                    </div>
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-fuchsia-600/10 filter blur-[100px] pointer-events-none z-0"></div>
+                </div>
+
+            </div> <div id="content-minecraft" class="portfolio-section w-full hidden flex-col gap-20 mt-10">
                 
-                <div class="absolute right-0 top-0 bottom-0 w-1/2 flex items-center justify-center pointer-events-none transform-style-3d z-0 translate-x-12 opacity-40 group-hover:opacity-100 transition-all duration-700">
-                    <div class="w-48 h-64 border border-orange-500/30 bg-orange-500/10 rounded-2xl backdrop-blur-sm transform rotate-[-5deg] group-hover:rotate-[-15deg] group-hover:-translate-x-8 transition-all duration-700 shadow-[0_0_30px_rgba(249,115,22,0.2)]"></div>
-                    <div class="w-40 h-56 border border-white/10 bg-white/5 rounded-2xl backdrop-blur-md absolute transform rotate-[5deg] group-hover:rotate-[10deg] group-hover:translate-x-12 group-hover:translate-y-4 transition-all duration-700 shadow-2xl"></div>
-                    <div class="w-32 h-12 border border-orange-400/40 bg-orange-400/20 rounded-xl backdrop-blur-lg absolute bottom-1/4 transform group-hover:translate-y-8 group-hover:translate-z-40 transition-all duration-700 shadow-[0_0_20px_rgba(249,115,22,0.3)]"></div>
-                </div>
-                
-                <div class="absolute left-8 md:left-16 bottom-10 md:bottom-16 z-30 translate-z-40 pointer-events-none">
-                     <h3 class="font-display text-4xl md:text-6xl lg:text-[5.5rem] font-black text-white tracking-tighter mb-2 group-hover:translate-x-6 transition-transform duration-700 ease-out drop-shadow-2xl">E-Commerce.</h3>
-                     <p class="text-orange-400 text-lg md:text-xl font-light group-hover:translate-x-6 transition-transform duration-700 delay-75 ease-out drop-shadow-md max-w-lg">High-conversion storefronts & payment gateways engineered for massive scale.</p>
-                     <div class="mt-6 opacity-0 group-hover:opacity-100 group-hover:translate-x-6 transition-all duration-700 delay-150 pointer-events-auto">
-                        <span class="px-6 py-3 bg-white text-black text-sm font-bold uppercase tracking-widest rounded-full flex items-center gap-2 w-max shadow-lg">
-                            <i class="fas fa-eye text-orange-500"></i> Open Prototype
-                        </span>
-                     </div>
-                </div>
-            </div>
-
-            <!-- Project: Enterprise SaaS -->
-            <div onclick="openPreviewModal('enterprise.html', 'Enterprise SaaS')" class="w-full h-[350px] md:h-[450px] relative group cursor-pointer hover-3d transform-style-3d border border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden">
-                <div class="absolute inset-0 bg-zinc-950"></div>
-                <div class="absolute inset-0 bg-gradient-to-l from-[#020202] via-[#020202]/80 to-transparent z-10"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-cyan-500/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay z-10"></div>
-                
-                <div class="absolute left-0 top-0 bottom-0 w-1/2 flex items-end justify-center gap-4 pb-16 pointer-events-none transform-style-3d z-0 -translate-x-12 opacity-40 group-hover:opacity-100 transition-all duration-700">
-                    <div class="w-12 h-32 border border-cyan-500/30 bg-cyan-500/10 rounded-t-xl backdrop-blur-sm transform group-hover:h-48 transition-all duration-700 shadow-[0_0_30px_rgba(6,182,212,0.2)]"></div>
-                    <div class="w-12 h-48 border border-white/10 bg-white/5 rounded-t-xl backdrop-blur-md transform group-hover:h-64 transition-all duration-700 delay-75 shadow-2xl"></div>
-                    <div class="w-12 h-24 border border-cyan-400/40 bg-cyan-400/20 rounded-t-xl backdrop-blur-lg transform group-hover:h-40 group-hover:translate-z-40 transition-all duration-700 delay-150 shadow-[0_0_20px_rgba(6,182,212,0.3)]"></div>
-                </div>
-                
-                <div class="absolute right-8 md:right-16 bottom-10 md:bottom-16 z-30 translate-z-40 text-right flex flex-col items-end pointer-events-none">
-                     <h3 class="font-display text-4xl md:text-6xl lg:text-[5.5rem] font-black text-white tracking-tighter mb-2 group-hover:-translate-x-6 transition-transform duration-700 ease-out drop-shadow-2xl">Enterprise SaaS.</h3>
-                     <p class="text-cyan-400 text-lg md:text-xl font-light group-hover:-translate-x-6 transition-transform duration-700 delay-75 ease-out drop-shadow-md max-w-lg">Data-rich, real-time administrative dashboards and scalable software tools.</p>
-                     <div class="mt-6 opacity-0 group-hover:opacity-100 group-hover:-translate-x-6 transition-all duration-700 delay-150 pointer-events-auto">
-                        <span class="px-6 py-3 bg-white text-black text-sm font-bold uppercase tracking-widest rounded-full flex items-center gap-2 w-max shadow-lg">
-                            <i class="fas fa-eye text-cyan-500"></i> Open Prototype
-                        </span>
-                     </div>
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full h-[400px]">
-                <!-- Project: Social Media (Half width) -->
-                <div onclick="openPreviewModal('social.html', 'Social Platforms')" class="w-full h-full relative group cursor-pointer hover-3d transform-style-3d border border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent z-10"></div>
-                    <div class="absolute inset-0 bg-gradient-to-b from-pink-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay z-10"></div>
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none transform-style-3d z-0 opacity-40 group-hover:opacity-100 transition-all duration-700">
-                        <div class="absolute w-24 h-24 border border-pink-500/30 bg-pink-500/10 rounded-full backdrop-blur-sm transform -translate-x-12 -translate-y-12 group-hover:-translate-x-24 group-hover:-translate-y-20 transition-all duration-700 shadow-[0_0_30px_rgba(236,72,153,0.2)]"></div>
-                        <div class="absolute w-32 h-32 border border-white/10 bg-white/5 rounded-full backdrop-blur-md transform translate-x-8 translate-y-8 group-hover:translate-x-20 group-hover:translate-y-16 group-hover:translate-z-30 transition-all duration-700 shadow-2xl"></div>
-                        <div class="w-32 h-[1px] bg-gradient-to-r from-pink-500/0 via-pink-500/80 to-white/0 transform rotate-45 group-hover:scale-150 transition-all duration-700"></div>
-                    </div>
-                    <div class="absolute left-8 bottom-10 z-30 translate-z-40 pointer-events-none">
-                         <h3 class="font-display text-3xl md:text-4xl font-black text-white tracking-tighter mb-1 group-hover:translate-y-[-10px] transition-transform duration-500 ease-out">Social Platforms.</h3>
-                         <p class="text-pink-400 text-sm font-light group-hover:translate-y-[-10px] transition-transform duration-500 delay-75 ease-out">Real-time feeds & user databases.</p>
-                    </div>
-                </div>
-
-                <!-- Project: Corporate (Half width) -->
-                <div onclick="openPreviewModal('corporate.html', 'Corporate Sites')" class="w-full h-full relative group cursor-pointer hover-3d transform-style-3d border border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent z-10"></div>
-                    <div class="absolute inset-0 bg-gradient-to-b from-emerald-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay z-10"></div>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center gap-6 pointer-events-none transform-style-3d z-0 opacity-40 group-hover:opacity-100 transition-all duration-700 p-12">
-                        <div class="w-full max-w-[200px] h-[1px] bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent transform group-hover:scale-x-150 transition-all duration-700"></div>
-                        <div class="w-full max-w-[280px] h-32 border border-white/10 bg-white/5 rounded-2xl backdrop-blur-md transform group-hover:scale-105 group-hover:translate-z-30 transition-all duration-700 shadow-2xl"></div>
-                        <div class="w-full max-w-[150px] h-[1px] bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent transform group-hover:scale-x-150 transition-all duration-700 delay-100"></div>
-                    </div>
-                    <div class="absolute left-8 bottom-10 z-30 translate-z-40 pointer-events-none">
-                         <h3 class="font-display text-3xl md:text-4xl font-black text-white tracking-tighter mb-1 group-hover:translate-y-[-10px] transition-transform duration-500 ease-out">Corporate Sites.</h3>
-                         <p class="text-emerald-400 text-sm font-light group-hover:translate-y-[-10px] transition-transform duration-500 delay-75 ease-out">High-end layouts that command authority.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ================= 5. AI MASTERY VORTEX ================= -->
-        <div onclick="openAiModal()" class="w-full flex flex-col items-center justify-center min-h-[400px] group cursor-pointer overflow-hidden relative gs-reveal ai-mesh-bg rounded-[3rem] border border-white/10 shadow-2xl hover-3d transform-style-3d mt-10">
-            <div class="absolute inset-0 bg-black/60 backdrop-blur-[6px] group-hover:backdrop-blur-sm transition-all duration-1000 z-0"></div>
-            <div class="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-fuchsia-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 mix-blend-overlay z-0"></div>
-            
-            <div class="relative z-20 text-center px-4 max-w-4xl mx-auto translate-z-40 pointer-events-none">
-                <div class="text-fuchsia-400 text-sm font-bold tracking-widest uppercase mb-4 flex items-center justify-center gap-2">
-                    <i class="fas fa-wand-magic-sparkles animate-pulse"></i> Generative Services
-                </div>
-                <h3 class="font-display text-4xl md:text-5xl lg:text-6xl font-black mb-6 text-white tracking-tighter drop-shadow-2xl">How I can help you with AI</h3>
-                <p class="text-gray-300 text-lg md:text-xl leading-relaxed font-light mb-8">From complex generative workflows to flawless media synthesis. Click to explore my complete arsenal of artificial intelligence capabilities.</p>
-                <div class="inline-flex items-center gap-3 px-8 py-3.5 rounded-2xl bg-white/5 border border-fuchsia-500/30 text-white font-bold tracking-widest uppercase text-xs backdrop-blur-md transition-all group-hover:bg-fuchsia-500/20 group-hover:border-fuchsia-500/50 group-hover:scale-105 shadow-[0_0_20px_rgba(217,70,239,0.2)]">
-                    <i class="fas fa-layer-group text-fuchsia-400"></i> View AI Capabilities
-                </div>
-            </div>
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-fuchsia-600/10 filter blur-[100px] pointer-events-none z-0"></div>
-        </div>
-
-            </div> <!-- End Full Stack Content -->
-
-            <!-- MINECRAFT ANIMATION PORTFOLIO CONTENT -->
-            <div id="content-minecraft" class="portfolio-section w-full hidden flex-col gap-20 mt-10">
-                
-                <!-- Long Videos -->
                 <div class="w-full flex flex-col gap-6">
                     <h2 class="font-display text-4xl lg:text-5xl text-white font-bold tracking-tight drop-shadow-md px-4 mb-4">Minecraft Cinematics</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                         
-                        <!-- MC Video Placeholder 1 -->
                         <div class="w-full aspect-video rounded-[2.5rem] border border-white/10 bg-black/40 shadow-2xl overflow-hidden relative group cursor-pointer hover-3d transform-style-3d">
                             <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-black z-0 mix-blend-overlay"></div>
                             
-                            <!-- Camera UI Overlays -->
                             <div class="absolute top-6 left-6 z-20 translate-z-20 flex items-center gap-2">
                                 <div class="w-3 h-3 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_rgba(34,211,238,0.8)]"></div>
                                 <span class="text-cyan-400 text-xs font-bold font-mono tracking-widest uppercase">RENDER</span>
                             </div>
 
-                            <!-- Play Button -->
                             <div class="absolute inset-0 flex items-center justify-center translate-z-30 z-10">
                                 <div class="w-20 h-20 rounded-full bg-cyan-500/20 border border-cyan-500/50 flex items-center justify-center text-cyan-400 backdrop-blur-md group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-white transition-all duration-500 shadow-[0_0_30px_rgba(34,211,238,0.3)]">
                                     <i class="fas fa-play text-2xl ml-1"></i>
@@ -551,17 +542,14 @@
                             </div>
                         </div>
 
-                        <!-- MC Video Placeholder 2 -->
                         <div class="w-full aspect-video rounded-[2.5rem] border border-white/10 bg-black/40 shadow-2xl overflow-hidden relative group cursor-pointer hover-3d transform-style-3d">
                             <div class="absolute inset-0 bg-gradient-to-bl from-cyan-600/20 to-black z-0 mix-blend-overlay"></div>
                             
-                            <!-- Camera UI Overlays -->
                             <div class="absolute top-6 left-6 z-20 translate-z-20 flex items-center gap-2">
                                 <div class="w-3 h-3 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_rgba(34,211,238,0.8)]"></div>
                                 <span class="text-cyan-400 text-xs font-bold font-mono tracking-widest uppercase">RENDER</span>
                             </div>
 
-                            <!-- Play Button -->
                             <div class="absolute inset-0 flex items-center justify-center translate-z-30 z-10">
                                 <div class="w-20 h-20 rounded-full bg-cyan-500/20 border border-cyan-500/50 flex items-center justify-center text-cyan-400 backdrop-blur-md group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-white transition-all duration-500 shadow-[0_0_30px_rgba(34,211,238,0.3)]">
                                     <i class="fas fa-play text-2xl ml-1"></i>
@@ -572,12 +560,10 @@
                     </div>
                 </div>
                 
-                <!-- Minecraft Shorts -->
                 <div class="w-full flex flex-col gap-6 mt-10">
                     <h2 class="font-display text-4xl lg:text-5xl text-white font-bold tracking-tight drop-shadow-md px-4 mb-4">Animated Shorts</h2>
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 w-full">
                         
-                        <!-- MC Short 1 -->
                         <div class="w-full aspect-[9/16] rounded-[2rem] border border-white/10 bg-black/40 shadow-xl overflow-hidden relative group cursor-pointer transform-style-3d hover-3d">
                             <div class="absolute inset-0 bg-gradient-to-t from-cyan-500/20 to-transparent z-0 opacity-50 group-hover:opacity-100 transition-opacity"></div>
                             <div class="absolute inset-0 flex items-center justify-center z-10 translate-z-30">
@@ -585,7 +571,6 @@
                             </div>
                         </div>
 
-                        <!-- MC Short 2 -->
                         <div class="w-full aspect-[9/16] rounded-[2rem] border border-white/10 bg-black/40 shadow-xl overflow-hidden relative group cursor-pointer transform-style-3d hover-3d">
                             <div class="absolute inset-0 bg-gradient-to-t from-cyan-500/20 to-transparent z-0 opacity-50 group-hover:opacity-100 transition-opacity"></div>
                             <div class="absolute inset-0 flex items-center justify-center z-10 translate-z-30">
@@ -593,7 +578,6 @@
                             </div>
                         </div>
 
-                        <!-- MC Short 3 -->
                         <div class="w-full aspect-[9/16] rounded-[2rem] border border-white/10 bg-black/40 shadow-xl overflow-hidden relative group cursor-pointer transform-style-3d hover-3d">
                             <div class="absolute inset-0 bg-gradient-to-t from-cyan-500/20 to-transparent z-0 opacity-50 group-hover:opacity-100 transition-opacity"></div>
                             <div class="absolute inset-0 flex items-center justify-center z-10 translate-z-30">
@@ -601,7 +585,6 @@
                             </div>
                         </div>
 
-                        <!-- MC Short 4 -->
                         <div class="w-full aspect-[9/16] rounded-[2rem] border border-white/10 bg-black/40 shadow-xl overflow-hidden relative group cursor-pointer transform-style-3d hover-3d">
                             <div class="absolute inset-0 bg-gradient-to-t from-cyan-500/20 to-transparent z-0 opacity-50 group-hover:opacity-100 transition-opacity"></div>
                             <div class="absolute inset-0 flex items-center justify-center z-10 translate-z-30">
@@ -612,21 +595,15 @@
                     </div>
                 </div>
 
-            </div> <!-- End Minecraft Content -->
-
-            <!-- VIDEO EDITOR PORTFOLIO CONTENT -->
-            <div id="content-video" class="portfolio-section w-full hidden flex-col gap-20 mt-10">
+            </div> <div id="content-video" class="portfolio-section w-full hidden flex-col gap-20 mt-10">
                 
-                <!-- Long Videos -->
                 <div class="w-full flex flex-col gap-6">
                     <h2 class="font-display text-4xl lg:text-5xl text-white font-bold tracking-tight drop-shadow-md px-4 mb-4">Long Videos</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                         
-                        <!-- Video Placeholder 1 -->
                         <div class="w-full aspect-video rounded-[2.5rem] border border-white/10 bg-black/40 shadow-2xl overflow-hidden relative group cursor-pointer hover-3d transform-style-3d">
                             <div class="absolute inset-0 bg-gradient-to-br from-red-500/20 to-black z-0 mix-blend-overlay"></div>
                             
-                            <!-- Camera UI Overlays -->
                             <div class="absolute top-6 left-6 z-20 translate-z-20 flex items-center gap-2">
                                 <div class="w-3 h-3 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.8)]"></div>
                                 <span class="text-red-500 text-xs font-bold font-mono tracking-widest uppercase">REC</span>
@@ -642,11 +619,9 @@
                             </div>
                         </div>
 
-                        <!-- Video Placeholder 2 -->
                         <div class="w-full aspect-video rounded-[2.5rem] border border-white/10 bg-black/40 shadow-2xl overflow-hidden relative group cursor-pointer hover-3d transform-style-3d">
                             <div class="absolute inset-0 bg-gradient-to-bl from-red-600/20 to-black z-0 mix-blend-overlay"></div>
                             
-                            <!-- Camera UI Overlays -->
                             <div class="absolute top-6 left-6 z-20 translate-z-20 flex items-center gap-2">
                                 <div class="w-3 h-3 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.8)]"></div>
                                 <span class="text-red-500 text-xs font-bold font-mono tracking-widest uppercase">REC</span>
@@ -665,70 +640,33 @@
                     </div>
                 </div>
 
-                <!-- High-Retention Shorts -->
                 <div class="w-full flex flex-col gap-6 mt-10">
                     <h2 class="font-display text-4xl lg:text-5xl text-white font-bold tracking-tight drop-shadow-md px-4 mb-4">High-Retention Shorts</h2>
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 w-full">
                         
-                        <!-- Short Placeholder 1 -->
                         <div class="w-full aspect-[9/16] rounded-[2rem] border border-white/10 bg-black/40 shadow-xl overflow-hidden relative group cursor-pointer">
                             <div class="absolute inset-0 bg-gradient-to-t from-red-500/20 to-transparent z-0 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                            
-                            <!-- Social Action Icons (Right Side) -->
-                            <div class="absolute right-4 bottom-24 flex flex-col gap-4 translate-z-20 z-20 items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div class="flex flex-col items-center gap-1"><div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:text-red-500 transition-colors"><i class="fas fa-heart text-lg"></i></div></div>
-                                <div class="flex flex-col items-center gap-1"><div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:text-white transition-colors"><i class="fas fa-comment-dots text-lg"></i></div></div>
-                                <div class="flex flex-col items-center gap-1"><div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:text-white transition-colors"><i class="fas fa-share text-lg"></i></div></div>
-                            </div>
-
                             <div class="absolute inset-0 flex items-center justify-center z-10">
                                 <i class="fas fa-play text-4xl text-white/30 group-hover:text-white transition-colors duration-300"></i>
                             </div>
                         </div>
 
-                        <!-- Short Placeholder 2 -->
                         <div class="w-full aspect-[9/16] rounded-[2rem] border border-white/10 bg-black/40 shadow-xl overflow-hidden relative group cursor-pointer">
                             <div class="absolute inset-0 bg-gradient-to-t from-red-500/20 to-transparent z-0 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                            
-                            <!-- Social Action Icons (Right Side) -->
-                            <div class="absolute right-4 bottom-24 flex flex-col gap-4 translate-z-20 z-20 items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div class="flex flex-col items-center gap-1"><div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:text-red-500 transition-colors"><i class="fas fa-heart text-lg"></i></div></div>
-                                <div class="flex flex-col items-center gap-1"><div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:text-white transition-colors"><i class="fas fa-comment-dots text-lg"></i></div></div>
-                                <div class="flex flex-col items-center gap-1"><div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:text-white transition-colors"><i class="fas fa-share text-lg"></i></div></div>
-                            </div>
-
                             <div class="absolute inset-0 flex items-center justify-center z-10">
                                 <i class="fas fa-play text-4xl text-white/30 group-hover:text-white transition-colors duration-300"></i>
                             </div>
                         </div>
 
-                        <!-- Short Placeholder 3 -->
                         <div class="w-full aspect-[9/16] rounded-[2rem] border border-white/10 bg-black/40 shadow-xl overflow-hidden relative group cursor-pointer">
                             <div class="absolute inset-0 bg-gradient-to-t from-red-500/20 to-transparent z-0 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                            
-                            <!-- Social Action Icons (Right Side) -->
-                            <div class="absolute right-4 bottom-24 flex flex-col gap-4 translate-z-20 z-20 items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div class="flex flex-col items-center gap-1"><div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:text-red-500 transition-colors"><i class="fas fa-heart text-lg"></i></div></div>
-                                <div class="flex flex-col items-center gap-1"><div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:text-white transition-colors"><i class="fas fa-comment-dots text-lg"></i></div></div>
-                                <div class="flex flex-col items-center gap-1"><div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:text-white transition-colors"><i class="fas fa-share text-lg"></i></div></div>
-                            </div>
-
                             <div class="absolute inset-0 flex items-center justify-center z-10">
                                 <i class="fas fa-play text-4xl text-white/30 group-hover:text-white transition-colors duration-300"></i>
                             </div>
                         </div>
 
-                        <!-- Short Placeholder 4 -->
                         <div class="w-full aspect-[9/16] rounded-[2rem] border border-white/10 bg-black/40 shadow-xl overflow-hidden relative group cursor-pointer">
                             <div class="absolute inset-0 bg-gradient-to-t from-red-500/20 to-transparent z-0 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                            
-                            <!-- Social Action Icons (Right Side) -->
-                            <div class="absolute right-4 bottom-24 flex flex-col gap-4 translate-z-20 z-20 items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div class="flex flex-col items-center gap-1"><div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:text-red-500 transition-colors"><i class="fas fa-heart text-lg"></i></div></div>
-                                <div class="flex flex-col items-center gap-1"><div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:text-white transition-colors"><i class="fas fa-comment-dots text-lg"></i></div></div>
-                                <div class="flex flex-col items-center gap-1"><div class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:text-white transition-colors"><i class="fas fa-share text-lg"></i></div></div>
-                            </div>
-
                             <div class="absolute inset-0 flex items-center justify-center z-10">
                                 <i class="fas fa-play text-4xl text-white/30 group-hover:text-white transition-colors duration-300"></i>
                             </div>
@@ -736,20 +674,15 @@
 
                     </div>
                 </div>
-            </div> <!-- End Video Content -->
-
-            <!-- DISCORD BOT PORTFOLIO CONTENT -->
-            <div id="content-discord" class="portfolio-section w-full hidden flex-col gap-10 mt-10">
+            </div> <div id="content-discord" class="portfolio-section w-full hidden flex-col gap-10 mt-10">
                 <div class="w-full min-h-[500px] flex flex-col items-center justify-center text-center bg-white/5 border border-white/10 rounded-[3rem] p-6 md:p-10 relative overflow-hidden shadow-2xl">
                     <div class="absolute inset-0 bg-gradient-to-b from-[#5865F2]/10 to-transparent z-0"></div>
                     <i class="fab fa-discord text-7xl text-[#5865F2] mb-8 animate-pulse relative z-10 drop-shadow-[0_0_30px_rgba(88,101,242,0.5)]"></i>
                     <h2 class="font-display text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter mb-6 relative z-10 drop-shadow-lg">Discord Systems Architecture</h2>
                     <p class="text-gray-400 text-lg md:text-xl font-light max-w-3xl mx-auto relative z-10">I engineer enterprise-grade Discord applications. From global RPG economies and automated web stores, to integrating advanced AI generation models and Web3 crypto exchanges directly into your servers.</p>
                     
-                    <!-- Advanced Capabilities Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl mt-16 relative z-10 text-left">
                         
-                        <!-- AI Integration -->
                         <div class="p-6 rounded-2xl bg-[#0a0a0c]/80 border border-fuchsia-500/20 backdrop-blur-md hover:border-fuchsia-500/50 hover:bg-[#121215] transition-all duration-300 group shadow-lg hover:shadow-[0_0_30px_rgba(217,70,239,0.15)] hover:-translate-y-1">
                             <div class="w-12 h-12 rounded-xl bg-fuchsia-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <i class="fas fa-brain text-2xl text-fuchsia-400"></i>
@@ -758,7 +691,6 @@
                             <p class="text-sm text-gray-400 leading-relaxed">Connecting LLMs, AI image/video generators directly to Discord. Build your own Midjourney or ChatGPT clone inside your server.</p>
                         </div>
 
-                        <!-- RPG & Economy -->
                         <div class="p-6 rounded-2xl bg-[#0a0a0c]/80 border border-yellow-500/20 backdrop-blur-md hover:border-yellow-500/50 hover:bg-[#121215] transition-all duration-300 group shadow-lg hover:shadow-[0_0_30px_rgba(234,179,8,0.15)] hover:-translate-y-1">
                             <div class="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <i class="fas fa-coins text-2xl text-yellow-400"></i>
@@ -767,7 +699,6 @@
                             <p class="text-sm text-gray-400 leading-relaxed">Massive, complex economy bots (like Dank Memer/OwO). Inventories, trading, gambling, leveling systems, and cross-server syncing.</p>
                         </div>
 
-                        <!-- Digital Store -->
                         <div class="p-6 rounded-2xl bg-[#0a0a0c]/80 border border-emerald-500/20 backdrop-blur-md hover:border-emerald-500/50 hover:bg-[#121215] transition-all duration-300 group shadow-lg hover:shadow-[0_0_30px_rgba(16,185,129,0.15)] hover:-translate-y-1">
                             <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <i class="fas fa-shopping-cart text-2xl text-emerald-400"></i>
@@ -776,7 +707,6 @@
                             <p class="text-sm text-gray-400 leading-relaxed">Fully working digital goods stores. Automated payment gateways, instant product delivery via DMs, and invoice generation.</p>
                         </div>
 
-                        <!-- Web3 & Crypto -->
                         <div class="p-6 rounded-2xl bg-[#0a0a0c]/80 border border-blue-500/20 backdrop-blur-md hover:border-blue-500/50 hover:bg-[#121215] transition-all duration-300 group shadow-lg hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] hover:-translate-y-1">
                             <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <i class="fab fa-ethereum text-2xl text-blue-400"></i>
@@ -785,7 +715,6 @@
                             <p class="text-sm text-gray-400 leading-relaxed">Live crypto exchange rates, wallet tracking, automated swap executing bots, and NFT verification systems.</p>
                         </div>
 
-                        <!-- Advanced Moderation -->
                         <div class="p-6 rounded-2xl bg-[#0a0a0c]/80 border border-red-500/20 backdrop-blur-md hover:border-red-500/50 hover:bg-[#121215] transition-all duration-300 group shadow-lg hover:shadow-[0_0_30px_rgba(239,68,68,0.15)] hover:-translate-y-1">
                             <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <i class="fas fa-shield-alt text-2xl text-red-400"></i>
@@ -794,7 +723,6 @@
                             <p class="text-sm text-gray-400 leading-relaxed">Unbreakable anti-raid mechanisms, AI-driven chat moderation, automated ticketing systems, and advanced logging.</p>
                         </div>
 
-                        <!-- Web & API Bridging -->
                         <div class="p-6 rounded-2xl bg-[#0a0a0c]/80 border border-[#5865F2]/20 backdrop-blur-md hover:border-[#5865F2]/50 hover:bg-[#121215] transition-all duration-300 group shadow-lg hover:shadow-[0_0_30px_rgba(88,101,242,0.15)] hover:-translate-y-1">
                             <div class="w-12 h-12 rounded-xl bg-[#5865F2]/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <i class="fas fa-project-diagram text-2xl text-[#5865F2]"></i>
@@ -805,12 +733,9 @@
 
                     </div>
 
-                    <!-- DISCORD SIMULATION PANEL -->
                     <div class="w-full max-w-6xl mt-16 border border-[#1e1f22] rounded-2xl overflow-hidden flex flex-col md:flex-row h-[500px] lg:h-[700px] relative z-10 shadow-[0_0_50px_rgba(0,0,0,0.8)] text-left font-sans bg-[#313338]">
                         
-                        <!-- Main Chat Area -->
                         <div class="flex-1 flex flex-col h-full relative border-r border-[#1e1f22]">
-                            <!-- Header -->
                             <div class="h-14 border-b border-[#1e1f22] flex items-center px-4 shrink-0 bg-[#313338] shadow-sm z-10">
                                 <i class="fas fa-hashtag text-gray-400 mr-2 text-lg"></i>
                                 <span class="text-white font-bold text-md tracking-wide">bot-testing</span>
@@ -819,9 +744,7 @@
                                 </div>
                             </div>
                             
-                            <!-- Messages Container -->
                             <div id="discord-messages" class="flex-1 overflow-y-auto p-4 space-y-2 discord-scrollbar flex flex-col justify-start">
-                                <!-- Welcome Header -->
                                 <div class="mt-4 mb-6 px-2">
                                     <div class="w-16 h-16 rounded-full bg-[#4752c4] flex items-center justify-center mb-4 shadow-lg shadow-[#4752c4]/20">
                                         <i class="fas fa-hashtag text-4xl text-white"></i>
@@ -834,19 +757,15 @@
                                     <span class="px-3 text-[11px] font-bold text-gray-500 mt-[-1px]">Today</span>
                                     <div class="flex-1 h-[1px] bg-[#3f4147]"></div>
                                 </div>
-                                <!-- Messages will be dynamically inserted here -->
-                            </div>
+                                </div>
                             
-                            <!-- Input Area -->
                             <div class="p-4 shrink-0 bg-[#313338] relative">
-                                <!-- Slash Command Autocomplete -->
                                 <div id="discord-autocomplete" class="absolute bottom-[calc(100%-10px)] left-4 right-4 bg-[#2b2d31] border border-[#1e1f22] rounded-lg shadow-2xl flex-col hidden overflow-hidden z-20 transition-all duration-200 opacity-0 translate-y-2">
                                     <div class="px-4 py-2 border-b border-[#1e1f22] bg-[#232428] text-xs font-bold text-gray-400 uppercase tracking-wider">
                                         Matching Commands
                                     </div>
                                     <div id="autocomplete-list" class="max-h-56 overflow-y-auto discord-scrollbar p-2">
-                                        <!-- Commands injected via JS -->
-                                    </div>
+                                        </div>
                                 </div>
 
                                 <form id="discord-form" onsubmit="handleDiscordCommand(event)" class="relative">
@@ -860,14 +779,13 @@
                             </div>
                         </div>
 
-                        <!-- Right Sidebar (Members) -->
                         <div class="w-60 bg-[#2b2d31] hidden md:flex flex-col flex-shrink-0 h-full">
                             <div class="p-4 flex-1 overflow-y-auto discord-scrollbar">
                                 <h3 class="text-xs font-extrabold text-gray-400 uppercase tracking-wide mb-3">Online — 3</h3>
                                 
                                 <div class="flex items-center gap-3 mb-1 cursor-pointer hover:bg-[#35373c] p-2 -mx-2 rounded transition-colors group">
                                     <div class="relative shrink-0">
-                                        <img src="SANIYAT.png" class="w-8 h-8 rounded-full object-cover grayscale-0 shadow-sm group-hover:scale-105 transition-transform">
+                                        <img src="SANIYAT.png" loading="lazy" class="w-8 h-8 rounded-full object-cover grayscale-0 shadow-sm group-hover:scale-105 transition-transform">
                                         <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-[#23a559] border-2 border-[#2b2d31] rounded-full"></div>
                                     </div>
                                     <div class="flex flex-col text-left truncate">
@@ -919,27 +837,20 @@
                         </div>
                     </div>
                 </div>
-            </div> <!-- End Discord Content -->
-
-            <!-- AUDIO ENGINEER PORTFOLIO CONTENT -->
-            <div id="content-audio" class="portfolio-section w-full hidden flex-col gap-20 mt-10">
+            </div> <div id="content-audio" class="portfolio-section w-full hidden flex-col gap-20 mt-10">
                 
-                <!-- Mastered Tracks -->
                 <div class="w-full flex flex-col gap-6">
                     <h2 class="font-display text-4xl lg:text-5xl text-white font-bold tracking-tight drop-shadow-md px-4 mb-4">Mastered Tracks</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                         
-                        <!-- Audio Placeholder 1 -->
                         <div class="w-full aspect-video rounded-[2.5rem] border border-white/10 bg-black/40 shadow-2xl overflow-hidden relative group cursor-pointer hover-3d transform-style-3d">
                             <div class="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-black z-0 mix-blend-overlay"></div>
                             
-                            <!-- Audio UI Overlays -->
                             <div class="absolute top-6 left-6 z-20 translate-z-20 flex items-center gap-2">
                                 <div class="w-3 h-3 rounded-full bg-orange-400 animate-pulse shadow-[0_0_10px_rgba(249,115,22,0.8)]"></div>
                                 <span class="text-orange-400 text-xs font-bold font-mono tracking-widest uppercase">PLAYBACK</span>
                             </div>
 
-                            <!-- Play Button -->
                             <div class="absolute inset-0 flex items-center justify-center translate-z-30 z-10">
                                 <div class="w-20 h-20 rounded-full bg-orange-500/20 border border-orange-500/50 flex items-center justify-center text-orange-400 backdrop-blur-md group-hover:scale-110 group-hover:bg-orange-500 group-hover:text-white transition-all duration-500 shadow-[0_0_30px_rgba(249,115,22,0.3)]">
                                     <i class="fas fa-play text-2xl ml-1"></i>
@@ -947,17 +858,14 @@
                             </div>
                         </div>
 
-                        <!-- Audio Placeholder 2 -->
                         <div class="w-full aspect-video rounded-[2.5rem] border border-white/10 bg-black/40 shadow-2xl overflow-hidden relative group cursor-pointer hover-3d transform-style-3d">
                             <div class="absolute inset-0 bg-gradient-to-bl from-orange-600/20 to-black z-0 mix-blend-overlay"></div>
                             
-                            <!-- Audio UI Overlays -->
                             <div class="absolute top-6 left-6 z-20 translate-z-20 flex items-center gap-2">
                                 <div class="w-3 h-3 rounded-full bg-orange-400 animate-pulse shadow-[0_0_10px_rgba(249,115,22,0.8)]"></div>
                                 <span class="text-orange-400 text-xs font-bold font-mono tracking-widest uppercase">PLAYBACK</span>
                             </div>
 
-                            <!-- Play Button -->
                             <div class="absolute inset-0 flex items-center justify-center translate-z-30 z-10">
                                 <div class="w-20 h-20 rounded-full bg-orange-500/20 border border-orange-500/50 flex items-center justify-center text-orange-400 backdrop-blur-md group-hover:scale-110 group-hover:bg-orange-500 group-hover:text-white transition-all duration-500 shadow-[0_0_30px_rgba(249,115,22,0.3)]">
                                     <i class="fas fa-play text-2xl ml-1"></i>
@@ -968,12 +876,10 @@
                     </div>
                 </div>
                 
-                <!-- Sound Design Snippets -->
                 <div class="w-full flex flex-col gap-6 mt-10">
                     <h2 class="font-display text-4xl lg:text-5xl text-white font-bold tracking-tight drop-shadow-md px-4 mb-4">Sound Design Snippets</h2>
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 w-full">
                         
-                        <!-- Audio Short 1 -->
                         <div class="w-full aspect-[9/16] rounded-[2rem] border border-white/10 bg-black/40 shadow-xl overflow-hidden relative group cursor-pointer transform-style-3d hover-3d">
                             <div class="absolute inset-0 bg-gradient-to-t from-orange-500/20 to-transparent z-0 opacity-50 group-hover:opacity-100 transition-opacity"></div>
                             <div class="absolute inset-0 flex items-center justify-center z-10 translate-z-30">
@@ -981,7 +887,6 @@
                             </div>
                         </div>
 
-                        <!-- Audio Short 2 -->
                         <div class="w-full aspect-[9/16] rounded-[2rem] border border-white/10 bg-black/40 shadow-xl overflow-hidden relative group cursor-pointer transform-style-3d hover-3d">
                             <div class="absolute inset-0 bg-gradient-to-t from-orange-500/20 to-transparent z-0 opacity-50 group-hover:opacity-100 transition-opacity"></div>
                             <div class="absolute inset-0 flex items-center justify-center z-10 translate-z-30">
@@ -989,7 +894,6 @@
                             </div>
                         </div>
 
-                        <!-- Audio Short 3 -->
                         <div class="w-full aspect-[9/16] rounded-[2rem] border border-white/10 bg-black/40 shadow-xl overflow-hidden relative group cursor-pointer transform-style-3d hover-3d">
                             <div class="absolute inset-0 bg-gradient-to-t from-orange-500/20 to-transparent z-0 opacity-50 group-hover:opacity-100 transition-opacity"></div>
                             <div class="absolute inset-0 flex items-center justify-center z-10 translate-z-30">
@@ -997,7 +901,6 @@
                             </div>
                         </div>
 
-                        <!-- Audio Short 4 -->
                         <div class="w-full aspect-[9/16] rounded-[2rem] border border-white/10 bg-black/40 shadow-xl overflow-hidden relative group cursor-pointer transform-style-3d hover-3d">
                             <div class="absolute inset-0 bg-gradient-to-t from-orange-500/20 to-transparent z-0 opacity-50 group-hover:opacity-100 transition-opacity"></div>
                             <div class="absolute inset-0 flex items-center justify-center z-10 translate-z-30">
@@ -1008,12 +911,7 @@
                     </div>
                 </div>
 
-            </div> <!-- End Audio Content -->
-
-        </div> <!-- End Portfolio Container -->
-
-        <!-- ================= 6. CONTACT FOOTER ================= -->
-        <div class="w-full flex flex-col items-center justify-center text-center py-20 gs-reveal relative">
+            </div> </div> <div class="w-full flex flex-col items-center justify-center text-center py-20 gs-reveal relative">
             <h3 class="font-display text-4xl md:text-6xl font-black text-white mb-6 tracking-tighter drop-shadow-2xl">Let's rebuild your imagination.</h3>
             <p class="text-gray-400 text-xl font-light mb-12 max-w-2xl">Ready to turn your complex ideas into flawless digital realities? Contact me directly.</p>
             
@@ -1051,7 +949,6 @@
 
     </main>
 
-    <!-- Modals -->
     <div id="about-modal" class="fixed inset-0 z-[60] flex items-center justify-center hidden">
         <div class="absolute inset-0 bg-black/80 backdrop-blur-xl cursor-pointer" onclick="closeAboutModal()"></div>
         <div id="about-modal-content" class="relative w-full max-w-3xl bg-[#0a0a0c]/95 border border-white/10 rounded-[2rem] p-8 md:p-14 m-4 shadow-2xl opacity-0 scale-95 transform max-h-[90vh] overflow-y-auto custom-scrollbar">
@@ -1077,7 +974,6 @@
         </div>
     </div>
 
-    <!-- Meet The Team Modal -->
     <div id="team-modal" class="fixed inset-0 z-[80] flex items-center justify-center hidden">
         <div class="absolute inset-0 bg-black/80 backdrop-blur-xl cursor-pointer" onclick="closeTeamModal()"></div>
         <div id="team-modal-content" class="relative w-full max-w-6xl bg-[#0a0a0c]/95 border border-white/10 rounded-[2rem] p-6 md:p-10 m-4 shadow-2xl opacity-0 scale-95 transform max-h-[95vh] overflow-y-auto custom-scrollbar flex flex-col">
@@ -1094,7 +990,6 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
                 
-                <!-- Full Stack -->
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-emerald-500/40 transition-all duration-300 shadow-xl group">
                     <div class="flex items-center gap-4 mb-6">
                         <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(16,185,129,0.2)]">
@@ -1109,7 +1004,6 @@
                     </div>
                 </div>
 
-                <!-- Discord Systems -->
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-[#5865F2]/40 transition-all duration-300 shadow-xl group">
                     <div class="flex items-center gap-4 mb-6">
                         <div class="w-12 h-12 rounded-xl bg-[#5865F2]/10 text-[#5865F2] flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(88,101,242,0.2)]">
@@ -1124,7 +1018,6 @@
                     </div>
                 </div>
 
-                <!-- Audio Engineer -->
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-orange-500/40 transition-all duration-300 shadow-xl group">
                     <div class="flex items-center gap-4 mb-6">
                         <div class="w-12 h-12 rounded-xl bg-orange-500/10 text-orange-400 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(249,115,22,0.2)]">
@@ -1139,7 +1032,6 @@
                     </div>
                 </div>
 
-                <!-- Video Editor -->
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-red-500/40 transition-all duration-300 shadow-xl group md:col-span-2 lg:col-span-1">
                     <div class="flex items-center gap-4 mb-6">
                         <div class="w-12 h-12 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(239,68,68,0.2)]">
@@ -1157,7 +1049,6 @@
                     </div>
                 </div>
 
-                <!-- Minecraft Animator -->
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-cyan-500/40 transition-all duration-300 shadow-xl group md:col-span-2 lg:col-span-2">
                     <div class="flex items-center gap-4 mb-6">
                         <div class="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(34,211,238,0.2)]">
@@ -1181,7 +1072,6 @@
         </div>
     </div>
 
-    <!-- Contact Modal -->
     <div id="contact-modal" class="fixed inset-0 z-[70] flex items-center justify-center hidden">
         <div class="absolute inset-0 bg-black/80 backdrop-blur-xl cursor-pointer" onclick="closeContactModal()"></div>
         <div id="contact-modal-content" class="relative w-full max-w-2xl bg-[#0a0a0c]/95 border border-white/10 rounded-[2rem] p-8 md:p-12 m-4 shadow-2xl opacity-0 scale-95 transform max-h-[90vh] overflow-y-auto custom-scrollbar">
@@ -1249,7 +1139,6 @@
         </div>
     </div>
 
-    <!-- Request Success Modal -->
     <div id="success-modal" class="fixed inset-0 z-[80] flex items-center justify-center hidden">
         <div class="absolute inset-0 bg-black/90 backdrop-blur-xl cursor-pointer" onclick="closeSuccessModal()"></div>
         <div id="success-modal-content" class="relative w-full max-w-md bg-[#0a0a0c]/95 border border-emerald-500/30 rounded-[2rem] p-8 md:p-10 m-4 text-center shadow-[0_0_50px_rgba(16,185,129,0.15)] opacity-0 scale-95 transform">
@@ -1275,7 +1164,6 @@
         </div>
     </div>
 
-    <!-- AI Modal -->
     <div id="ai-modal" class="fixed inset-0 z-[60] flex items-center justify-center hidden">
         <div class="absolute inset-0 bg-black/80 backdrop-blur-xl cursor-pointer" onclick="closeAiModal()"></div>
         <div id="ai-modal-content" class="relative w-full max-w-5xl bg-[#0a0a0c]/95 border border-white/10 rounded-[2rem] p-6 md:p-10 m-4 shadow-2xl opacity-0 scale-95 transform max-h-[95vh] overflow-y-auto custom-scrollbar flex flex-col">
@@ -1345,7 +1233,6 @@
                 <h2 id="tech-modal-title" class="font-display text-3xl md:text-4xl font-extrabold text-white tracking-tight mb-3 drop-shadow-md">Technology Name</h2>
                 <p id="tech-modal-desc" class="text-gray-400 font-light leading-relaxed text-sm md:text-base max-w-lg mb-8">Technology description goes here.</p>
                 
-                <!-- Animated Code Mini-IDE -->
                 <div class="w-full bg-[#050505] rounded-xl border border-white/10 overflow-hidden shadow-2xl relative text-left group/ide">
                     <div class="flex items-center gap-2 px-4 py-3 bg-[#111] border-b border-white/5">
                         <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
@@ -1385,17 +1272,117 @@
         </div>
     </div>
 
-    <!-- Animation Script -->
     <script>
+        // --- Core Optimizations & Initialization ---
+        function updateLiveClock() {
+            const clockEl = document.getElementById('live-time'); if(!clockEl) return;
+            const options = { timeZone: 'Asia/Dhaka', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            clockEl.textContent = new Intl.DateTimeFormat('en-US', options).format(new Date());
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            // OPTIMIZATION: Lazy load all heavy placeholder images automatically
+            document.querySelectorAll('img[src*="unsplash.com"]').forEach(img => {
+                img.setAttribute('loading', 'lazy');
+                img.setAttribute('decoding', 'async');
+            });
+
+            updateLiveClock(); setInterval(updateLiveClock, 1000);
+            
+            // GSAP Initial Reveal
+            gsap.to("#main-container", { opacity: 1, scale: 1, duration: 1.5, ease: "expo.out", delay: 0.2 });
+            
+            // OPTIMIZATION: Hook up actual ScrollTrigger for performance (only animate when in view)
+            if (typeof ScrollTrigger !== 'undefined') {
+                gsap.registerPlugin(ScrollTrigger);
+                gsap.utils.toArray(".gs-reveal").forEach(function(elem) {
+                    gsap.fromTo(elem, 
+                        { y: 50, opacity: 0 }, 
+                        { 
+                            y: 0, opacity: 1, duration: 1.2, ease: "power3.out",
+                            scrollTrigger: {
+                                trigger: elem,
+                                start: "top 85%",
+                                toggleActions: "play none none none"
+                            }
+                        }
+                    );
+                });
+            } else {
+                // Fallback if ScrollTrigger fails to load
+                gsap.to(".gs-reveal", { y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: "power3.out", delay: 0.4 });
+            }
+
+            // OPTIMIZATION: Cache bounding rectangles to stop Layout Thrashing on hover
+            document.querySelectorAll('.magnetic-wrap').forEach(elem => {
+                let rect;
+                elem.addEventListener('mouseenter', () => { rect = elem.getBoundingClientRect(); }, { passive: true });
+                elem.addEventListener('mousemove', (e) => {
+                    if(!rect) rect = elem.getBoundingClientRect(); 
+                    const strength = elem.dataset.strength || 20; 
+                    const moveX = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2) * strength;
+                    const moveY = (e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2) * strength;
+                    gsap.to(elem, { x: moveX, y: moveY, duration: 0.5, ease: "power3.out" });
+                }, { passive: true });
+                elem.addEventListener('mouseleave', () => {
+                    rect = null; 
+                    gsap.to(elem, { x: 0, y: 0, duration: 1, ease: "elastic.out(1, 0.3)" });
+                }, { passive: true });
+            });
+
+            // OPTIMIZATION: Cache 3D card geometry
+            document.querySelectorAll('.hover-3d').forEach(card => {
+                let rect;
+                card.addEventListener('mouseenter', () => { rect = card.getBoundingClientRect(); }, { passive: true });
+                card.addEventListener('mousemove', e => {
+                    if (window.innerWidth > 768) {
+                        if(!rect) rect = card.getBoundingClientRect();
+                        const rotateX = ((e.clientY - rect.top - rect.height / 2) / (rect.height / 2)) * -2; 
+                        const rotateY = ((e.clientX - rect.left - rect.width / 2) / (rect.width / 2)) * 2;
+                        
+                        gsap.to(card, { rotationX: rotateX, rotationY: rotateY, transformPerspective: 1000, duration: 0.6, ease: "power2.out" });
+                        card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+                        card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+                    }
+                }, { passive: true });
+                card.addEventListener('mouseleave', () => {
+                    rect = null; 
+                    gsap.to(card, { rotationX: 0, rotationY: 0, duration: 1.2, ease: "elastic.out(1, 0.5)" });
+                }, { passive: true });
+            });
+
+            const firstLine = document.getElementById('name-first'), secondLine = document.getElementById('name-last');
+            const en1 = "SANIYAT", bn1 = "সানিয়াত", hi1 = "सानियात", en2 = "MAHMUD", bn2 = "মাহমুদ", hi2 = "महमूद";
+            function playGlitch() {
+                if (!firstLine || !secondLine) return;
+                const tl = gsap.timeline();
+                tl.set([firstLine, secondLine], { textShadow: "3px 0 #f00, -3px 0 #0ff", skewX: 10, x: -2 })
+                  .call(() => { firstLine.textContent = hi1; secondLine.textContent = hi2; }).to({}, {duration: 0.05})
+                  .set([firstLine, secondLine], { textShadow: "-3px 0 #0f0, 3px 0 #f0f", skewX: -10, x: 2 })
+                  .call(() => { firstLine.textContent = bn1; secondLine.textContent = bn2; }).to({}, {duration: 0.05})
+                  .set([firstLine, secondLine], { textShadow: "none", skewX: 0, x: 0 })
+                  .call(() => { firstLine.textContent = en1; secondLine.textContent = en2; }).to({}, {duration: 0.05})
+                  .set([firstLine, secondLine], { textShadow: "2px 0 #00f", skewX: 5, x: -1 })
+                  .call(() => { firstLine.textContent = bn1; secondLine.textContent = bn2; }).to({}, {duration: 0.03})
+                  .set([firstLine, secondLine], { textShadow: "none", skewX: 0, x: 0 })
+                  .call(() => { firstLine.textContent = en1; secondLine.textContent = en2; });
+                setTimeout(playGlitch, Math.random() * 4000 + 3000);
+            }
+            setTimeout(playGlitch, 3000);
+        });
+
+        // --- Custom Cursor Logic ---
         const cursorDot = document.getElementById('cursor-dot');
         const cursorRing = document.getElementById('cursor-ring');
         let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
         let ringX = mouseX, ringY = mouseY;
         document.querySelectorAll('a, button, input, textarea, select, .cursor-pointer').forEach(el => el.style.cursor = 'none');
+        
         window.addEventListener('mousemove', (e) => {
             mouseX = e.clientX; mouseY = e.clientY;
             cursorDot.style.left = `${mouseX}px`; cursorDot.style.top = `${mouseY}px`;
-        });
+        }, { passive: true });
+        
         function animateCursor() {
             ringX += (mouseX - ringX) * 0.15; ringY += (mouseY - ringY) * 0.15;
             cursorRing.style.left = `${ringX}px`; cursorRing.style.top = `${ringY}px`;
@@ -1403,6 +1390,7 @@
         }
         animateCursor();
 
+        // --- Data Definitions ---
         const techData = {
             'js': { name: 'JavaScript', iconClass: 'fab fa-js text-yellow-400', glowColor: 'rgba(250,204,21,0.2)', desc: 'The universal language of the web. Essential for adding complex interactivity and core logic to modern web applications.', filename: 'core_logic.js', codeColor: 'text-yellow-400', code: "async function executeAction(payload) {\n  const engine = new V8Engine();\n  await engine.compile(payload);\n  return engine.run();\n}" },
             'python': { name: 'Python', iconClass: 'fab fa-python text-blue-500', glowColor: 'rgba(59,130,246,0.2)', desc: 'Versatile and readable. I use Python for powerful backend processing, data handling, and building robust AI workflows.', filename: 'neural_net.py', codeColor: 'text-blue-400', code: "def train_model(dataset):\n    model = TransformerNet(layers=12)\n    model.fit(dataset, epochs=1000)\n    return model.generate_output()" },
@@ -1413,6 +1401,7 @@
             'db': { name: 'Databases', iconClass: 'fas fa-database text-indigo-400', glowColor: 'rgba(129,140,248,0.2)', desc: 'The memory of the application. I design optimized schemas to securely store and manage massive datasets.', filename: 'query.sql', codeColor: 'text-indigo-300', code: "SELECT u.id, SUM(t.amount) AS total_vol\nFROM users u\nINNER JOIN transactions t ON u.id = t.user_id\nWHERE t.status = 'COMPLETED'\nGROUP BY u.id;" }
         };
 
+        // --- Modals & UI Actions ---
         function openAboutModal() {
             const modal = document.getElementById('about-modal');
             const content = document.getElementById('about-modal-content');
@@ -1424,6 +1413,19 @@
             const content = document.getElementById('about-modal-content');
             gsap.to(content, { opacity: 0, scale: 0.95, duration: 0.4, ease: "power3.in", onComplete: () => modal.classList.add('hidden') });
         }
+
+        function openTeamModal() {
+            const modal = document.getElementById('team-modal');
+            const content = document.getElementById('team-modal-content');
+            modal.classList.remove('hidden');
+            gsap.to(content, { opacity: 1, scale: 1, duration: 0.8, ease: "expo.out" });
+        }
+        function closeTeamModal() {
+            const modal = document.getElementById('team-modal');
+            const content = document.getElementById('team-modal-content');
+            gsap.to(content, { opacity: 0, scale: 0.95, duration: 0.4, ease: "power3.in", onComplete: () => modal.classList.add('hidden') });
+        }
+
         function openContactModal() {
             const modal = document.getElementById('contact-modal');
             const content = document.getElementById('contact-modal-content');
@@ -1431,25 +1433,21 @@
             const btn = document.getElementById('contact-submit-btn');
             btn.innerHTML = `Send Request <i class="fas fa-paper-plane"></i>`;
             btn.disabled = false;
-            btn.classList.remove('bg-emerald-500', 'text-white', 'shadow-[0_0_20px_rgba(16,185,129,0.4)]');
+            btn.classList.remove('bg-emerald-500', 'bg-red-500', 'text-white', 'shadow-[0_0_20px_rgba(16,185,129,0.4)]');
             btn.classList.add('bg-white', 'text-black', 'shadow-[0_0_20px_rgba(255,255,255,0.2)]');
+            
+            // Reset Social UI
+            document.getElementById('add-social-btn').classList.remove('hidden');
+            document.getElementById('social-input-container').classList.add('hidden');
+            document.getElementById('social-input-container').classList.remove('flex');
+            
             modal.classList.remove('hidden');
             gsap.to(content, { opacity: 1, scale: 1, duration: 0.8, ease: "expo.out" });
         }
         function closeContactModal() {
             const modal = document.getElementById('contact-modal');
             const content = document.getElementById('contact-modal-content');
-            gsap.to(content, { opacity: 0, scale: 0.95, duration: 0.4, ease: "power3.in", onComplete: () => {
-                modal.classList.add('hidden');
-                
-                // Reset Social Button UI
-                document.getElementById('add-social-btn').classList.remove('hidden');
-                const container = document.getElementById('social-input-container');
-                container.classList.add('hidden');
-                container.classList.remove('flex');
-                document.getElementById('social-platform').value = "";
-                document.getElementById('client-social').placeholder = "Select a platform first...";
-            }});
+            gsap.to(content, { opacity: 0, scale: 0.95, duration: 0.4, ease: "power3.in", onComplete: () => modal.classList.add('hidden') });
         }
 
         function openSuccessModal() {
@@ -1476,156 +1474,7 @@
             gsap.to(content, { opacity: 0, scale: 0.95, duration: 0.4, ease: "power3.in", onComplete: () => modal.classList.add('hidden') });
         }
 
-        // --- Team Modal Logic ---
-        function openTeamModal() {
-            const modal = document.getElementById('team-modal');
-            const content = document.getElementById('team-modal-content');
-            modal.classList.remove('hidden');
-            gsap.to(content, { opacity: 1, scale: 1, duration: 0.8, ease: "expo.out" });
-        }
-        
-        function closeTeamModal() {
-            const modal = document.getElementById('team-modal');
-            const content = document.getElementById('team-modal-content');
-            gsap.to(content, { opacity: 0, scale: 0.95, duration: 0.4, ease: "power3.in", onComplete: () => modal.classList.add('hidden') });
-        }
-        
-        // --- Social Input Logic ---
-        function showSocialInput() {
-            document.getElementById('add-social-btn').classList.add('hidden');
-            const container = document.getElementById('social-input-container');
-            container.classList.remove('hidden');
-            container.classList.add('flex');
-        }
-
-        function updateSocialPlaceholder() {
-            const platform = document.getElementById('social-platform').value;
-            const input = document.getElementById('client-social');
-            
-            switch(platform) {
-                case 'Discord': input.placeholder = "Enter your username (e.g., shinyy)"; break;
-                case 'Twitter/X': input.placeholder = "Enter profile link or @handle"; break;
-                case 'LinkedIn': input.placeholder = "Enter LinkedIn profile link"; break;
-                case 'Instagram': input.placeholder = "Enter Instagram link or @username"; break;
-                case 'Facebook': input.placeholder = "Enter Facebook profile link"; break;
-                case 'Telegram': input.placeholder = "Enter Telegram @username or link"; break;
-                default: input.placeholder = "Enter your link/username";
-            }
-            input.focus();
-        }
-
-        async function submitContactForm(e) {
-            e.preventDefault(); 
-            const btn = document.getElementById('contact-submit-btn');
-            
-            // 1. Get form values
-            const name = document.getElementById('client-name').value;
-            const objective = document.getElementById('client-objective').value;
-            const desc = document.getElementById('client-desc').value;
-
-            // Validate Social Input Custom UI
-            const platform = document.getElementById('social-platform').value;
-            const socialHandle = document.getElementById('client-social').value;
-
-            if (!platform || !socialHandle.trim()) {
-                showToast("Please add and fill out your social link so I can contact you!");
-                return;
-            }
-
-            const formattedSocial = `${platform} - ${socialHandle.trim()}`;
-
-            btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Processing...`;
-            btn.disabled = true;
-
-            // --- IMPORTANT: Paste your actual Discord Webhook URL below ---
-            const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1486763165113909289/wb0uJgpFL0ThWnhtxhmxJujxO2TFF7JnxDX5qvzyf36pj9aDV6t6RXbscLqCYyKp2tLG"; 
-            
-            // Format the Discord Embed
-            const discordPayload = {
-                username: "Portfolio Alerts",
-                avatar_url: "https://cdn-icons-png.flaticon.com/512/893/893257.png",
-                embeds: [{
-                    title: "🚀 New Project Request!",
-                    color: 3694024, // Cyan color
-                    fields: [
-                        { name: "👤 Client Name/Alias", value: name, inline: true },
-                        { name: "🔗 Social Contact", value: formattedSocial, inline: true },
-                        { name: "🎯 Objective", value: objective, inline: false },
-                        { name: "📝 Description", value: desc, inline: false }
-                    ],
-                    timestamp: new Date().toISOString()
-                }]
-            };
-
-            try {
-                // 2. Send to Discord
-                if(DISCORD_WEBHOOK_URL !== "YOUR_DISCORD_WEBHOOK_URL_HERE") {
-                    await fetch(DISCORD_WEBHOOK_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(discordPayload)
-                    });
-                }
-
-                // 3. Send to Email via FormSubmit API
-                await fetch("https://formsubmit.co/ajax/saniyatmahmud11@gmail.com", {
-                    method: "POST",
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        Name: name,
-                        Social: formattedSocial,
-                        Objective: objective,
-                        Description: desc,
-                        _subject: "🔥 New Portfolio Lead: " + name
-                    })
-                });
-
-                // 4. Success UI Update
-                btn.innerHTML = `<i class="fas fa-check"></i> Request Sent Successfully`;
-                btn.classList.add('bg-emerald-500', 'text-white', 'shadow-[0_0_20px_rgba(16,185,129,0.4)]');
-                btn.classList.remove('bg-white', 'text-black', 'shadow-[0_0_20px_rgba(255,255,255,0.2)]');
-                
-                // Trigger the new Success Modal after a short delay
-                setTimeout(() => { 
-                    closeContactModal(); 
-                    document.getElementById('contact-form').reset();
-                    
-                    // Open the success popup shortly after the contact form fades out
-                    setTimeout(() => {
-                        openSuccessModal();
-                        
-                        // Reset the button back to its default state for future use silently in the background
-                        setTimeout(() => {
-                            btn.innerHTML = `Send Request <i class="fas fa-paper-plane"></i>`;
-                            btn.disabled = false;
-                            btn.classList.remove('bg-emerald-500', 'text-white', 'shadow-[0_0_20px_rgba(16,185,129,0.4)]');
-                            btn.classList.add('bg-white', 'text-black', 'shadow-[0_0_20px_rgba(255,255,255,0.2)]');
-                        }, 1000);
-                    }, 400);
-
-                }, 1000);
-
-            } catch (error) {
-                console.error("Error sending request:", error);
-                btn.innerHTML = `<i class="fas fa-times"></i> Error Sending`;
-                btn.classList.add('bg-red-500', 'text-white');
-                btn.classList.remove('bg-white', 'text-black');
-                showToast('There was an error sending your request. Please try my socials.');
-                
-                setTimeout(() => {
-                    btn.innerHTML = `Send Request <i class="fas fa-paper-plane"></i>`;
-                    btn.disabled = false;
-                    btn.classList.remove('bg-red-500', 'text-white');
-                    btn.classList.add('bg-white', 'text-black');
-                }, 3000);
-            }
-        }
-        
         let typingInterval;
-
         function openTechModal(techKey) {
             const data = techData[techKey];
             if(!data) return;
@@ -1642,8 +1491,6 @@
             
             // IDE Updates
             document.getElementById('tech-modal-filename').textContent = data.filename;
-            
-            // Extract pure RGB color from glowColor for the background glow
             const baseColor = data.glowColor.match(/rgba?\((\d+,\s*\d+,\s*\d+)/);
             if (baseColor) {
                 document.getElementById('tech-modal-code-glow').style.backgroundColor = `rgb(${baseColor[1]})`;
@@ -1651,12 +1498,11 @@
             
             const codeEl = document.getElementById('tech-modal-code');
             codeEl.className = `font-mono text-sm md:text-[15px] leading-relaxed relative z-10 transition-colors duration-500 ${data.codeColor}`;
-            codeEl.textContent = ''; // Reset content
+            codeEl.textContent = ''; 
             
             const cursorEl = document.getElementById('tech-modal-cursor');
             cursorEl.className = `animate-pulse font-mono text-sm md:text-[15px] ${data.codeColor}`;
             
-            // Open Modal
             const modal = document.getElementById('tech-modal');
             const content = document.getElementById('tech-modal-content');
             modal.classList.remove('hidden');
@@ -1666,21 +1512,17 @@
             clearInterval(typingInterval);
             let i = 0;
             const textToType = data.code;
-            
-            // Brief delay before typing starts for immersion
             setTimeout(() => {
                 typingInterval = setInterval(() => {
                     codeEl.textContent += textToType.charAt(i);
                     i++;
-                    if(i >= textToType.length) {
-                        clearInterval(typingInterval);
-                    }
-                }, 15); // Fast mechanical typing speed
+                    if(i >= textToType.length) clearInterval(typingInterval);
+                }, 15);
             }, 300);
         }
 
         function closeTechModal() {
-            clearInterval(typingInterval); // Stop typing if user closes it early
+            clearInterval(typingInterval);
             const modal = document.getElementById('tech-modal');
             const content = document.getElementById('tech-modal-content');
             gsap.to(content, { opacity: 0, scale: 0.95, duration: 0.4, ease: "power3.in", onComplete: () => modal.classList.add('hidden') });
@@ -1704,31 +1546,137 @@
                 modal.classList.add('hidden'); iframe.src = ''; 
             }});
         }
+
+        // --- Social Input & Form Submission Logic ---
+        function showSocialInput() {
+            document.getElementById('add-social-btn').classList.add('hidden');
+            const container = document.getElementById('social-input-container');
+            container.classList.remove('hidden');
+            container.classList.add('flex');
+        }
+
+        function updateSocialPlaceholder() {
+            const platform = document.getElementById('social-platform').value;
+            const input = document.getElementById('client-social');
+            switch(platform) {
+                case 'Discord': input.placeholder = "Enter your username (e.g., shinyy)"; break;
+                case 'Twitter/X': input.placeholder = "Enter profile link or @handle"; break;
+                case 'LinkedIn': input.placeholder = "Enter LinkedIn profile link"; break;
+                case 'Instagram': input.placeholder = "Enter Instagram link or @username"; break;
+                case 'Facebook': input.placeholder = "Enter Facebook profile link"; break;
+                case 'Telegram': input.placeholder = "Enter Telegram @username or link"; break;
+                default: input.placeholder = "Enter your link/username";
+            }
+            input.focus();
+        }
+
+        async function submitContactForm(e) {
+            e.preventDefault(); 
+            const btn = document.getElementById('contact-submit-btn');
+            
+            const name = document.getElementById('client-name').value;
+            const objective = document.getElementById('client-objective').value;
+            const desc = document.getElementById('client-desc').value;
+
+            const platform = document.getElementById('social-platform').value;
+            const socialHandle = document.getElementById('client-social').value;
+
+            if (!platform || !socialHandle.trim()) {
+                showToast("Please add and fill out your social link so I can contact you!");
+                return;
+            }
+
+            const formattedSocial = `${platform} - ${socialHandle.trim()}`;
+
+            btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Processing...`;
+            btn.disabled = true;
+
+            const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1486763165113909289/wb0uJgpFL0ThWnhtxhmxJujxO2TFF7JnxDX5qvzyf36pj9aDV6t6RXbscLqCYyKp2tLG"; 
+            
+            const discordPayload = {
+                username: "Portfolio Alerts",
+                avatar_url: "https://cdn-icons-png.flaticon.com/512/893/893257.png",
+                embeds: [{
+                    title: "🚀 New Project Request!",
+                    color: 3694024,
+                    fields: [
+                        { name: "👤 Client Name/Alias", value: name, inline: true },
+                        { name: "🔗 Social Contact", value: formattedSocial, inline: true },
+                        { name: "🎯 Objective", value: objective, inline: false },
+                        { name: "📝 Description", value: desc, inline: false }
+                    ],
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            try {
+                // Send to Discord
+                await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(discordPayload)
+                });
+
+                // Send to Email via FormSubmit API
+                await fetch("https://formsubmit.co/ajax/saniyatmahmud11@gmail.com", {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({
+                        Name: name,
+                        Social: formattedSocial,
+                        Objective: objective,
+                        Description: desc,
+                        _subject: "🔥 New Portfolio Lead: " + name
+                    })
+                });
+
+                btn.innerHTML = `<i class="fas fa-check"></i> Request Sent Successfully`;
+                btn.classList.add('bg-emerald-500', 'text-white', 'shadow-[0_0_20px_rgba(16,185,129,0.4)]');
+                btn.classList.remove('bg-white', 'text-black', 'shadow-[0_0_20px_rgba(255,255,255,0.2)]');
+                
+                setTimeout(() => { 
+                    closeContactModal(); 
+                    document.getElementById('contact-form').reset();
+                    setTimeout(() => {
+                        openSuccessModal();
+                        setTimeout(() => {
+                            btn.innerHTML = `Send Request <i class="fas fa-paper-plane"></i>`;
+                            btn.disabled = false;
+                            btn.classList.remove('bg-emerald-500', 'text-white', 'shadow-[0_0_20px_rgba(16,185,129,0.4)]');
+                            btn.classList.add('bg-white', 'text-black', 'shadow-[0_0_20px_rgba(255,255,255,0.2)]');
+                        }, 1000);
+                    }, 400);
+                }, 1000);
+
+            } catch (error) {
+                console.error("Error sending request:", error);
+                btn.innerHTML = `<i class="fas fa-times"></i> Error Sending`;
+                btn.classList.add('bg-red-500', 'text-white');
+                btn.classList.remove('bg-white', 'text-black');
+                showToast('There was an error sending your request. Please try my socials.');
+                
+                setTimeout(() => {
+                    btn.innerHTML = `Send Request <i class="fas fa-paper-plane"></i>`;
+                    btn.disabled = false;
+                    btn.classList.remove('bg-red-500', 'text-white');
+                    btn.classList.add('bg-white', 'text-black');
+                }, 3000);
+            }
+        }
+
+        // --- Utilities ---
         function triggerHireMe() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            // Wait for scroll, then animate the "Let's Talk" button
             setTimeout(() => {
                 const btn = document.getElementById('lets-talk-btn');
                 if(btn) {
-                    // Smooth, fady pulse animation using GSAP
                     gsap.timeline()
-                        .to(btn, { 
-                            scale: 1.08, 
-                            boxShadow: "0 0 60px rgba(56, 189, 248, 0.8)", 
-                            duration: 0.6, 
-                            ease: "power2.out" 
-                        })
-                        .to(btn, { 
-                            scale: 1, 
-                            boxShadow: "0 0 30px rgba(255, 255, 255, 0.2)", 
-                            duration: 1.2, 
-                            ease: "power2.inOut",
-                            clearProps: "boxShadow" // Clears inline shadow to let Tailwind take over again
-                        });
+                        .to(btn, { scale: 1.08, boxShadow: "0 0 60px rgba(56, 189, 248, 0.8)", duration: 0.6, ease: "power2.out" })
+                        .to(btn, { scale: 1, boxShadow: "0 0 30px rgba(255, 255, 255, 0.2)", duration: 1.2, ease: "power2.inOut", clearProps: "boxShadow" });
                 }
             }, 800);
         }
+
         function showToast(message) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -1740,141 +1688,32 @@
                 setTimeout(() => toast.remove(), 400); 
             }, 3000);
         }
-        function updateLiveClock() {
-            const clockEl = document.getElementById('live-time'); if(!clockEl) return;
-            const options = { timeZone: 'Asia/Dhaka', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-            clockEl.textContent = new Intl.DateTimeFormat('en-US', options).format(new Date());
-        }
 
-        window.addEventListener("DOMContentLoaded", () => {
-            // OPTIMIZATION: Lazy load all heavy placeholder images automatically
-            document.querySelectorAll('img[src*="unsplash.com"]').forEach(img => {
-                img.setAttribute('loading', 'lazy');
-                img.setAttribute('decoding', 'async');
-            });
-
-            updateLiveClock(); setInterval(updateLiveClock, 1000);
-            
-            // GSAP Initial Reveal
-            gsap.to("#main-container", { opacity: 1, scale: 1, duration: 1.5, ease: "expo.out", delay: 0.2 });
-            
-            // OPTIMIZATION: Hook up actual ScrollTrigger for performance (only animate when in view)
-            gsap.registerPlugin(ScrollTrigger);
-            gsap.utils.toArray(".gs-reveal").forEach(function(elem) {
-                gsap.fromTo(elem, 
-                    { y: 50, opacity: 0 }, 
-                    { 
-                        y: 0, opacity: 1, duration: 1.2, ease: "power3.out",
-                        scrollTrigger: {
-                            trigger: elem,
-                            start: "top 85%", // Reveal when element is 85% down the viewport
-                            toggleActions: "play none none none"
-                        }
-                    }
-                );
-            });
-
-            // OPTIMIZATION: Cache bounding rectangles to stop Layout Thrashing on hover
-            document.querySelectorAll('.magnetic-wrap').forEach(elem => {
-                let rect;
-                elem.addEventListener('mouseenter', () => { rect = elem.getBoundingClientRect(); });
-                elem.addEventListener('mousemove', (e) => {
-                    if(!rect) rect = elem.getBoundingClientRect(); // Fallback
-                    const strength = elem.dataset.strength || 20; 
-                    const moveX = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2) * strength;
-                    const moveY = (e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2) * strength;
-                    gsap.to(elem, { x: moveX, y: moveY, duration: 0.5, ease: "power3.out" });
-                });
-                elem.addEventListener('mouseleave', () => {
-                    rect = null; // Clear cache
-                    gsap.to(elem, { x: 0, y: 0, duration: 1, ease: "elastic.out(1, 0.3)" });
-                });
-            });
-
-            // OPTIMIZATION: Cache 3D card geometry
-            document.querySelectorAll('.hover-3d').forEach(card => {
-                let rect;
-                card.addEventListener('mouseenter', () => { rect = card.getBoundingClientRect(); });
-                card.addEventListener('mousemove', e => {
-                    if (window.innerWidth > 768) {
-                        if(!rect) rect = card.getBoundingClientRect(); // Fallback
-                        const rotateX = ((e.clientY - rect.top - rect.height / 2) / (rect.height / 2)) * -2; 
-                        const rotateY = ((e.clientX - rect.left - rect.width / 2) / (rect.width / 2)) * 2;
-                        
-                        // Use requestAnimationFrame under the hood via GSAP
-                        gsap.to(card, { rotationX: rotateX, rotationY: rotateY, transformPerspective: 1000, duration: 0.6, ease: "power2.out" });
-                        card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-                        card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
-                    }
-                });
-                card.addEventListener('mouseleave', () => {
-                    rect = null; // Clear cache
-                    gsap.to(card, { rotationX: 0, rotationY: 0, duration: 1.2, ease: "elastic.out(1, 0.5)" });
-                });
-            });
-
-            const firstLine = document.getElementById('name-first'), secondLine = document.getElementById('name-last');
-            const en1 = "SANIYAT", bn1 = "সানিয়াত", hi1 = "सानियात", en2 = "MAHMUD", bn2 = "মাহমুদ", hi2 = "महमूद";
-            function playGlitch() {
-                if (!firstLine || !secondLine) return;
-                const tl = gsap.timeline();
-                tl.set([firstLine, secondLine], { textShadow: "3px 0 #f00, -3px 0 #0ff", skewX: 10, x: -2 })
-                  .call(() => { firstLine.textContent = hi1; secondLine.textContent = hi2; }).to({}, {duration: 0.05})
-                  .set([firstLine, secondLine], { textShadow: "-3px 0 #0f0, 3px 0 #f0f", skewX: -10, x: 2 })
-                  .call(() => { firstLine.textContent = bn1; secondLine.textContent = bn2; }).to({}, {duration: 0.05})
-                  .set([firstLine, secondLine], { textShadow: "none", skewX: 0, x: 0 })
-                  .call(() => { firstLine.textContent = en1; secondLine.textContent = en2; }).to({}, {duration: 0.05})
-                  .set([firstLine, secondLine], { textShadow: "2px 0 #00f", skewX: 5, x: -1 })
-                  .call(() => { firstLine.textContent = bn1; secondLine.textContent = bn2; }).to({}, {duration: 0.03})
-                  .set([firstLine, secondLine], { textShadow: "none", skewX: 0, x: 0 })
-                  .call(() => { firstLine.textContent = en1; secondLine.textContent = en2; });
-                setTimeout(playGlitch, Math.random() * 4000 + 3000);
-            }
-            setTimeout(playGlitch, 3000);
-        });
-
-        // Portfolio Tab Switching Logic
+        // --- Portfolio Tab Switching Logic ---
         window.switchTab = function(tabId) {
             const tabs = ['video', 'minecraft', 'fullstack', 'discord', 'audio'];
-            
             tabs.forEach(t => {
                 const tabEl = document.getElementById(`tab-${t}`);
                 const contentEl = document.getElementById(`content-${t}`);
-                
                 if (!tabEl || !contentEl) return;
 
                 if (t === tabId) {
-                    // Activate Tab
                     tabEl.classList.remove('opacity-50', 'hover:opacity-100');
                     tabEl.classList.add('opacity-100');
-                    
-                    // Show Content
                     contentEl.classList.remove('hidden');
                     contentEl.classList.add('flex');
-                    
-                    // Animate In
-                    gsap.fromTo(contentEl, 
-                        { opacity: 0, y: 30 }, 
-                        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
-                    );
-                    
-                    // Refresh ScrollTrigger as heights change
-                    if (typeof ScrollTrigger !== 'undefined') {
-                        setTimeout(() => ScrollTrigger.refresh(), 100);
-                    }
+                    gsap.fromTo(contentEl, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
+                    if (typeof ScrollTrigger !== 'undefined') setTimeout(() => ScrollTrigger.refresh(), 100);
                 } else {
-                    // Deactivate Tab
                     tabEl.classList.add('opacity-50', 'hover:opacity-100');
                     tabEl.classList.remove('opacity-100');
-                    
-                    // Hide Content
                     contentEl.classList.add('hidden');
                     contentEl.classList.remove('flex');
                 }
             });
         };
 
-        // --- Discord Simulation Logic ---
+        // --- Discord Sandbox Logic ---
         const discordMessagesEl = document.getElementById('discord-messages');
         const discordInputEl = document.getElementById('discord-input');
         const autocompleteEl = document.getElementById('discord-autocomplete');
@@ -1892,6 +1731,7 @@
         ];
 
         window.updateSlashCommands = function() {
+            if(!discordInputEl || !autocompleteListEl || !autocompleteEl) return;
             const val = discordInputEl.value.toLowerCase();
             if (val.startsWith('/')) {
                 const matches = availableCommands.filter(c => c.cmd.startsWith(val));
@@ -1906,7 +1746,6 @@
                         </div>
                     `).join('');
                     autocompleteEl.classList.remove('hidden');
-                    // Small delay to allow display:block to apply before animating opacity
                     setTimeout(() => {
                         autocompleteEl.classList.remove('opacity-0', 'translate-y-2');
                         autocompleteEl.classList.add('opacity-100', 'translate-y-0');
@@ -1920,6 +1759,7 @@
         };
 
         function hideAutocomplete() {
+            if(!autocompleteEl) return;
             autocompleteEl.classList.add('opacity-0', 'translate-y-2');
             autocompleteEl.classList.remove('opacity-100', 'translate-y-0');
             setTimeout(() => autocompleteEl.classList.add('hidden'), 200);
@@ -1944,14 +1784,11 @@
                                 <span class="text-white text-sm font-bold">${msg.embed.author.name}</span>
                             </div>
                         ` : ''}
-                        
                         <div>
                             ${msg.embed.title ? `<div class="font-bold text-white mb-1.5 text-[15px]">${msg.embed.title}</div>` : ''}
                             ${msg.embed.description ? `<div class="text-[14px] text-gray-300 leading-snug">${msg.embed.description}</div>` : ''}
                         </div>
-                        
                         ${msg.embed.customHtml ? `<div>${msg.embed.customHtml}</div>` : ''}
-                        
                         ${msg.embed.fields ? `<div class="grid grid-cols-2 gap-4">
                             ${msg.embed.fields.map(f => `
                                 <div>
@@ -1960,13 +1797,11 @@
                                 </div>
                             `).join('')}
                         </div>` : ''}
-                        
                         ${msg.embed.image ? `
                             <div class="mt-2 rounded-lg overflow-hidden border border-[#1e1f22]">
-                                <img src="${msg.embed.image}" class="w-full h-auto object-cover max-h-64">
+                                <img src="${msg.embed.image}" class="w-full h-auto object-cover max-h-64" loading="lazy">
                             </div>
                         ` : ''}
-                        
                         ${msg.embed.footer ? `
                             <div class="flex items-center gap-2 mt-2 pt-2 border-t border-[#1e1f22]/50">
                                 <span class="text-[11px] text-gray-400 font-medium">${msg.embed.footer}</span>
@@ -2040,12 +1875,12 @@
 
         window.handleDiscordCommand = function(e) {
             e.preventDefault();
+            if(!discordInputEl) return;
             const val = discordInputEl.value.trim();
             if(!val) return;
             
             hideAutocomplete();
 
-            // Add user message
             appendDiscordMessage({
                 username: "Guest User",
                 avatarType: "icon",
@@ -2058,10 +1893,9 @@
 
             discordInputEl.value = '';
 
-            // Calculate delay based on command type (AI commands take longer)
-            let typingDuration = Math.random() * 800 + 600; // 600ms to 1400ms default
+            let typingDuration = Math.random() * 800 + 600; 
             if(val.toLowerCase().startsWith('/imagine') || val.toLowerCase().startsWith('/ask_ai')) {
-                typingDuration = 2500; // 2.5 seconds for AI gen feel
+                typingDuration = 2500; 
             }
 
             showTypingIndicator(typingDuration, () => {
@@ -2163,7 +1997,7 @@
                         </div>
                     `
                 };
-            } else if (parsedCmd.startsWith('/help')) {
+            } else if (parsedCmd.startsWith('/help') || parsedCmd === '/help') {
                 botMsg.content = "Here are the advanced interactive commands available for testing:";
                 botMsg.embed = {
                     color: '#5865F2',
@@ -2206,11 +2040,9 @@
         window.handleDiscordButton = function(btn, action) {
             btn.disabled = true;
             btn.classList.add('opacity-50', 'cursor-not-allowed', 'scale-95');
-            const originalHtml = btn.innerHTML;
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> <span>Processing...</span>`;
 
             setTimeout(() => {
-                // Change button state based on action
                 if (action === 'claim_salary') {
                     btn.innerHTML = `<i class="fas fa-check"></i> <span>Claimed</span>`;
                     btn.classList.replace('bg-[#248046]', 'bg-[#1a6334]');
@@ -2232,10 +2064,8 @@
                 }
 
                 btn.classList.remove('scale-95');
-
                 if(action === 'cancel') return;
 
-                // Follow up bot message
                 showTypingIndicator(800, () => {
                     let followUp = {
                         username: "SHINYY Bot",
@@ -2265,32 +2095,30 @@
                         followUp.embed = { color: '#3b82f6', title: "✅ Swap Executed", description: "Successfully swapped **1.5 ETH** for **5,130.75 USDC**.\n\n[View Transaction on Etherscan](#)" };
                     }
 
-                    if(followUp.content || followUp.embed) {
-                        appendDiscordMessage(followUp);
-                    }
+                    if(followUp.content || followUp.embed) appendDiscordMessage(followUp);
                 });
-
             }, 800);
         };
 
-        // Initialize Discord panel greetings on load
         setTimeout(() => {
-            showTypingIndicator(1500, () => {
-                appendDiscordMessage({
-                    username: "SHINYY Bot",
-                    avatarType: "text",
-                    avatarText: "S",
-                    avatarBg: "bg-gradient-to-br from-indigo-500 to-purple-600",
-                    isBot: true,
-                    usernameColor: "text-indigo-400",
-                    content: "Welcome to the custom **Discord Architecture Sandbox**! \nI handle everything from automated Web3 swaps to AI generative pipelines and global RPG economies.",
-                    embed: {
-                        color: '#5865F2',
-                        title: "System Online",
-                        description: "Type `/` or use the command bar below to trigger multi-system simulations."
-                    }
+            if(document.getElementById('discord-messages')) {
+                showTypingIndicator(1500, () => {
+                    appendDiscordMessage({
+                        username: "SHINYY Bot",
+                        avatarType: "text",
+                        avatarText: "S",
+                        avatarBg: "bg-gradient-to-br from-indigo-500 to-purple-600",
+                        isBot: true,
+                        usernameColor: "text-indigo-400",
+                        content: "Welcome to the custom **Discord Architecture Sandbox**! \nI handle everything from automated Web3 swaps to AI generative pipelines and global RPG economies.",
+                        embed: {
+                            color: '#5865F2',
+                            title: "System Online",
+                            description: "Type `/` or use the command bar below to trigger multi-system simulations."
+                        }
+                    });
                 });
-            });
+            }
         }, 1500);
 
     </script>
