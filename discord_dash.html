@@ -3,9 +3,700 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord Web Dashboard</title>
+    <title>SHINYY Bot | Web Dashboard</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Manrope', 'sans-serif'] },
+                    colors: {
+                        discord: {
+                            dark: '#1e1f22',
+                            main: '#313338',
+                            sidebar: '#2b2d31',
+                            hover: '#35373c',
+                            active: '#404249',
+                            blurple: '#5865F2',
+                            green: '#23a559',
+                            red: '#da373c',
+                            yellow: '#f0b232'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #1e1f22; color: #dbdee1; overflow: hidden; }
+        
+        /* Discord Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #2b2d31; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #1a1b1e; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #111214; }
+
+        .toggle-checkbox:checked { right: 0; border-color: #68D391; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #23a559; }
+        
+        .log-entry { animation: slideIn 0.3s ease-out forwards; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        /* Toast Animation */
+        .toast-enter { animation: toastIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .toast-leave { animation: toastOut 0.3s ease-in forwards; }
+        @keyframes toastIn { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes toastOut { from { transform: translateY(0); opacity: 1; } to { transform: translateY(100%); opacity: 0; } }
+
+        input[type=range] {
+            -webkit-appearance: none; background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
+            background: #ffffff; cursor: pointer; margin-top: -6px; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 4px; cursor: pointer; background: #404249; border-radius: 2px;
+        }
+    </style>
 </head>
-<body>
-    <!-- Content will be added later -->
+<body class="h-screen w-screen flex antialiased relative">
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- MODALS -->
+    <div id="sync-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-discord-sidebar w-[400px] p-6 rounded-xl border border-discord-dark shadow-2xl transform scale-95 transition-transform duration-300" id="sync-modal-content">
+            <div class="flex items-center gap-3 mb-4">
+                <i class="fas fa-sync-alt text-discord-blurple fa-spin text-xl"></i>
+                <h3 class="text-white font-bold text-lg">Synchronizing Nodes...</h3>
+            </div>
+            <p class="text-sm text-gray-400 mb-4" id="sync-status-text">Fetching latest shards from MongoDB cluster...</p>
+            <div class="w-full bg-discord-dark h-3 rounded-full overflow-hidden border border-[#1e1f22]">
+                <div id="sync-progress" class="bg-discord-blurple h-full w-0 transition-all duration-200 ease-out shadow-[0_0_10px_rgba(88,101,242,0.8)]"></div>
+            </div>
+            <div class="flex justify-between mt-2 text-xs font-mono text-gray-500">
+                <span>ETA: <span id="sync-eta">00:03s</span></span>
+                <span id="sync-percentage">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-discord-sidebar flex flex-col border-r border-discord-dark shrink-0 z-20 shadow-2xl gs-reveal-left">
+        <!-- Server Header -->
+        <div onclick="showToast('Server dropdown clicked!', 'info')" class="h-16 flex items-center px-4 border-b border-discord-dark hover:bg-discord-hover cursor-pointer transition-colors group active:bg-discord-active">
+            <div class="w-8 h-8 rounded-lg bg-discord-blurple flex items-center justify-center text-white font-bold shadow-lg group-hover:scale-105 transition-transform">S</div>
+            <div class="ml-3 flex-1 flex justify-between items-center">
+                <h1 class="font-bold text-white text-[15px] tracking-wide">SHINYY Network</h1>
+                <i class="fas fa-chevron-down text-xs text-gray-400 group-hover:text-white transition-colors"></i>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex-1 overflow-y-auto py-4 px-2 space-y-0.5">
+            <div class="px-2 pb-2 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Dashboard</div>
+            
+            <a href="#" onclick="switchView('overview', this)" class="nav-link flex items-center gap-3 px-3 py-2 bg-discord-active text-white rounded cursor-pointer transition-colors">
+                <i class="fas fa-chart-line w-5 text-center text-gray-300"></i>
+                <span class="font-medium text-[14px]">Overview</span>
+            </a>
+            <a href="#" onclick="switchView('economy', this)" class="nav-link flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-discord-hover hover:text-gray-100 rounded cursor-pointer transition-colors">
+                <i class="fas fa-coins w-5 text-center"></i>
+                <span class="font-medium text-[14px]">Economy System</span>
+            </a>
+            <a href="#" onclick="switchView('automod', this)" class="nav-link flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-discord-hover hover:text-gray-100 rounded cursor-pointer transition-colors">
+                <i class="fas fa-shield-alt w-5 text-center"></i>
+                <span class="font-medium text-[14px]">Auto-Moderation</span>
+            </a>
+            <a href="#" onclick="switchView('ai', this)" class="nav-link flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-discord-hover hover:text-gray-100 rounded cursor-pointer transition-colors">
+                <i class="fas fa-brain w-5 text-center"></i>
+                <span class="font-medium text-[14px]">AI Generation API</span>
+            </a>
+
+            <div class="px-2 pt-6 pb-2 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Management</div>
+            
+            <a href="#" onclick="showToast('Audit Logs feature is restricted to super-admins.', 'error')" class="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-discord-hover hover:text-gray-100 rounded cursor-pointer transition-colors">
+                <i class="fas fa-list w-5 text-center"></i>
+                <span class="font-medium text-[14px]">Audit Logs <i class="fas fa-lock text-[10px] ml-1 text-gray-500"></i></span>
+            </a>
+            <a href="#" onclick="showToast('Fetching Member Roles...', 'info')" class="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-discord-hover hover:text-gray-100 rounded cursor-pointer transition-colors">
+                <i class="fas fa-users w-5 text-center"></i>
+                <span class="font-medium text-[14px]">Member Roles</span>
+            </a>
+            <a href="#" onclick="showToast('Bot Settings opened', 'success')" class="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-discord-hover hover:text-gray-100 rounded cursor-pointer transition-colors">
+                <i class="fas fa-cog w-5 text-center"></i>
+                <span class="font-medium text-[14px]">Bot Settings</span>
+            </a>
+        </div>
+
+        <!-- User Profile Footer -->
+        <div class="h-[52px] bg-[#232428] flex items-center px-2 border-t border-discord-dark shrink-0">
+            <div class="flex items-center hover:bg-discord-hover p-1 rounded cursor-pointer w-full transition-colors group active:bg-discord-active" onclick="showToast('User profile options clicked.', 'info')">
+                <div class="relative">
+                    <img src="https://cdn-icons-png.flaticon.com/512/893/893257.png" class="w-8 h-8 rounded-full bg-white">
+                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-discord-green border-2 border-[#232428] rounded-full"></div>
+                </div>
+                <div class="ml-2 flex-1 overflow-hidden">
+                    <div class="text-[13px] font-bold text-white leading-tight truncate">Saniyat</div>
+                    <div class="text-[11px] text-gray-400 leading-tight">System Admin</div>
+                </div>
+                <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div class="w-7 h-7 rounded flex items-center justify-center hover:bg-discord-active text-gray-300 transition-colors" onclick="event.stopPropagation(); showToast('Microphone toggled', 'success')"><i class="fas fa-microphone text-xs"></i></div>
+                    <div class="w-7 h-7 rounded flex items-center justify-center hover:bg-discord-active text-gray-300 transition-colors" onclick="event.stopPropagation(); showToast('Settings opened', 'info')"><i class="fas fa-cog text-xs"></i></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col bg-discord-main min-w-0 relative">
+        
+        <!-- Notifications Dropdown (Hidden by default) -->
+        <div id="notifications-dropdown" class="absolute top-14 right-6 w-80 bg-discord-sidebar border border-discord-dark rounded-xl shadow-2xl z-50 hidden opacity-0 transform translate-y-[-10px] transition-all duration-200 overflow-hidden">
+            <div class="p-3 border-b border-discord-dark bg-[#232428] flex justify-between items-center">
+                <h3 class="text-white font-bold text-sm">Recent Alerts</h3>
+                <span class="text-xs text-discord-blurple hover:underline cursor-pointer" onclick="showToast('Alerts cleared', 'success'); toggleNotifications();">Mark all as read</span>
+            </div>
+            <div class="max-h-64 overflow-y-auto discord-scrollbar">
+                <div class="p-3 border-b border-discord-dark hover:bg-discord-hover cursor-pointer transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-discord-red/20 text-discord-red flex items-center justify-center shrink-0"><i class="fas fa-shield-alt"></i></div>
+                        <div>
+                            <p class="text-sm text-gray-200"><strong>Anti-Nuke</strong> blocked a suspicious API request.</p>
+                            <p class="text-[10px] text-gray-500 mt-0.5">2 mins ago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-3 hover:bg-discord-hover cursor-pointer transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-discord-green/20 text-discord-green flex items-center justify-center shrink-0"><i class="fas fa-database"></i></div>
+                        <div>
+                            <p class="text-sm text-gray-200">Database auto-backup completed successfully.</p>
+                            <p class="text-[10px] text-gray-500 mt-0.5">1 hour ago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topbar -->
+        <header class="h-16 border-b border-discord-dark flex items-center justify-between px-6 shrink-0 gs-reveal-down z-40 bg-discord-main">
+            <div class="flex items-center gap-4">
+                <i class="fas fa-hashtag text-gray-400 text-xl"></i>
+                <h2 id="topbar-title" class="text-white font-bold text-[16px]">overview-dashboard</h2>
+                <div class="h-6 w-[1px] bg-discord-active mx-2"></div>
+                <span id="topbar-desc" class="text-sm text-gray-400 hidden md:block">Live monitoring for SHINYY Bot architecture.</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="relative hidden md:block">
+                    <input type="text" placeholder="Search logs or settings..." onfocus="showToast('Searching active...', 'info')" class="bg-discord-dark text-sm text-gray-300 px-3 py-1.5 rounded pr-8 w-56 focus:outline-none focus:ring-1 focus:ring-discord-blurple transition-all placeholder-gray-500 border border-[#1e1f22]">
+                    <i class="fas fa-search absolute right-3 top-2 text-gray-500 text-xs"></i>
+                </div>
+                <div class="relative">
+                    <i class="fas fa-bell text-gray-400 hover:text-white cursor-pointer transition-colors text-lg active:scale-90" onclick="toggleNotifications()"></i>
+                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-discord-red rounded-full border-2 border-discord-main"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Views Container -->
+        <div class="flex-1 overflow-y-auto p-6 discord-scrollbar relative">
+            
+            <!-- VIEW: OVERVIEW -->
+            <div id="view-overview" class="view-section max-w-6xl mx-auto w-full space-y-6">
+                <!-- Welcome Banner -->
+                <div class="w-full bg-gradient-to-r from-discord-blurple to-purple-600 rounded-xl p-6 shadow-lg flex justify-between items-center relative overflow-hidden">
+                    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 pointer-events-none"></div>
+                    <div class="relative z-10">
+                        <h2 class="text-2xl font-display font-bold text-white mb-1">System Architecture Online</h2>
+                        <p class="text-blue-100 text-sm">All backend modules are fully operational. WebSocket latency is stable at 12ms.</p>
+                    </div>
+                    <div class="hidden sm:block relative z-10">
+                        <button onclick="startDatabaseSync(this)" class="bg-white/20 hover:bg-white/30 text-white border border-white/30 px-5 py-2.5 rounded font-bold text-sm transition-all backdrop-blur-sm shadow-lg active:scale-95 flex items-center gap-2">
+                            <i class="fas fa-sync-alt"></i> Sync Database
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-discord-sidebar p-4 rounded-xl border border-discord-dark shadow-sm hover:-translate-y-1 transition-transform cursor-default cursor-pointer" onclick="showToast('Detailed Member Graph opening...', 'info')">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-gray-400 text-xs font-bold uppercase tracking-wider">Total Members</span>
+                            <i class="fas fa-users text-gray-500"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">45,291</h3>
+                        <p class="text-discord-green text-xs font-medium mt-1"><i class="fas fa-arrow-up mr-1"></i> +124 this week</p>
+                    </div>
+                    
+                    <div class="bg-discord-sidebar p-4 rounded-xl border border-discord-dark shadow-sm hover:-translate-y-1 transition-transform cursor-pointer" onclick="showToast('Economy Analytics opening...', 'info')">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-gray-400 text-xs font-bold uppercase tracking-wider">Economy Volume</span>
+                            <i class="fas fa-coins text-discord-yellow"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">$1.2M</h3>
+                        <p class="text-discord-green text-xs font-medium mt-1"><i class="fas fa-arrow-up mr-1"></i> +$50K traded today</p>
+                    </div>
+
+                    <div class="bg-discord-sidebar p-4 rounded-xl border border-discord-dark shadow-sm hover:-translate-y-1 transition-transform cursor-pointer" onclick="showToast('Command metrics opening...', 'info')">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-gray-400 text-xs font-bold uppercase tracking-wider">Commands Executed</span>
+                            <i class="fas fa-terminal text-gray-500"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">892.4K</h3>
+                        <p class="text-gray-400 text-xs font-medium mt-1">~12 requests per second</p>
+                    </div>
+
+                    <div class="bg-discord-sidebar p-4 rounded-xl border border-discord-dark shadow-sm hover:-translate-y-1 transition-transform cursor-pointer" onclick="showToast('Incident Report opening...', 'error')">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-gray-400 text-xs font-bold uppercase tracking-wider">Active Punishments</span>
+                            <i class="fas fa-gavel text-discord-red"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">1,043</h3>
+                        <p class="text-discord-red text-xs font-medium mt-1">4 active raids blocked</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left Col: Module Toggles -->
+                    <div class="lg:col-span-1 space-y-4">
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 pl-1">Active Modules</h3>
+                        
+                        <!-- Toggle 1 -->
+                        <div class="bg-discord-sidebar p-4 rounded-xl border border-discord-dark flex justify-between items-center shadow-sm hover:border-discord-blurple/50 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-discord-blurple/10 flex items-center justify-center text-discord-blurple"><i class="fas fa-brain text-lg"></i></div>
+                                <div>
+                                    <h4 class="text-white font-medium text-sm">AI Generative Engine</h4>
+                                    <p class="text-gray-400 text-[11px]">Midjourney & LLM bridges</p>
+                                </div>
+                            </div>
+                            <div class="relative inline-block w-10 h-5 align-middle select-none">
+                                <input type="checkbox" checked onchange="toggleModule('AI Generative Engine', this)" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 top-0 transition-all duration-300"/>
+                                <label class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-600 cursor-pointer transition-colors duration-300"></label>
+                            </div>
+                        </div>
+
+                        <!-- Toggle 2 -->
+                        <div class="bg-discord-sidebar p-4 rounded-xl border border-discord-dark flex justify-between items-center shadow-sm hover:border-discord-green/50 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-discord-green/10 flex items-center justify-center text-discord-green"><i class="fas fa-coins text-lg"></i></div>
+                                <div>
+                                    <h4 class="text-white font-medium text-sm">Global Economy</h4>
+                                    <p class="text-gray-400 text-[11px]">MongoDB sync active</p>
+                                </div>
+                            </div>
+                            <div class="relative inline-block w-10 h-5 align-middle select-none">
+                                <input type="checkbox" checked onchange="toggleModule('Global Economy', this)" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 top-0 transition-all duration-300"/>
+                                <label class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-600 cursor-pointer transition-colors duration-300"></label>
+                            </div>
+                        </div>
+
+                        <!-- Toggle 3 -->
+                        <div class="bg-discord-sidebar p-4 rounded-xl border border-discord-dark flex justify-between items-center shadow-sm hover:border-discord-red/50 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-discord-red/10 flex items-center justify-center text-discord-red"><i class="fas fa-shield-alt text-lg"></i></div>
+                                <div>
+                                    <h4 class="text-white font-medium text-sm">Vanguard Anti-Nuke</h4>
+                                    <p class="text-gray-400 text-[11px]">Strict protection mode</p>
+                                </div>
+                            </div>
+                            <div class="relative inline-block w-10 h-5 align-middle select-none">
+                                <input type="checkbox" checked onchange="toggleModule('Vanguard Anti-Nuke', this)" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 top-0 transition-all duration-300"/>
+                                <label class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-600 cursor-pointer transition-colors duration-300"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Col: Live Terminal -->
+                    <div class="lg:col-span-2 flex flex-col h-[400px]">
+                        <div class="flex justify-between items-center mb-2 px-1">
+                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-discord-green animate-pulse"></div> Live Audit Terminal
+                            </h3>
+                            <span class="text-[10px] bg-discord-dark px-2 py-0.5 rounded text-gray-400 border border-white/5 cursor-pointer hover:text-white transition-colors" onclick="showToast('Terminal history downloaded.', 'success')"><i class="fas fa-download mr-1"></i> Export Logs</span>
+                        </div>
+                        
+                        <div class="flex-1 bg-[#1e1f22] rounded-xl border border-discord-dark shadow-inner overflow-hidden flex flex-col relative font-mono text-sm group">
+                            <div class="h-8 bg-[#2b2d31] border-b border-discord-dark flex items-center px-4 gap-2 shrink-0">
+                                <i class="fas fa-terminal text-gray-500 text-xs"></i>
+                                <span class="text-gray-400 text-xs">system.log</span>
+                                <div class="ml-auto flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div class="w-3 h-3 rounded-full bg-discord-green cursor-pointer" onclick="showToast('Terminal expanded', 'info')"></div>
+                                    <div class="w-3 h-3 rounded-full bg-discord-yellow cursor-pointer" onclick="document.getElementById('live-logs').innerHTML = ''; showToast('Logs cleared', 'success')"></div>
+                                    <div class="w-3 h-3 rounded-full bg-discord-red cursor-pointer" onclick="showToast('Terminal closed', 'error')"></div>
+                                </div>
+                            </div>
+                            
+                            <div id="live-logs" class="flex-1 overflow-y-auto p-4 space-y-3 discord-scrollbar text-[13px] relative z-10 pb-10">
+                                <!-- Pre-populated Logs -->
+                                <div class="flex gap-3 text-gray-300"><span class="text-gray-500 shrink-0">[14:32:01]</span><span class="text-discord-green font-bold shrink-0">[ECONOMY]</span><span>User <span class="text-white">@shinyymineyy</span> transferred $5,000 to vault.</span></div>
+                                <div class="flex gap-3 text-gray-300"><span class="text-gray-500 shrink-0">[14:32:45]</span><span class="text-discord-blurple font-bold shrink-0">[AI_GEN]</span><span>Model SDXL rendered image in 2.4s for request <span class="text-blue-300">#9821</span>.</span></div>
+                            </div>
+                            <div class="absolute bottom-0 w-full h-12 bg-gradient-to-t from-[#1e1f22] to-transparent z-20 pointer-events-none"></div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- End Overview -->
+
+            <!-- VIEW: ECONOMY SETTINGS -->
+            <div id="view-economy" class="view-section hidden max-w-4xl mx-auto w-full space-y-6 animate-[slideIn_0.3s_ease-out]">
+                <div class="border-b border-discord-dark pb-4 mb-6">
+                    <h2 class="text-2xl font-bold text-white mb-1">Economy System Settings</h2>
+                    <p class="text-sm text-gray-400">Configure your global currency, drop rates, and store parameters.</p>
+                </div>
+                
+                <div class="bg-discord-sidebar p-6 rounded-xl border border-discord-dark space-y-6 shadow-sm">
+                    <!-- Input -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Currency Name / Symbol</label>
+                        <div class="flex border border-[#1e1f22] rounded bg-discord-dark overflow-hidden focus-within:border-discord-blurple transition-colors">
+                            <span class="px-4 py-2.5 bg-[#232428] text-gray-400 border-r border-[#1e1f22]"><i class="fas fa-coins"></i></span>
+                            <input type="text" value="ShinyyCoins" class="flex-1 bg-transparent px-4 py-2.5 text-white focus:outline-none text-sm">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Starting Balance</label>
+                            <input type="number" value="500" class="w-full bg-discord-dark border border-[#1e1f22] rounded p-2.5 text-white text-sm focus:outline-none focus:border-discord-blurple transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Work Cooldown (Minutes)</label>
+                            <select class="w-full bg-discord-dark border border-[#1e1f22] rounded p-2.5 text-white text-sm focus:outline-none focus:border-discord-blurple transition-colors appearance-none cursor-pointer">
+                                <option>5 Minutes</option>
+                                <option selected>15 Minutes</option>
+                                <option>30 Minutes</option>
+                                <option>60 Minutes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Slider -->
+                    <div class="pt-2 border-t border-discord-dark">
+                        <div class="flex justify-between items-center mb-2 mt-4">
+                            <label class="text-xs font-bold text-gray-400 uppercase">Daily Payout Amount</label>
+                            <span class="text-discord-green font-bold text-sm bg-discord-green/10 px-2 py-0.5 rounded">$<span id="slider-val">1500</span></span>
+                        </div>
+                        <input type="range" min="100" max="10000" step="100" value="1500" class="w-full" oninput="document.getElementById('slider-val').innerText = this.value">
+                        <div class="flex justify-between text-[10px] text-gray-500 mt-1 font-mono">
+                            <span>$100</span><span>$10,000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <button onclick="showToast('Changes discarded.', 'info')" class="px-5 py-2.5 text-sm font-medium text-white hover:underline transition-all">Cancel</button>
+                    <button onclick="saveFormBtn(this)" class="bg-discord-green hover:bg-[#1a8c48] text-white px-6 py-2.5 rounded text-sm font-bold transition-colors shadow-lg active:scale-95 flex items-center gap-2">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </div> <!-- End Economy -->
+
+            <!-- VIEW: AUTO MOD -->
+            <div id="view-automod" class="view-section hidden max-w-4xl mx-auto w-full space-y-6 animate-[slideIn_0.3s_ease-out]">
+                <div class="border-b border-discord-dark pb-4 mb-6">
+                    <h2 class="text-2xl font-bold text-white mb-1">Vanguard Auto-Moderation</h2>
+                    <p class="text-sm text-gray-400">Manage security filters, anti-raid mechanisms, and punishment triggers.</p>
+                </div>
+                
+                <div class="bg-discord-sidebar p-6 rounded-xl border border-discord-dark space-y-6 shadow-sm">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2 flex justify-between">
+                            <span>Banned Words Filter</span>
+                            <span class="text-discord-blurple normal-case font-normal cursor-pointer hover:underline">Import Default List</span>
+                        </label>
+                        <textarea rows="3" class="w-full bg-discord-dark border border-[#1e1f22] rounded p-3 text-gray-300 text-sm focus:outline-none focus:border-discord-blurple transition-colors custom-scrollbar resize-none">hack, token grabber, free nitro, nuke, raid</textarea>
+                        <p class="text-[11px] text-gray-500 mt-1">Separate words with commas. Wildcards (*) are supported.</p>
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 bg-discord-dark border border-[#1e1f22] rounded-lg">
+                        <div>
+                            <h4 class="text-white font-medium text-sm">Anti-Link Spam</h4>
+                            <p class="text-gray-400 text-xs mt-0.5">Automatically delete suspicious links (e.g., discord gifts, crypto drops).</p>
+                        </div>
+                        <div class="relative inline-block w-10 h-5 align-middle select-none">
+                            <input type="checkbox" checked onchange="showToast('Anti-Link updated', 'success')" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 top-0 transition-all duration-300"/>
+                            <label class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-600 cursor-pointer transition-colors duration-300"></label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Default Action on Flagged Message</label>
+                        <div class="flex gap-4">
+                            <label class="flex-1 bg-discord-dark border border-discord-red/50 p-3 rounded-lg cursor-pointer flex items-center gap-3 hover:bg-[#1e1f22] transition-colors relative overflow-hidden">
+                                <input type="radio" name="punishment" class="accent-discord-red w-4 h-4 cursor-pointer" checked>
+                                <div>
+                                    <div class="text-white text-sm font-bold">Delete & Warn</div>
+                                    <div class="text-gray-400 text-[11px]">Silently removes message.</div>
+                                </div>
+                            </label>
+                            <label class="flex-1 bg-discord-dark border border-[#1e1f22] p-3 rounded-lg cursor-pointer flex items-center gap-3 hover:bg-[#1e1f22] transition-colors">
+                                <input type="radio" name="punishment" class="accent-discord-red w-4 h-4 cursor-pointer">
+                                <div>
+                                    <div class="text-white text-sm font-bold">Auto-Ban User</div>
+                                    <div class="text-gray-400 text-[11px]">Immediate permanent ban.</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <button onclick="saveFormBtn(this)" class="bg-discord-blurple hover:bg-indigo-500 text-white px-6 py-2.5 rounded text-sm font-bold transition-colors shadow-lg active:scale-95 flex items-center gap-2">
+                        <i class="fas fa-save"></i> Save Security Config
+                    </button>
+                </div>
+            </div> <!-- End AutoMod -->
+
+            <!-- VIEW: AI API -->
+            <div id="view-ai" class="view-section hidden max-w-4xl mx-auto w-full space-y-6 animate-[slideIn_0.3s_ease-out]">
+                <div class="border-b border-discord-dark pb-4 mb-6">
+                    <h2 class="text-2xl font-bold text-white mb-1">AI Generation API Integration</h2>
+                    <p class="text-sm text-gray-400">Connect your server to OpenAI, Midjourney, or local Stable Diffusion models.</p>
+                </div>
+                
+                <div class="bg-discord-sidebar p-6 rounded-xl border border-discord-dark space-y-6 shadow-sm">
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">OpenAI API Key</label>
+                        <div class="flex border border-[#1e1f22] rounded bg-discord-dark overflow-hidden focus-within:border-discord-blurple transition-colors">
+                            <input type="password" value="sk-abcd1234efgh5678ijkl9012mnop3456" class="flex-1 bg-transparent px-4 py-2.5 text-gray-300 font-mono text-sm focus:outline-none">
+                            <button onclick="showToast('API Key Validated Successfully!', 'success')" class="px-4 py-2 bg-[#2b2d31] hover:bg-[#35373c] text-white text-xs font-bold border-l border-[#1e1f22] transition-colors">Test Key</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6 pt-4 border-t border-discord-dark">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Default Image Model</label>
+                            <select class="w-full bg-discord-dark border border-[#1e1f22] rounded p-2.5 text-white text-sm focus:outline-none focus:border-discord-blurple transition-colors appearance-none cursor-pointer">
+                                <option>Midjourney v6</option>
+                                <option selected>Stable Diffusion XL (SDXL)</option>
+                                <option>DALL-E 3</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Default Chat Model</label>
+                            <select class="w-full bg-discord-dark border border-[#1e1f22] rounded p-2.5 text-white text-sm focus:outline-none focus:border-discord-blurple transition-colors appearance-none cursor-pointer">
+                                <option>GPT-3.5 Turbo</option>
+                                <option selected>GPT-4 Omni</option>
+                                <option>Claude 3 Opus</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <div class="flex justify-between items-center mb-2 mt-2">
+                            <label class="text-xs font-bold text-gray-400 uppercase">Bot Persona Temperature (Creativity)</label>
+                            <span class="text-discord-blurple font-bold text-sm bg-discord-blurple/10 px-2 py-0.5 rounded" id="temp-val">0.7</span>
+                        </div>
+                        <input type="range" min="0" max="1" step="0.1" value="0.7" class="w-full" oninput="document.getElementById('temp-val').innerText = this.value">
+                        <div class="flex justify-between text-[10px] text-gray-500 mt-1 font-mono">
+                            <span>0.0 (Strict/Factual)</span><span>1.0 (Creative/Chaotic)</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <button onclick="saveFormBtn(this)" class="bg-discord-blurple hover:bg-indigo-500 text-white px-6 py-2.5 rounded text-sm font-bold transition-colors shadow-lg active:scale-95 flex items-center gap-2">
+                        <i class="fas fa-save"></i> Save API Config
+                    </button>
+                </div>
+            </div> <!-- End AI -->
+            
+            <div class="h-10"></div>
+        </div>
+    </main>
+
+    <script>
+        // Live Mock Audit Log Generator
+        const logsContainer = document.getElementById('live-logs');
+        const mockEvents = [
+            { tag: "[ECONOMY]", color: "text-discord-green", msg: "Global market sync completed. 0 latency." },
+            { tag: "[MODERATION]", color: "text-blue-400", msg: "Auto-mod filtered toxic message from channel #general." },
+            { tag: "[AI_GEN]", color: "text-discord-blurple", msg: "Processing /imagine request... Model load 98%." },
+            { tag: "[WEB3]", color: "text-purple-400", msg: "Crypto exchange rate updated via Binance API." },
+            { tag: "[SYSTEM]", color: "text-gray-400", msg: "Performing routine database backup. 4.2GB saved." },
+            { tag: "[SECURITY]", color: "text-discord-red", msg: "Blocked unauthorized API access attempt from IP 192.168.*.*" },
+            { tag: "[ECONOMY]", color: "text-discord-green", msg: "User won $500 jackpot in casino module." }
+        ];
+
+        function getTimestamp() {
+            const now = new Date();
+            return `[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}]`;
+        }
+
+        function addLiveLog() {
+            if(!logsContainer) return;
+            const event = mockEvents[Math.floor(Math.random() * mockEvents.length)];
+            const logEntry = document.createElement('div');
+            logEntry.className = `flex gap-3 text-gray-300 log-entry`;
+            if(event.tag === "[SECURITY]") logEntry.classList.replace('text-gray-300', 'text-discord-red');
+
+            logEntry.innerHTML = `<span class="text-gray-500 shrink-0">${getTimestamp()}</span><span class="${event.color} font-bold shrink-0">${event.tag}</span><span>${event.msg}</span>`;
+            logsContainer.appendChild(logEntry);
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+            if (logsContainer.children.length > 20) logsContainer.removeChild(logsContainer.firstElementChild);
+        }
+        setInterval(addLiveLog, Math.random() * 4000 + 3000);
+
+        // Toast Notification System
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let icon = 'fa-check-circle';
+            let colorClass = 'border-discord-green';
+            let bgClass = 'bg-[#23a559]/10 text-discord-green';
+            
+            if(type === 'error') { icon = 'fa-times-circle'; colorClass = 'border-discord-red'; bgClass = 'bg-discord-red/10 text-discord-red'; }
+            if(type === 'info') { icon = 'fa-info-circle'; colorClass = 'border-discord-blurple'; bgClass = 'bg-discord-blurple/10 text-discord-blurple'; }
+
+            toast.className = `bg-discord-sidebar border-l-4 ${colorClass} px-4 py-3 rounded shadow-2xl flex items-center gap-3 toast-enter border-y border-r border-discord-dark`;
+            toast.innerHTML = `<div class="${bgClass} w-6 h-6 rounded-full flex items-center justify-center shrink-0"><i class="fas ${icon} text-[10px]"></i></div><span class="text-gray-200 text-sm font-medium">${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.replace('toast-enter', 'toast-leave');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // View Switching Logic
+        function switchView(viewId, element) {
+            // Update Sidebar UI
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.replace('bg-discord-active', 'hover:bg-discord-hover');
+                link.classList.replace('text-white', 'text-gray-300');
+            });
+            element.classList.replace('hover:bg-discord-hover', 'bg-discord-active');
+            element.classList.replace('text-gray-300', 'text-white');
+
+            // Update Topbar
+            const titles = { 'overview': 'overview-dashboard', 'economy': 'economy-settings', 'automod': 'vanguard-automod', 'ai': 'api-configuration' };
+            document.getElementById('topbar-title').innerText = titles[viewId];
+
+            // Hide all views, show target
+            document.querySelectorAll('.view-section').forEach(view => view.classList.add('hidden'));
+            document.getElementById(`view-${viewId}`).classList.remove('hidden');
+        }
+
+        // Module Toggle Interaction
+        function toggleModule(moduleName, checkbox) {
+            if(checkbox.checked) {
+                showToast(`${moduleName} enabled and active.`, 'success');
+            } else {
+                showToast(`${moduleName} has been disabled.`, 'error');
+            }
+        }
+
+        // Form Saving Interaction
+        function saveFormBtn(btn) {
+            btn.disabled = true;
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Saving...`;
+            setTimeout(() => {
+                btn.innerHTML = `<i class="fas fa-check"></i> Saved`;
+                btn.classList.replace('bg-discord-blurple', 'bg-discord-green');
+                btn.classList.replace('hover:bg-indigo-500', 'hover:bg-[#1a8c48]');
+                showToast('Settings saved successfully and synced to database.', 'success');
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                    btn.classList.replace('bg-discord-green', 'bg-discord-blurple');
+                    btn.classList.replace('hover:bg-[#1a8c48]', 'hover:bg-indigo-500');
+                }, 2000);
+            }, 1000);
+        }
+
+        // Topbar Notification Bell
+        let notifsOpen = false;
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notifications-dropdown');
+            if(notifsOpen) {
+                dropdown.classList.replace('translate-y-0', 'translate-y-[-10px]');
+                dropdown.classList.replace('opacity-100', 'opacity-0');
+                setTimeout(() => dropdown.classList.add('hidden'), 200);
+            } else {
+                dropdown.classList.remove('hidden');
+                setTimeout(() => {
+                    dropdown.classList.replace('translate-y-[-10px]', 'translate-y-0');
+                    dropdown.classList.replace('opacity-0', 'opacity-100');
+                }, 10);
+            }
+            notifsOpen = !notifsOpen;
+        }
+
+        // Sync Database Modal Logic
+        function startDatabaseSync(btn) {
+            const modal = document.getElementById('sync-modal');
+            const content = document.getElementById('sync-modal-content');
+            const bar = document.getElementById('sync-progress');
+            const text = document.getElementById('sync-percentage');
+            const eta = document.getElementById('sync-eta');
+            const status = document.getElementById('sync-status-text');
+
+            // Reset
+            bar.style.width = '0%';
+            text.innerText = '0%';
+            status.innerText = "Fetching latest shards from MongoDB cluster...";
+            eta.innerText = "00:03s";
+
+            // Show
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+
+            // Animate
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 15) + 5;
+                if(progress > 100) progress = 100;
+                
+                bar.style.width = `${progress}%`;
+                text.innerText = `${progress}%`;
+                
+                if(progress > 30 && progress < 70) status.innerText = "Reindexing user economics...";
+                if(progress > 70) { status.innerText = "Finalizing data integrity..."; eta.innerText = "00:01s"; }
+
+                if(progress === 100) {
+                    clearInterval(interval);
+                    status.innerText = "Sync Complete!";
+                    status.classList.replace('text-gray-400', 'text-discord-green');
+                    
+                    setTimeout(() => {
+                        modal.classList.add('opacity-0');
+                        content.classList.add('scale-95');
+                        setTimeout(() => {
+                            modal.classList.add('hidden');
+                            status.classList.replace('text-discord-green', 'text-gray-400');
+                            showToast('Database synchronized perfectly.', 'success');
+                        }, 300);
+                    }, 800);
+                }
+            }, 300);
+        }
+    </script>
 </body>
 </html>
