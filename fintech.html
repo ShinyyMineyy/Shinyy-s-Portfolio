@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHINYY | FinTech Ledger Architecture</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'], 
+                        mono: ['JetBrains Mono', 'monospace'],
+                        display: ['Manrope', 'sans-serif']
+                    },
+                    colors: {
+                        fin: {
+                            bg: '#050505',       
+                            surface: '#0f0f11',  
+                            border: '#1f1f22',   
+                            accent: '#f59e0b',   // Amber 500
+                            accentHover: '#d97706', // Amber 600
+                            text: '#a1a1aa',
+                            success: '#10b981',
+                            danger: '#ef4444'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #050505; color: #fafafa; overflow: hidden; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #27272a; }
+
+        /* Toast Animation */
+        .toast-enter { animation: toastIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .toast-leave { animation: toastOut 0.3s ease-in forwards; }
+        @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes toastOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+
+        /* Virtual Card CSS */
+        .credit-card {
+            background: linear-gradient(135deg, #18181b 0%, #000000 100%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1), 0 20px 40px -10px rgba(0,0,0,0.8);
+        }
+        .credit-card::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(245, 158, 11, 0.15), transparent);
+            transform: skewX(-20deg); animation: cardShimmer 6s infinite; pointer-events: none;
+        }
+        @keyframes cardShimmer { 0% { left: -100%; } 20%, 100% { left: 200%; } }
+
+        /* Card Chip */
+        .card-chip {
+            width: 40px; height: 30px; background: linear-gradient(135deg, #d4af37, #fcd34d, #b45309);
+            border-radius: 6px; position: relative; overflow: hidden;
+            box-shadow: inset 0 0 4px rgba(0,0,0,0.5);
+        }
+        .card-chip::after {
+            content: ''; position: absolute; inset: 0;
+            background-image: 
+                linear-gradient(transparent 45%, rgba(0,0,0,0.2) 45%, rgba(0,0,0,0.2) 55%, transparent 55%),
+                linear-gradient(90deg, transparent 30%, rgba(0,0,0,0.2) 30%, rgba(0,0,0,0.2) 40%, transparent 40%, transparent 60%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.2) 70%, transparent 70%);
+        }
+
+        /* Ledger Row Animation */
+        .ledger-row { animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .blur-text { filter: blur(6px); user-select: none; transition: filter 0.3s ease; }
+        .blur-text.revealed { filter: blur(0px); }
+
+        /* View Switching Animations */
+        .view-section { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="h-screen w-screen flex antialiased relative selection:bg-fin-accent selection:text-black">
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed top-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- MODAL: CREATE ESCROW -->
+    <div id="escrow-modal" class="fixed inset-0 bg-black/80 z-[80] hidden flex items-center justify-center opacity-0 transition-opacity duration-300 backdrop-blur-sm">
+        <div class="bg-fin-surface w-full max-w-md rounded-2xl border border-fin-border shadow-2xl p-8 transform scale-95 transition-transform duration-300 flex flex-col" id="escrow-content">
+            <div class="flex justify-between items-center mb-6 border-b border-fin-border pb-4">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2"><i class="fas fa-shield-alt text-fin-accent"></i> New Escrow Contract</h2>
+                <button onclick="closeEscrowModal()" class="text-gray-500 hover:text-white"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Counterparty Email / ID</label>
+                    <input type="text" id="escrow-user" placeholder="contractor@domain.com" class="w-full bg-[#050505] border border-fin-border rounded-lg px-4 py-3 text-white focus:outline-none focus:border-fin-accent transition-colors text-sm font-mono">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Contract Title / Milestone</label>
+                    <input type="text" id="escrow-title" placeholder="e.g. Website Frontend Development" class="w-full bg-[#050505] border border-fin-border rounded-lg px-4 py-3 text-white focus:outline-none focus:border-fin-accent transition-colors text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Amount to Lock (USD)</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-3 text-gray-500 font-mono">$</span>
+                        <input type="number" id="escrow-amount" placeholder="0.00" class="w-full bg-[#050505] border border-fin-border rounded-lg pl-8 pr-4 py-3 text-white focus:outline-none focus:border-fin-accent transition-colors text-sm font-mono">
+                    </div>
+                </div>
+            </div>
+            <button onclick="submitEscrow()" class="w-full mt-8 py-3.5 bg-fin-accent hover:bg-fin-accentHover text-black rounded-lg font-bold transition-all shadow-[0_0_20px_rgba(245,158,11,0.2)] active:scale-95 flex items-center justify-center gap-2">
+                <i class="fas fa-lock"></i> Lock Funds in Escrow
+            </button>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="w-20 md:w-64 bg-fin-surface border-r border-fin-border flex flex-col shrink-0 z-20 relative shadow-2xl gs-reveal-left">
+        <div class="h-20 flex items-center justify-center md:justify-start md:px-8 border-b border-fin-border">
+            <div class="w-8 h-8 rounded border border-fin-accent bg-fin-accent/10 flex items-center justify-center text-fin-accent font-black text-lg md:mr-3 shadow-[0_0_15px_rgba(245,158,11,0.2)]">S</div>
+            <h1 class="font-display font-extrabold text-white text-xl tracking-tighter hidden md:block">LEDGER</h1>
+        </div>
+
+        <nav class="flex-1 py-8 flex flex-col gap-2 px-4 overflow-y-auto hide-scrollbar">
+            <div class="hidden md:block px-4 pb-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">Finance</div>
+            
+            <a href="#" onclick="switchView('overview', this, 'Financial Overview')" class="nav-link flex items-center justify-center md:justify-start gap-4 px-3 md:px-4 py-3 bg-fin-accent/10 border border-fin-accent/30 text-fin-accent rounded-xl cursor-pointer transition-colors relative">
+                <i class="fas fa-chart-pie text-lg w-6 text-center"></i>
+                <span class="font-medium text-sm hidden md:block">Overview</span>
+            </a>
+            <a href="#" onclick="switchView('transactions', this, 'Live Global Ledger')" class="nav-link flex items-center justify-center md:justify-start gap-4 px-3 md:px-4 py-3 text-fin-text border border-transparent hover:bg-white/5 hover:text-white rounded-xl cursor-pointer transition-colors">
+                <i class="fas fa-list text-lg w-6 text-center"></i>
+                <span class="font-medium text-sm hidden md:block">Transactions</span>
+            </a>
+            <a href="#" onclick="switchView('escrow', this, 'Escrow Management')" class="nav-link flex items-center justify-center md:justify-start gap-4 px-3 md:px-4 py-3 text-fin-text border border-transparent hover:bg-white/5 hover:text-white rounded-xl cursor-pointer transition-colors">
+                <i class="fas fa-handshake text-lg w-6 text-center"></i>
+                <span class="font-medium text-sm hidden md:block">Escrow Contracts</span>
+            </a>
+            
+            <div class="w-full h-px bg-fin-border my-4 hidden md:block"></div>
+            <div class="hidden md:block px-4 pb-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">Issuing</div>
+
+            <a href="#" onclick="switchView('cards', this, 'Corporate Cards')" class="nav-link flex items-center justify-center md:justify-start gap-4 px-3 md:px-4 py-3 text-fin-text border border-transparent hover:bg-white/5 hover:text-white rounded-xl cursor-pointer transition-colors">
+                <i class="fas fa-credit-card text-lg w-6 text-center"></i>
+                <span class="font-medium text-sm hidden md:block">Corporate Cards</span>
+            </a>
+
+            <div class="hidden md:block px-4 pt-4 pb-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">Developer</div>
+
+            <a href="#" onclick="switchView('api', this, 'API & Webhooks')" class="nav-link flex items-center justify-center md:justify-start gap-4 px-3 md:px-4 py-3 text-fin-text border border-transparent hover:bg-white/5 hover:text-white rounded-xl cursor-pointer transition-colors">
+                <i class="fas fa-code text-lg w-6 text-center"></i>
+                <span class="font-medium text-sm hidden md:block">API Keys</span>
+            </a>
+        </nav>
+        
+        <div class="p-6 border-t border-fin-border flex items-center justify-center md:justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-fin-success animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
+                <span class="text-xs font-mono text-gray-400 hidden md:block">API Operational</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN DASHBOARD AREA -->
+    <main class="flex-1 flex flex-col h-full relative z-10 bg-fin-bg overflow-hidden">
+        
+        <!-- Global Header -->
+        <header class="h-20 border-b border-fin-border flex items-center justify-between px-8 bg-fin-bg/90 backdrop-blur-md shrink-0 z-30 gs-reveal-down">
+            <div class="flex items-center gap-4">
+                <h2 id="topbar-title" class="text-white font-bold text-xl tracking-tight font-display">Financial Overview</h2>
+                <span class="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-widest hidden md:block">Sandbox Mode</span>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <!-- Working Global Search -->
+                <div class="relative hidden md:block group">
+                    <input type="text" id="global-search" onkeyup="handleGlobalSearch(this.value)" placeholder="Search tx_id, amount, or desc..." class="bg-fin-surface border border-fin-border text-sm text-white px-4 py-2 rounded-lg w-72 focus:outline-none focus:border-fin-accent transition-colors font-mono placeholder-gray-600">
+                    <i class="fas fa-search absolute right-3 top-2.5 text-gray-500 text-xs group-focus-within:text-fin-accent transition-colors"></i>
+                </div>
+                <div class="flex items-center gap-3 pl-6 border-l border-fin-border cursor-pointer hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-xs font-bold text-white border border-gray-600">SM</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Container for Views -->
+        <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar relative">
+            
+            <!-- VIEW: OVERVIEW -->
+            <div id="view-overview" class="view-section block max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 pb-10">
+                <!-- LEFT COLUMN -->
+                <div class="lg:col-span-7 flex flex-col gap-8 gs-reveal-up">
+                    <!-- Balance Widget -->
+                    <div class="bg-fin-surface border border-fin-border rounded-2xl p-8 shadow-lg relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-gradient-to-br from-fin-accent/5 to-transparent pointer-events-none opacity-50"></div>
+                        <div class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                            <div>
+                                <p class="text-gray-400 text-sm font-medium mb-1">Available Balance (USD)</p>
+                                <h2 class="text-4xl md:text-6xl font-mono font-bold text-white tracking-tighter" id="total-balance">$142,504.20</h2>
+                                <p class="text-fin-success text-sm mt-2 flex items-center gap-1 font-mono"><i class="fas fa-arrow-up"></i> +$12,450.00 (2.4%) this week</p>
+                            </div>
+                            <div class="flex gap-3">
+                                <button onclick="showToast('Add funds modal opened.', 'info')" class="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-lg font-bold text-sm transition-colors backdrop-blur-md">Add Funds</button>
+                                <button onclick="showToast('Initiating withdrawal pipeline...', 'success')" class="px-5 py-2.5 bg-white text-black hover:bg-gray-200 rounded-lg font-bold text-sm transition-colors shadow-[0_0_15px_rgba(255,255,255,0.2)]">Payout</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Virtual Card & Escrow Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Ultra-Realistic Virtual Card -->
+                        <div class="flex flex-col gap-4">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-white font-bold text-sm flex items-center gap-2"><i class="fas fa-credit-card text-gray-500"></i> Corporate Card</h3>
+                                <span class="text-xs text-fin-success font-bold px-2 py-0.5 bg-fin-success/10 rounded flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full bg-fin-success animate-pulse"></div> Active</span>
+                            </div>
+                            
+                            <div class="credit-card w-full aspect-[1.58/1] rounded-2xl p-6 flex flex-col justify-between" id="overview-card">
+                                <div class="flex justify-between items-start relative z-10">
+                                    <div class="card-chip"></div>
+                                    <i class="fas fa-wifi text-white/50 transform rotate-90 text-2xl"></i>
+                                </div>
+                                <div class="relative z-10 mt-auto">
+                                    <div class="text-white font-mono text-xl tracking-[0.15em] mb-3 blur-text drop-shadow-md" style="text-shadow: 0px 1px 2px rgba(0,0,0,0.8);">
+                                        4242 &nbsp;4242 &nbsp;4242 &nbsp;4242
+                                    </div>
+                                    <div class="flex justify-between items-end">
+                                        <div class="flex flex-col">
+                                            <div class="text-[7px] text-white/50 uppercase tracking-widest mb-0.5">Cardholder</div>
+                                            <div class="text-white font-mono text-sm tracking-widest blur-text uppercase" style="text-shadow: 0px 1px 2px rgba(0,0,0,0.8);">SANIYAT MAHMUD</div>
+                                        </div>
+                                        <div class="flex gap-4 items-end text-right">
+                                            <div class="flex flex-col items-center">
+                                                <div class="text-[7px] text-white/50 uppercase tracking-widest mb-0.5">Valid Thru</div>
+                                                <div class="text-white font-mono text-sm blur-text tracking-widest">12/28</div>
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <div class="text-[7px] text-white/50 uppercase tracking-widest mb-0.5">CVC</div>
+                                                <div class="text-white font-mono text-sm blur-text tracking-widest">123</div>
+                                            </div>
+                                            <i class="fab fa-cc-visa text-4xl text-white ml-2 opacity-90 drop-shadow-md"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-2">
+                                <button onclick="toggleCardDetails()" class="flex-1 py-2 bg-fin-surface border border-fin-border hover:bg-white/5 text-gray-300 rounded-lg text-xs font-bold transition-colors shadow-sm card-reveal-btn">
+                                    <i class="fas fa-eye mr-1"></i> Reveal
+                                </button>
+                                <button onclick="freezeCard(this, 'overview-card')" class="flex-1 py-2 bg-fin-surface border border-fin-border hover:bg-fin-danger/10 hover:text-fin-danger hover:border-fin-danger/30 text-gray-300 rounded-lg text-xs font-bold transition-colors shadow-sm">
+                                    <i class="fas fa-snowflake mr-1"></i> Freeze
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Active Escrows Mini -->
+                        <div class="flex flex-col gap-4">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-white font-bold text-sm flex items-center gap-2"><i class="fas fa-handshake text-gray-500"></i> Active Escrows</h3>
+                                <button onclick="openEscrowModal()" class="text-fin-accent hover:text-fin-accentHover text-xs font-bold transition-colors"><i class="fas fa-plus"></i> New</button>
+                            </div>
+                            
+                            <div class="flex-1 bg-fin-surface border border-fin-border rounded-2xl p-4 flex flex-col gap-3 overflow-y-auto custom-scrollbar" id="overview-escrow-list">
+                                <div class="bg-[#050505] border border-fin-border rounded-xl p-4 relative overflow-hidden escrow-item">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div><h4 class="text-white font-bold text-sm truncate">Web Dev Milestone 1</h4><p class="text-xs text-gray-500 font-mono mt-0.5">dev@agency.com</p></div>
+                                        <div class="text-white font-mono font-bold text-sm">$5,000.00</div>
+                                    </div>
+                                    <div class="flex items-center gap-2 mt-3">
+                                        <div class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></div>
+                                        <span class="text-[10px] font-bold text-yellow-500 uppercase tracking-widest">Awaiting Approval</span>
+                                    </div>
+                                    <div class="mt-3 flex gap-2">
+                                        <button onclick="releaseEscrow(this, 5000)" class="flex-1 py-1.5 bg-fin-success/10 hover:bg-fin-success/20 border border-fin-success/30 text-fin-success rounded text-[10px] font-bold uppercase tracking-widest transition-colors">Release</button>
+                                        <button onclick="showToast('Dispute opened and logged to admin.', 'error')" class="px-3 py-1.5 bg-fin-danger/10 hover:bg-fin-danger/20 border border-fin-danger/30 text-fin-danger rounded text-[10px] font-bold uppercase tracking-widest transition-colors">Dispute</button>
+                                    </div>
+                                </div>
+                                <div class="bg-[#050505] border border-fin-border rounded-xl p-4 relative overflow-hidden escrow-item">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div><h4 class="text-white font-bold text-sm truncate">3D Asset Rendering</h4><p class="text-xs text-gray-500 font-mono mt-0.5">artist@studio.net</p></div>
+                                        <div class="text-white font-mono font-bold text-sm">$1,200.00</div>
+                                    </div>
+                                    <div class="flex items-center gap-2 mt-3 mb-1">
+                                        <div class="w-2 h-2 rounded-full bg-blue-500"></div><span class="text-[10px] font-bold text-blue-500 uppercase tracking-widest">In Progress</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN (Mini Ledger) -->
+                <div class="lg:col-span-5 flex flex-col h-[600px] lg:h-auto gs-reveal-up" style="animation-delay: 0.2s;">
+                    <div class="bg-fin-surface border border-fin-border rounded-2xl flex flex-col h-full shadow-xl overflow-hidden">
+                        <div class="p-5 border-b border-fin-border bg-[#0a0a0c] flex justify-between items-center z-10">
+                            <h3 class="text-white font-bold text-sm flex items-center gap-2"><i class="fas fa-list text-gray-500"></i> General Ledger</h3>
+                            <div class="flex items-center gap-2 bg-fin-bg border border-fin-border px-2 py-1 rounded text-[10px] text-gray-400 font-mono">
+                                <div class="w-1.5 h-1.5 rounded-full bg-fin-success animate-pulse"></div> Live Feed
+                            </div>
+                        </div>
+                        <div class="flex-1 overflow-hidden relative bg-[#050505]">
+                            <div class="grid grid-cols-12 gap-2 px-5 py-2 border-b border-fin-border bg-[#0a0a0c] text-[10px] font-bold text-gray-500 uppercase tracking-widest sticky top-0 z-10">
+                                <div class="col-span-3">Time</div><div class="col-span-6">Description</div><div class="col-span-3 text-right">Amount</div>
+                            </div>
+                            <!-- Mini Ledger Body -->
+                            <div id="mini-ledger-body" class="p-2 space-y-1 overflow-y-auto h-full custom-scrollbar pb-20"></div>
+                            <div class="absolute bottom-0 w-full h-12 bg-gradient-to-t from-[#050505] to-transparent pointer-events-none"></div>
+                        </div>
+                        <div class="p-3 border-t border-fin-border bg-[#0a0a0c] text-center">
+                            <button onclick="document.querySelector('nav a:nth-child(3)').click()" class="text-xs text-fin-accent hover:text-fin-accentHover font-bold tracking-widest uppercase transition-colors">View All Transactions <i class="fas fa-arrow-right ml-1"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- End Overview -->
+
+            <!-- VIEW: FULL TRANSACTIONS -->
+            <div id="view-transactions" class="view-section hidden max-w-7xl mx-auto w-full pb-10">
+                <div class="bg-fin-surface border border-fin-border rounded-2xl shadow-xl overflow-hidden flex flex-col h-[75vh]">
+                    <div class="p-5 border-b border-fin-border bg-[#0a0a0c] flex justify-between items-center z-10">
+                        <div>
+                            <h3 class="text-white font-bold text-lg flex items-center gap-2"><i class="fas fa-database text-fin-accent"></i> Master Transaction Log</h3>
+                            <p class="text-xs text-gray-500 mt-1">Real-time immutable ledger of all inbound and outbound funds.</p>
+                        </div>
+                        <button class="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded font-bold text-xs transition-colors"><i class="fas fa-download mr-1"></i> Export CSV</button>
+                    </div>
+                    <div class="flex-1 overflow-hidden relative bg-[#050505] flex flex-col">
+                        <div class="grid grid-cols-12 gap-4 px-6 py-3 border-b border-fin-border bg-[#0a0a0c] text-[11px] font-bold text-gray-500 uppercase tracking-widest shrink-0">
+                            <div class="col-span-2">Timestamp</div>
+                            <div class="col-span-2">TX_ID</div>
+                            <div class="col-span-5">Description</div>
+                            <div class="col-span-3 text-right">Amount</div>
+                        </div>
+                        <!-- Full Ledger Body -->
+                        <div id="full-ledger-body" class="p-3 space-y-1 overflow-y-auto flex-1 custom-scrollbar pb-10"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: ESCROW CONTRACTS -->
+            <div id="view-escrow" class="view-section hidden max-w-5xl mx-auto w-full pb-10">
+                <div class="flex justify-between items-end mb-8 border-b border-fin-border pb-6">
+                    <div>
+                        <h2 class="text-3xl font-display font-bold text-white tracking-tight">Escrow Management</h2>
+                        <p class="text-sm text-gray-400 mt-2 max-w-xl">Escrow securely holds funds in an isolated digital vault until both parties confirm the milestone is completed. Protects against fraud and non-payment.</p>
+                    </div>
+                    <button onclick="openEscrowModal()" class="px-6 py-3 bg-fin-accent hover:bg-fin-accentHover text-black rounded-lg font-bold text-sm transition-all shadow-[0_0_20px_rgba(245,158,11,0.2)] active:scale-95 flex items-center gap-2 shrink-0">
+                        <i class="fas fa-plus"></i> Create Contract
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-fin-surface border border-fin-border p-5 rounded-xl"><p class="text-xs text-gray-500 font-bold uppercase tracking-widest mb-1">Total Locked</p><h3 class="text-2xl font-mono font-bold text-white" id="escrow-total-locked">$6,200.00</h3></div>
+                    <div class="bg-fin-surface border border-fin-border p-5 rounded-xl"><p class="text-xs text-gray-500 font-bold uppercase tracking-widest mb-1">Active Contracts</p><h3 class="text-2xl font-mono font-bold text-white" id="escrow-active-count">2</h3></div>
+                    <div class="bg-fin-surface border border-fin-border p-5 rounded-xl"><p class="text-xs text-gray-500 font-bold uppercase tracking-widest mb-1">Disputes</p><h3 class="text-2xl font-mono font-bold text-fin-success">0</h3></div>
+                </div>
+
+                <h3 class="text-white font-bold text-sm mb-4 uppercase tracking-widest">Active Agreements</h3>
+                <div class="space-y-4" id="full-escrow-list">
+                    <!-- Cloned from mini list for consistency -->
+                </div>
+            </div>
+
+            <!-- VIEW: CORPORATE CARDS -->
+            <div id="view-cards" class="view-section hidden max-w-6xl mx-auto w-full pb-10">
+                <div class="flex justify-between items-end mb-8 border-b border-fin-border pb-6">
+                    <div>
+                        <h2 class="text-3xl font-display font-bold text-white tracking-tight">Corporate Issuing</h2>
+                        <p class="text-sm text-gray-400 mt-2">Instantly issue secure virtual cards for software subscriptions, marketing, and team expenses.</p>
+                    </div>
+                    <button onclick="showToast('New card issued instantly.', 'success')" class="px-6 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-lg font-bold text-sm transition-all active:scale-95 flex items-center gap-2">
+                        <i class="fas fa-credit-card"></i> Issue New Card
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Primary Card -->
+                    <div class="bg-fin-surface border border-fin-border rounded-2xl p-6 shadow-lg flex flex-col gap-6">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-white font-bold">Main Developer Card</h3>
+                            <span class="bg-fin-success/10 text-fin-success text-[10px] font-bold px-2 py-1 rounded uppercase">Active</span>
+                        </div>
+                        <div class="credit-card w-full max-w-sm mx-auto aspect-[1.58/1] rounded-2xl p-6 flex flex-col justify-between" id="full-card-1">
+                            <div class="flex justify-between items-start relative z-10"><div class="card-chip"></div><i class="fas fa-wifi text-white/50 transform rotate-90 text-2xl"></i></div>
+                            <div class="relative z-10 mt-auto">
+                                <div class="text-white font-mono text-xl tracking-[0.15em] mb-3 blur-text drop-shadow-md">4242 &nbsp;4242 &nbsp;4242 &nbsp;4242</div>
+                                <div class="flex justify-between items-end">
+                                    <div class="flex flex-col">
+                                        <div class="text-[7px] text-white/50 uppercase tracking-widest mb-0.5">Cardholder</div><div class="text-white font-mono text-sm blur-text">SANIYAT MAHMUD</div>
+                                    </div>
+                                    <div class="flex gap-4 items-end text-right">
+                                        <div class="flex flex-col items-center"><div class="text-[7px] text-white/50 uppercase tracking-widest mb-0.5">Valid Thru</div><div class="text-white font-mono text-sm blur-text">12/28</div></div>
+                                        <div class="flex flex-col items-center"><div class="text-[7px] text-white/50 uppercase tracking-widest mb-0.5">CVC</div><div class="text-white font-mono text-sm blur-text">123</div></div>
+                                        <i class="fab fa-cc-visa text-4xl text-white ml-2 opacity-90 drop-shadow-md"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button onclick="toggleCardDetails()" class="py-2.5 bg-[#050505] border border-fin-border hover:bg-white/5 text-white rounded font-bold text-xs transition-colors card-reveal-btn"><i class="fas fa-eye mr-1"></i> Reveal Details</button>
+                            <button onclick="freezeCard(this, 'full-card-1')" class="py-2.5 bg-[#050505] border border-fin-border hover:bg-fin-danger/10 text-fin-danger rounded font-bold text-xs transition-colors"><i class="fas fa-snowflake mr-1"></i> Freeze Card</button>
+                        </div>
+                    </div>
+
+                    <!-- Marketing Card -->
+                    <div class="bg-fin-surface border border-fin-border rounded-2xl p-6 shadow-lg flex flex-col gap-6 opacity-75">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-white font-bold">Marketing & Ads</h3>
+                            <span class="bg-gray-500/10 text-gray-400 border border-gray-500/20 text-[10px] font-bold px-2 py-1 rounded uppercase">Frozen</span>
+                        </div>
+                        <div class="credit-card w-full max-w-sm mx-auto aspect-[1.58/1] rounded-2xl p-6 flex flex-col justify-between" id="full-card-2" style="filter: grayscale(100%) opacity(0.7);">
+                            <div class="flex justify-between items-start relative z-10"><div class="card-chip"></div><i class="fas fa-wifi text-white/50 transform rotate-90 text-2xl"></i></div>
+                            <div class="relative z-10 mt-auto">
+                                <div class="text-white font-mono text-xl tracking-[0.15em] mb-3 blur-text drop-shadow-md">5531 &nbsp;8810 &nbsp;9021 &nbsp;3312</div>
+                                <div class="flex justify-between items-end">
+                                    <div class="flex flex-col">
+                                        <div class="text-[7px] text-white/50 uppercase tracking-widest mb-0.5">Cardholder</div><div class="text-white font-mono text-sm blur-text">SHINYY ADS</div>
+                                    </div>
+                                    <div class="flex gap-4 items-end text-right">
+                                        <div class="flex flex-col items-center"><div class="text-[7px] text-white/50 uppercase tracking-widest mb-0.5">Valid Thru</div><div class="text-white font-mono text-sm blur-text">08/25</div></div>
+                                        <div class="flex flex-col items-center"><div class="text-[7px] text-white/50 uppercase tracking-widest mb-0.5">CVC</div><div class="text-white font-mono text-sm blur-text">991</div></div>
+                                        <i class="fab fa-cc-mastercard text-4xl text-white ml-2 opacity-90 drop-shadow-md"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button onclick="toggleCardDetails()" class="py-2.5 bg-[#050505] border border-fin-border hover:bg-white/5 text-white rounded font-bold text-xs transition-colors card-reveal-btn"><i class="fas fa-eye mr-1"></i> Reveal Details</button>
+                            <button onclick="freezeCard(this, 'full-card-2', true)" class="py-2.5 bg-fin-danger/10 border border-fin-danger/30 text-fin-danger rounded font-bold text-xs transition-colors"><i class="fas fa-snowflake mr-1"></i> Unfreeze Card</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: API KEYS -->
+            <div id="view-api" class="view-section hidden max-w-5xl mx-auto w-full pb-10">
+                <div class="flex justify-between items-end mb-8 border-b border-fin-border pb-6">
+                    <div>
+                        <h2 class="text-3xl font-display font-bold text-white tracking-tight">API & Webhooks</h2>
+                        <p class="text-sm text-gray-400 mt-2 max-w-xl">Manage programmatic access to the ledger. Ensure keys are stored securely.</p>
+                    </div>
+                    <button onclick="showToast('New Production Key Generated.', 'success')" class="px-6 py-3 bg-white text-black rounded-lg font-bold text-sm transition-all active:scale-95 flex items-center gap-2 shrink-0 shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                        <i class="fas fa-key"></i> Generate Key
+                    </button>
+                </div>
+
+                <div class="bg-fin-surface border border-fin-border rounded-2xl shadow-xl overflow-hidden">
+                    <div class="grid grid-cols-12 gap-4 px-6 py-4 border-b border-fin-border bg-[#0a0a0c] text-xs font-bold text-gray-500 uppercase tracking-widest">
+                        <div class="col-span-3">Name / Env</div>
+                        <div class="col-span-6">Secret Key</div>
+                        <div class="col-span-3 text-right">Actions</div>
+                    </div>
+                    <div class="p-4 space-y-3">
+                        <div class="flex items-center justify-between p-4 bg-[#050505] border border-fin-border rounded-xl">
+                            <div class="w-1/4">
+                                <div class="text-white font-bold text-sm">Production App</div>
+                                <div class="text-[10px] text-fin-success border border-fin-success/30 bg-fin-success/10 px-2 py-0.5 rounded inline-block mt-1 uppercase tracking-widest">Live</div>
+                            </div>
+                            <div class="w-1/2 font-mono text-sm text-gray-400 flex items-center gap-3">
+                                <span>sk_live_************************</span>
+                            </div>
+                            <div class="w-1/4 flex justify-end gap-2">
+                                <button onclick="showToast('Copied to clipboard', 'info')" class="w-8 h-8 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded text-gray-400 hover:text-white transition-colors"><i class="far fa-copy"></i></button>
+                                <button onclick="showToast('Key rolled. Previous key expires in 24h.', 'warn')" class="px-3 py-1.5 bg-fin-danger/10 hover:bg-fin-danger/20 border border-fin-danger/30 text-fin-danger rounded text-xs font-bold transition-colors">Roll Key</button>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 bg-[#050505] border border-fin-border rounded-xl">
+                            <div class="w-1/4">
+                                <div class="text-white font-bold text-sm">Local Testing</div>
+                                <div class="text-[10px] text-yellow-500 border border-yellow-500/30 bg-yellow-500/10 px-2 py-0.5 rounded inline-block mt-1 uppercase tracking-widest">Test</div>
+                            </div>
+                            <div class="w-1/2 font-mono text-sm text-gray-400 flex items-center gap-3">
+                                <span>sk_test_************************</span>
+                            </div>
+                            <div class="w-1/4 flex justify-end gap-2">
+                                <button onclick="showToast('Copied to clipboard', 'info')" class="w-8 h-8 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded text-gray-400 hover:text-white transition-colors"><i class="far fa-copy"></i></button>
+                                <button onclick="showToast('Test key rolled.', 'success')" class="px-3 py-1.5 bg-fin-danger/10 hover:bg-fin-danger/20 border border-fin-danger/30 text-fin-danger rounded text-xs font-bold transition-colors">Roll Key</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Animations
+        gsap.from(".gs-reveal-left", { x: -50, opacity: 0, duration: 0.8, ease: "power3.out" });
+        gsap.from(".gs-reveal-down", { y: -20, opacity: 0, duration: 0.6, ease: "power3.out", delay: 0.2 });
+        gsap.from(".gs-reveal-up", { y: 30, opacity: 0, duration: 0.8, stagger: 0.1, ease: "power3.out", delay: 0.3 });
+
+        let currentBalance = 142504.20;
+        let activeView = 'overview';
+
+        // Initialize lists
+        document.addEventListener('DOMContentLoaded', () => {
+            syncEscrowLists();
+            // Pre-populate some ledgers
+            for(let i=0; i<8; i++) generateTransactionRow(true);
+        });
+
+        // View Switching
+        function switchView(viewId, element, titleText) {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('bg-fin-accent/10', 'border-fin-accent/30', 'text-fin-accent');
+                link.classList.add('text-fin-text', 'hover:bg-white/5', 'hover:text-white', 'border-transparent');
+            });
+            element.classList.remove('text-fin-text', 'hover:bg-white/5', 'hover:text-white', 'border-transparent');
+            element.classList.add('bg-fin-accent/10', 'border-fin-accent/30', 'text-fin-accent');
+
+            document.getElementById('topbar-title').innerText = titleText;
+            document.querySelectorAll('.view-section').forEach(v => {
+                v.classList.add('hidden'); v.classList.remove('block');
+            });
+            
+            document.getElementById(`view-${viewId}`).classList.remove('hidden');
+            document.getElementById(`view-${viewId}`).classList.add('block');
+            activeView = viewId;
+        }
+
+        // Global Search Logic
+        function handleGlobalSearch(val) {
+            val = val.toLowerCase();
+            if(activeView !== 'transactions') {
+                // If not in transactions, switch to it first to show results
+                document.querySelector('nav a:nth-child(3)').click();
+            }
+            
+            const rows = document.querySelectorAll('#full-ledger-body .ledger-row');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(val) ? 'grid' : 'none';
+            });
+        }
+
+        // Format Currency
+        function formatMoney(amount) { return '$' + amount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
+        function updateBalanceUI() { document.getElementById('total-balance').innerText = formatMoney(currentBalance); }
+
+        // Toast Notifications
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let icon = 'fa-check-circle', bgClass = 'bg-fin-surface border-l-fin-accent', iconColor = 'text-fin-accent';
+            if(type === 'error') { icon = 'fa-exclamation-circle'; bgClass = 'bg-fin-surface border-l-fin-danger'; iconColor = 'text-fin-danger'; }
+            if(type === 'info') { icon = 'fa-info-circle'; bgClass = 'bg-fin-surface border-l-blue-400'; iconColor = 'text-blue-400'; }
+            if(type === 'success') { icon = 'fa-check-circle'; bgClass = 'bg-fin-surface border-l-fin-success'; iconColor = 'text-fin-success'; }
+
+            toast.className = `${bgClass} border-l-[3px] border border-fin-border px-4 py-3 rounded-lg shadow-2xl flex items-center gap-3 toast-enter text-sm z-[100]`;
+            toast.innerHTML = `<i class="fas ${icon} ${iconColor} text-lg"></i><span class="text-white">${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.replace('toast-enter', 'toast-leave'); setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        // Virtual Card Logic (Applies to all cards synchronously)
+        let detailsRevealed = false;
+        function toggleCardDetails() {
+            detailsRevealed = !detailsRevealed;
+            const blurEls = document.querySelectorAll('.blur-text');
+            const btns = document.querySelectorAll('.card-reveal-btn');
+            
+            if(detailsRevealed) {
+                blurEls.forEach(el => el.classList.add('revealed'));
+                btns.forEach(btn => btn.innerHTML = `<i class="fas fa-eye-slash mr-1"></i> Hide Details`);
+                showToast("Secure card details revealed.", "info");
+            } else {
+                blurEls.forEach(el => el.classList.remove('revealed'));
+                btns.forEach(btn => btn.innerHTML = `<i class="fas fa-eye mr-1"></i> Reveal Details`);
+            }
+        }
+
+        function freezeCard(btn, cardId, isAlreadyFrozen = false) {
+            const card = document.getElementById(cardId);
+            const isFrozen = btn.classList.contains('text-fin-danger') || isAlreadyFrozen;
+            
+            if(!isFrozen) {
+                btn.innerHTML = `<i class="fas fa-snowflake mr-1"></i> Unfreeze Card`;
+                btn.classList.add('text-fin-danger', 'bg-fin-danger/10', 'border-fin-danger/30');
+                btn.classList.remove('text-gray-300', 'bg-[#050505]', 'bg-fin-surface');
+                card.style.filter = 'grayscale(100%) opacity(0.7)';
+                showToast("Card frozen successfully. Transactions blocked.", "error");
+            } else {
+                btn.innerHTML = `<i class="fas fa-snowflake mr-1"></i> Freeze Card`;
+                btn.classList.remove('text-fin-danger', 'bg-fin-danger/10', 'border-fin-danger/30');
+                btn.classList.add('text-white', 'bg-[#050505]');
+                card.style.filter = 'none';
+                showToast("Card unfrozen and active.", "success");
+            }
+        }
+
+        // Escrow Logic
+        function openEscrowModal() {
+            const modal = document.getElementById('escrow-modal');
+            const content = document.getElementById('escrow-content');
+            document.getElementById('escrow-user').value = ''; document.getElementById('escrow-title').value = ''; document.getElementById('escrow-amount').value = '';
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+        }
+        function closeEscrowModal() {
+            const modal = document.getElementById('escrow-modal');
+            const content = document.getElementById('escrow-content');
+            modal.classList.add('opacity-0'); content.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function submitEscrow() {
+            const user = document.getElementById('escrow-user').value || 'unknown@user.com';
+            const title = document.getElementById('escrow-title').value || 'Custom Contract';
+            const amount = parseFloat(document.getElementById('escrow-amount').value) || 0;
+
+            if(amount <= 0) { showToast("Enter a valid amount.", "error"); return; }
+            if(amount > currentBalance) { showToast("Insufficient funds.", "error"); return; }
+
+            currentBalance -= amount; updateBalanceUI();
+            closeEscrowModal(); showToast(`$${amount.toFixed(2)} locked in Escrow.`, "success");
+
+            const contractHtml = `
+                <div class="bg-[#050505] border border-fin-border rounded-xl p-4 relative overflow-hidden group animate-[slideInUp_0.3s_ease-out] escrow-item">
+                    <div class="flex justify-between items-start mb-2">
+                        <div><h4 class="text-white font-bold text-sm truncate">${title}</h4><p class="text-xs text-gray-500 font-mono mt-0.5">${user}</p></div>
+                        <div class="text-white font-mono font-bold text-sm">$${amount.toLocaleString('en-US', {minimumFractionDigits:2})}</div>
+                    </div>
+                    <div class="flex items-center gap-2 mt-3">
+                        <div class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></div><span class="text-[10px] font-bold text-yellow-500 uppercase tracking-widest">Awaiting Approval</span>
+                    </div>
+                    <div class="mt-3 flex gap-2">
+                        <button onclick="releaseEscrow(this, ${amount})" class="flex-1 py-1.5 bg-fin-success/10 hover:bg-fin-success/20 border border-fin-success/30 text-fin-success rounded text-[10px] font-bold uppercase tracking-widest transition-colors">Release</button>
+                        <button onclick="showToast('Dispute opened.', 'error')" class="px-3 py-1.5 bg-fin-danger/10 hover:bg-fin-danger/20 border border-fin-danger/30 text-fin-danger rounded text-[10px] font-bold uppercase tracking-widest transition-colors">Dispute</button>
+                    </div>
+                </div>`;
+            
+            document.getElementById('overview-escrow-list').insertAdjacentHTML('afterbegin', contractHtml);
+            syncEscrowLists();
+            generateTransactionRow(false, `Escrow Deposit (${title})`, -amount);
+        }
+
+        function releaseEscrow(btn, amount) {
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; btn.disabled = true;
+            setTimeout(() => {
+                const card = btn.closest('.escrow-item');
+                if (!card) return;
+                
+                const titleEl = card.querySelector('h4');
+                const title = titleEl ? titleEl.innerText : '';
+                
+                const newHTML = `
+                    <div class="flex justify-between items-start mb-2 opacity-50">
+                        <div><h4 class="text-white font-bold text-sm truncate line-through">Contract Released</h4><p class="text-xs text-gray-500 font-mono mt-0.5">Funds transferred</p></div>
+                        <div class="text-white font-mono font-bold text-sm">$${amount.toLocaleString('en-US', {minimumFractionDigits:2})}</div>
+                    </div>
+                    <div class="flex items-center gap-2 mt-2 opacity-50"><i class="fas fa-check-circle text-fin-success"></i><span class="text-[10px] font-bold text-fin-success uppercase tracking-widest">Completed</span></div>
+                `;
+                
+                document.querySelectorAll('.escrow-item').forEach(c => {
+                    const h4 = c.querySelector('h4');
+                    if (h4 && h4.innerText === title) {
+                        c.innerHTML = newHTML;
+                    }
+                });
+
+                showToast(`Funds successfully released.`, "success");
+                generateTransactionRow(false, "Escrow Release Execution", -amount);
+            }, 1000);
+        }
+
+        function syncEscrowLists() {
+            // Keep the full escrow list identical to the overview mini list
+            const miniList = document.getElementById('overview-escrow-list').innerHTML;
+            document.getElementById('full-escrow-list').innerHTML = miniList;
+        }
+
+        // Live Ledger Generators
+        const mockTxs = [
+            { d: "Stripe Payout (tx_auto)", p: true, min: 100, max: 5000 },
+            { d: "API Gateway Overage", p: false, min: 10, max: 150 },
+            { d: "Customer Payment (INV)", p: true, min: 50, max: 800 },
+            { d: "Vercel Enterprise Hosting", p: false, min: 40, max: 40 },
+            { d: "AWS S3 Storage", p: false, min: 100, max: 300 },
+            { d: "Refund Processed", p: false, min: 20, max: 100 }
+        ];
+
+        function getTimestamp() {
+            const d = new Date();
+            return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}:${d.getSeconds().toString().padStart(2,'0')}`;
+        }
+        function generateTxId() { return 'tx_' + Math.random().toString(36).substr(2, 9); }
+
+        function generateTransactionRow(isInit = false, cDesc = null, cAmt = null) {
+            let desc = cDesc, amt = cAmt, isPos = cAmt > 0;
+            if(!cDesc) {
+                const t = mockTxs[Math.floor(Math.random() * mockTxs.length)];
+                desc = t.d; isPos = t.p;
+                let rAmt = Math.random() * (t.max - t.min) + t.min;
+                amt = isPos ? rAmt : -rAmt;
+            }
+
+            if(!isInit) { currentBalance += amt; updateBalanceUI(); }
+
+            const amtStr = isPos ? `+$${amt.toLocaleString('en-US',{minimumFractionDigits:2})}` : `-$${Math.abs(amt).toLocaleString('en-US',{minimumFractionDigits:2})}`;
+            const amtColor = isPos ? 'text-fin-success font-bold' : (cDesc ? 'text-fin-danger' : 'text-white');
+            const time = getTimestamp();
+            const txId = generateTxId();
+
+            // 1. Build Mini Row (Overview)
+            const miniRow = document.createElement('div');
+            miniRow.className = "grid grid-cols-12 gap-2 px-3 py-2.5 hover:bg-white/5 rounded-lg transition-colors items-center ledger-row";
+            miniRow.innerHTML = `<div class="col-span-3 text-xs text-gray-500 font-mono">${time}</div><div class="col-span-6 text-xs text-gray-300 font-medium truncate">${desc}</div><div class="col-span-3 text-xs ${amtColor} font-mono text-right">${amtStr}</div>`;
+
+            // 2. Build Full Row (Transactions View)
+            const fullRow = document.createElement('div');
+            fullRow.className = "grid grid-cols-12 gap-4 px-6 py-3 hover:bg-white/5 rounded-lg transition-colors items-center ledger-row border-b border-white/5";
+            fullRow.innerHTML = `<div class="col-span-2 text-xs text-gray-500 font-mono">${time}</div><div class="col-span-2 text-[10px] text-gray-600 font-mono tracking-widest uppercase">${txId}</div><div class="col-span-5 text-sm text-gray-300 font-medium truncate">${desc}</div><div class="col-span-3 text-sm ${amtColor} font-mono font-bold text-right">${amtStr}</div>`;
+
+            const miniLedger = document.getElementById('mini-ledger-body');
+            const fullLedger = document.getElementById('full-ledger-body');
+
+            miniLedger.insertBefore(miniRow, miniLedger.firstChild);
+            fullLedger.insertBefore(fullRow, fullLedger.firstChild);
+
+            if(miniLedger.children.length > 15) miniLedger.removeChild(miniLedger.lastChild);
+            if(fullLedger.children.length > 50) fullLedger.removeChild(fullLedger.lastChild);
+            
+            // Re-apply search filter if active
+            const searchVal = document.getElementById('global-search').value;
+            if(searchVal) handleGlobalSearch(searchVal);
+        }
+
+        // Continuously generate traffic
+        setInterval(() => { if(Math.random() > 0.4) generateTransactionRow(); }, Math.random() * 3000 + 3000);
+
+    </script>
+</body>
+</html>
