@@ -71,6 +71,14 @@
             scroll-behavior: smooth;
         }
 
+        /* Override cursor when in iframe preview */
+        body.show-default-cursor, body.show-default-cursor * {
+            cursor: auto !important;
+        }
+        body.show-default-cursor #cursor-dot, body.show-default-cursor #cursor-ring {
+            display: none !important;
+        }
+
         /* Cinematic Vignette */
         .vignette {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -176,7 +184,7 @@
             transition: width 0.3s, height 0.3s, background-color 0.3s, border-color 0.3s;
             box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
         }
-        body:hover #cursor-ring, body:hover #cursor-dot { opacity: 1; }
+        body:not(.show-default-cursor):hover #cursor-ring, body:not(.show-default-cursor):hover #cursor-dot { opacity: 1; }
         a:hover ~ #cursor-ring, button:hover ~ #cursor-ring, .cursor-pointer:hover ~ #cursor-ring {
             width: 50px; height: 50px; background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.8);
         }
@@ -221,17 +229,25 @@
         .eq-bar:nth-child(3) { animation-delay: 0.4s; }
         .eq-bar:nth-child(4) { animation-delay: 0.1s; }
 
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-        .animate-marquee { display: inline-block; white-space: nowrap; animation: marquee 5s linear infinite; will-change: transform; }
-
         /* Hardware Acceleration & Clipping Fix */
         .strict-clip {
             -webkit-mask-image: -webkit-radial-gradient(white, black);
             mask-image: radial-gradient(white, black);
             isolation: isolate;
+        }
+
+        /* Infinite Scroll Reviews */
+        @keyframes infinite-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .review-scroll-container {
+            display: flex;
+            width: max-content;
+            animation: infinite-scroll 40s linear infinite;
+        }
+        .review-scroll-container:hover {
+            animation-play-state: paused;
         }
 
     </style>
@@ -253,14 +269,14 @@
 
     <main id="main-container" class="w-full max-w-[1400px] mx-auto py-10 px-4 md:px-8 relative z-10 scale-105 opacity-0 flex flex-col gap-24"> 
 
-        <div class="identity-card w-full max-w-5xl mx-auto p-10 lg:p-14 group hover-3d mt-10">
+        <div class="identity-card w-full max-w-5xl mx-auto py-10 px-8 lg:py-10 lg:px-14 group hover-3d mt-10">
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_var(--mouse-x,50%)_var(--mouse-y,50%),rgba(255,255,255,0.06)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-800 pointer-events-none z-0"></div>
             
-            <div class="flex flex-col md:flex-row items-center gap-12 md:gap-20 relative z-10 transform-style-3d">
+            <div class="flex flex-col md:flex-row items-center gap-10 md:gap-16 relative z-10 transform-style-3d">
                 
-               <div class="relative shrink-0 translate-z-40 order-2 md:order-2 px-8">
+               <div class="relative shrink-0 translate-z-40 order-2 md:order-2 px-4 md:px-8">
                     <div class="absolute inset-0 bg-blue-500/10 filter blur-3xl animate-pulse"></div>
-                    <div class="w-56 h-72 md:w-64 md:h-80 rounded-[2.5rem] border border-white/20 overflow-hidden relative shadow-2xl backdrop-blur-xl group-hover:scale-105 transition-transform duration-700">
+                    <div class="w-56 h-64 md:w-[17rem] md:h-[19rem] rounded-[2.5rem] border border-white/20 overflow-hidden relative shadow-2xl backdrop-blur-xl group-hover:scale-105 transition-transform duration-700">
                         <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
                         <img src="SANIYAT.png" alt="Saniyat Mahmud" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-1000 grayscale group-hover:grayscale-0">
                         <div class="absolute top-0 left-0 w-full h-full border-t border-l border-white/30 rounded-[2.5rem] z-20 pointer-events-none"></div>
@@ -268,7 +284,7 @@
                 </div>
                 
                 <div class="flex-1 transform-style-3d order-1 md:order-1">
-                    <div class="flex flex-wrap items-center gap-3 mb-12 translate-z-10">
+                    <div class="flex flex-wrap items-center gap-3 mb-6 translate-z-10">
                         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold tracking-widest uppercase shadow-sm backdrop-blur-md">
                             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
                             Available for Work
@@ -278,17 +294,14 @@
                         </div>
                     </div>
                     
-                    <div class="relative inline-block group/name cursor-pointer translate-z-30 mt-10" onclick="openAboutModal()">
-                        <span class="absolute -top-12 left-0 text-xs text-accent2 opacity-0 group-hover/name:opacity-100 transition-all duration-500 font-sans tracking-widest uppercase flex items-center gap-2 translate-y-2 group-hover/name:translate-y-0">
-                            <i class="fas fa-video text-sm"></i> View Documentary
-                        </span>
-                        <h1 class="font-display text-5xl md:text-6xl lg:text-[5.5rem] font-black tracking-tighter mb-4 text-white animate-float-name group-hover/name:text-accent2 transition-colors duration-500 drop-shadow-2xl flex flex-col leading-[0.95]">
+                    <div class="relative inline-block translate-z-30 mt-2">
+                        <h1 class="font-display text-5xl md:text-6xl lg:text-[5.5rem] font-black tracking-tighter mb-3 text-white animate-float-name transition-colors duration-500 drop-shadow-2xl flex flex-col leading-[0.95]">
                             <span id="name-first" class="block">SANIYAT</span>
                             <span id="name-last" class="block">MAHMUD</span>
                         </h1>
                     </div>
 
-                    <h2 class="font-sans text-xl lg:text-2xl text-gray-400 mb-8 flex items-center gap-3 drop-shadow-md translate-z-20">
+                    <h2 class="font-sans text-xl lg:text-2xl text-gray-400 mb-5 flex items-center gap-3 drop-shadow-md translate-z-20">
                         Operating as 
                         <span class="shimmer-badge px-4 py-1.5 rounded-lg bg-white/10 text-white font-display font-bold tracking-widest text-sm uppercase border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] backdrop-blur-md">
                             Shinyy
@@ -298,7 +311,7 @@
                         19-year-old Full Stack Architect & Video Editor. I specialize in crafting high-performance web ecosystems, engineering immensely complex Discord systems, and cinematic video editing. 
                     </p>
                     
-                    <div class="mt-12 flex flex-wrap gap-4 relative z-10 translate-z-20">
+                    <div class="mt-8 flex flex-wrap gap-4 relative z-10 translate-z-20">
                         <div class="magnetic-wrap" data-strength="40">
                             <button id="lets-talk-btn" onclick="openContactModal()" class="px-10 h-16 bg-white text-black font-display font-black tracking-wide uppercase rounded-xl hover:bg-gray-300 transition-colors flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(255,255,255,0.2)] w-full cursor-pointer relative z-10">
                                 Let's Talk <i class="fas fa-arrow-right"></i>
@@ -657,6 +670,60 @@
                             </div>
                         </div>
 
+                        <!-- 9. Creator Platforms (Span 1) -->
+                        <div onclick="openPreviewModal('creator.html', 'Creator Platforms')" class="w-full h-[350px] md:h-[400px] md:col-span-1 lg:col-span-1 relative group cursor-pointer hover-3d transform-style-3d border border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden strict-clip">
+                            <div class="absolute inset-0 bg-zinc-950"></div>
+                            <div class="absolute inset-0 bg-gradient-to-r from-[#020202] via-[#020202]/80 to-transparent z-10"></div>
+                            <div class="absolute inset-0 bg-gradient-to-b from-fuchsia-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-10 pointer-events-none"></div>
+
+                            <div class="absolute right-0 top-0 w-full h-full flex items-center justify-end pr-8 pointer-events-none transform-style-3d z-0 translate-x-8 opacity-60 group-hover:opacity-100 transition-all duration-700">
+                                <div class="w-12 h-32 border border-fuchsia-500/40 bg-fuchsia-500/20 rounded-xl backdrop-blur-sm transform group-hover:-translate-y-6 group-hover:translate-z-20 transition-all duration-700 shadow-[0_0_30px_rgba(217,70,239,0.3)] flex flex-col justify-end p-2 pb-4">
+                                    <i class="fas fa-lock text-fuchsia-300 text-lg drop-shadow-md text-center"></i>
+                                </div>
+                                <div class="w-20 h-40 border border-white/20 bg-white/10 rounded-2xl backdrop-blur-lg transform group-hover:-translate-y-12 group-hover:translate-z-40 transition-all duration-700 delay-75 shadow-2xl ml-4 relative flex items-center justify-center">
+                                    <i class="fas fa-star text-white/80 text-4xl drop-shadow-lg"></i>
+                                </div>
+                            </div>
+
+                            <div class="absolute left-8 bottom-8 z-30 translate-z-40 pointer-events-none pr-8">
+                                 <h3 class="font-display text-3xl md:text-4xl font-black text-white tracking-tighter mb-2 group-hover:translate-x-4 transition-transform duration-700 ease-out drop-shadow-2xl">Creator<br>Platforms.</h3>
+                                 <p class="text-fuchsia-400 text-sm font-light group-hover:translate-x-4 transition-transform duration-700 delay-75 ease-out drop-shadow-md">Subscription tiers & secure media paywalls.</p>
+                                 <div class="mt-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-4 transition-all duration-700 delay-150 pointer-events-auto">
+                                    <span class="px-4 py-2 bg-white text-black text-[10px] font-bold uppercase tracking-widest rounded-full flex items-center gap-2 w-max shadow-lg">
+                                        <i class="fas fa-lock text-fuchsia-500"></i> Prototype
+                                    </span>
+                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- 10. FinTech & Escrow (Span 2) -->
+                        <div onclick="openPreviewModal('fintech.html', 'FinTech Dashboards')" class="w-full h-[350px] md:h-[400px] md:col-span-2 lg:col-span-2 relative group cursor-pointer hover-3d transform-style-3d border border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden strict-clip">
+                            <div class="absolute inset-0 bg-zinc-950"></div>
+                            <div class="absolute inset-0 bg-gradient-to-r from-[#020202] via-[#020202]/80 to-transparent z-10"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-amber-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-10 pointer-events-none"></div>
+
+                            <div class="absolute right-0 top-0 bottom-0 w-1/2 flex items-center justify-center gap-6 pointer-events-none transform-style-3d z-0 translate-x-12 opacity-60 group-hover:opacity-100 transition-all duration-700">
+                                <div class="w-48 h-28 rounded-2xl border border-amber-500/40 bg-amber-500/20 backdrop-blur-md transform rotate-[-5deg] group-hover:rotate-[-10deg] group-hover:-translate-x-8 group-hover:-translate-y-4 transition-all duration-700 shadow-[0_0_40px_rgba(245,158,11,0.3)] p-4 flex flex-col justify-between">
+                                    <div class="w-8 h-6 bg-amber-400/50 rounded-md"></div>
+                                    <div class="w-24 h-2 bg-amber-400/30 rounded-full"></div>
+                                </div>
+                                <div class="w-32 h-48 border border-white/20 bg-white/10 rounded-2xl backdrop-blur-lg absolute transform rotate-[5deg] group-hover:rotate-[15deg] group-hover:translate-x-16 group-hover:translate-y-8 group-hover:translate-z-40 transition-all duration-700 shadow-2xl flex flex-col items-center justify-center gap-3">
+                                    <i class="fas fa-wallet text-white/80 text-4xl drop-shadow-md"></i>
+                                    <div class="w-12 h-1 bg-white/30 rounded-full"></div>
+                                </div>
+                            </div>
+
+                            <div class="absolute left-8 md:left-16 bottom-10 md:bottom-16 z-30 translate-z-40 pointer-events-none">
+                                 <h3 class="font-display text-4xl md:text-5xl lg:text-[4.5rem] font-black text-white tracking-tighter mb-2 group-hover:translate-x-6 transition-transform duration-700 ease-out drop-shadow-2xl">FinTech<br>Ledgers.</h3>
+                                 <p class="text-amber-400 text-lg font-light group-hover:translate-x-6 transition-transform duration-700 delay-75 ease-out drop-shadow-md max-w-sm">High-frequency escrows, secure APIs & virtual cards.</p>
+                                 <div class="mt-6 opacity-0 group-hover:opacity-100 group-hover:translate-x-6 transition-all duration-700 delay-150 pointer-events-auto">
+                                    <span class="px-6 py-3 bg-white text-black text-sm font-bold uppercase tracking-widest rounded-full flex items-center gap-2 w-max shadow-lg">
+                                        <i class="fas fa-credit-card text-amber-500"></i> Open Prototype
+                                    </span>
+                                 </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -733,44 +800,43 @@
                                 <i class="fas fa-project-diagram text-2xl text-[#5865F2]"></i>
                             </div>
                             <h3 class="font-bold text-white mb-2 text-lg">API & Web Dashboards</h3>
-                    <h3 class="font-display text-xl font-bold text-white mb-3">API & Web Dashboards</h3>
-                    <p class="text-sm text-gray-400 leading-relaxed">Bridging external web apps, massive databases, and games to Discord. Control your bot entirely from a custom React dashboard.</p>
-                </div>
-
-            </div>
-
-            <!-- Project: Discord Bot Dashboard Preview -->
-            <div onclick="openPreviewModal('discord_dash.html', 'Discord Web Dashboard')" class="w-full max-w-6xl mt-16 h-[350px] md:h-[400px] relative group cursor-pointer hover-3d transform-style-3d border border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden strict-clip text-left bg-zinc-950">
-                <div class="absolute inset-0 bg-gradient-to-r from-[#020202] via-[#020202]/80 to-transparent z-10"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-[#5865F2]/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-10 pointer-events-none"></div>
-                
-                <!-- Floating Dashboard Elements -->
-                <div class="absolute right-0 top-0 bottom-0 w-[60%] flex items-center justify-center pointer-events-none transform-style-3d z-0 translate-x-12 opacity-60 group-hover:opacity-100 transition-all duration-700">
-                    <!-- Sidebar mock -->
-                    <div class="w-24 h-72 border border-[#5865F2]/40 bg-[#5865F2]/20 rounded-l-2xl backdrop-blur-md transform rotate-[-5deg] group-hover:rotate-[-10deg] group-hover:-translate-x-12 transition-all duration-700 shadow-[0_0_40px_rgba(88,101,242,0.3)]"></div>
-                    <!-- Main Content mock -->
-                    <div class="w-72 h-72 border border-white/20 bg-white/10 rounded-r-2xl backdrop-blur-lg flex flex-col gap-4 p-5 transform rotate-[-5deg] group-hover:rotate-[-10deg] group-hover:translate-x-2 transition-all duration-700 shadow-2xl">
-                        <div class="w-full h-8 bg-white/20 rounded-md"></div>
-                        <div class="w-full flex-1 flex gap-4">
-                            <div class="flex-1 bg-[#5865F2]/30 rounded-md border border-[#5865F2]/40"></div>
-                            <div class="flex-1 bg-[#5865F2]/30 rounded-md border border-[#5865F2]/40"></div>
+                            <p class="text-sm text-gray-400 leading-relaxed">Bridging external web apps, massive databases, and games to Discord. Control your bot entirely from a custom React dashboard.</p>
                         </div>
-                        <div class="w-full h-16 bg-white/10 rounded-md border border-white/20"></div>
-                    </div>
-                </div>
-                
-                <div class="absolute left-8 md:left-16 bottom-10 md:bottom-16 z-30 translate-z-40 pointer-events-none">
-                     <h3 class="font-display text-4xl md:text-6xl font-black text-white tracking-tighter mb-2 group-hover:translate-x-6 transition-transform duration-700 ease-out drop-shadow-2xl">Discord<br>Dashboard.</h3>
-                     <p class="text-[#5865F2] text-sm md:text-base font-light group-hover:translate-x-6 transition-transform duration-700 delay-75 ease-out drop-shadow-md max-w-sm">Custom React web panels for server owners to configure bots, manage economies, and view live logs.</p>
-                     <div class="mt-6 opacity-0 group-hover:opacity-100 group-hover:translate-x-6 transition-all duration-700 delay-150 pointer-events-auto">
-                        <span class="px-6 py-3 bg-white text-black text-sm font-bold uppercase tracking-widest rounded-full flex items-center gap-2 w-max shadow-lg">
-                            <i class="fas fa-desktop text-[#5865F2]"></i> Open Web Panel
-                        </span>
-                     </div>
-                </div>
-            </div>
 
-            <div class="w-full max-w-6xl mt-16 border border-[#1e1f22] rounded-2xl overflow-hidden flex flex-col md:flex-row h-[500px] lg:h-[700px] relative z-10 shadow-[0_0_50px_rgba(0,0,0,0.8)] text-left font-sans bg-[#313338]">
+                    </div>
+
+                    <!-- Project: Discord Bot Dashboard Preview -->
+                    <div onclick="openPreviewModal('discord_dash.html', 'Discord Web Dashboard')" class="w-full max-w-6xl mt-16 h-[350px] md:h-[400px] relative group cursor-pointer hover-3d transform-style-3d border border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden strict-clip text-left bg-zinc-950">
+                        <div class="absolute inset-0 bg-gradient-to-r from-[#020202] via-[#020202]/80 to-transparent z-10"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#5865F2]/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-10 pointer-events-none"></div>
+                        
+                        <!-- Floating Dashboard Elements -->
+                        <div class="absolute right-0 top-0 bottom-0 w-[60%] flex items-center justify-center pointer-events-none transform-style-3d z-0 translate-x-12 opacity-60 group-hover:opacity-100 transition-all duration-700">
+                            <!-- Sidebar mock -->
+                            <div class="w-24 h-72 border border-[#5865F2]/40 bg-[#5865F2]/20 rounded-l-2xl backdrop-blur-md transform rotate-[-5deg] group-hover:rotate-[-10deg] group-hover:-translate-x-12 transition-all duration-700 shadow-[0_0_40px_rgba(88,101,242,0.3)]"></div>
+                            <!-- Main Content mock -->
+                            <div class="w-72 h-72 border border-white/20 bg-white/10 rounded-r-2xl backdrop-blur-lg flex flex-col gap-4 p-5 transform rotate-[-5deg] group-hover:rotate-[-10deg] group-hover:translate-x-2 transition-all duration-700 shadow-2xl">
+                                <div class="w-full h-8 bg-white/20 rounded-md"></div>
+                                <div class="w-full flex-1 flex gap-4">
+                                    <div class="flex-1 bg-[#5865F2]/30 rounded-md border border-[#5865F2]/40"></div>
+                                    <div class="flex-1 bg-[#5865F2]/30 rounded-md border border-[#5865F2]/40"></div>
+                                </div>
+                                <div class="w-full h-16 bg-white/10 rounded-md border border-white/20"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="absolute left-8 md:left-16 bottom-10 md:bottom-16 z-30 translate-z-40 pointer-events-none">
+                             <h3 class="font-display text-4xl md:text-6xl font-black text-white tracking-tighter mb-2 group-hover:translate-x-6 transition-transform duration-700 ease-out drop-shadow-2xl">Discord<br>Dashboard.</h3>
+                             <p class="text-[#5865F2] text-sm md:text-base font-light group-hover:translate-x-6 transition-transform duration-700 delay-75 ease-out drop-shadow-md max-w-sm">Custom React web panels for server owners to configure bots, manage economies, and view live logs.</p>
+                             <div class="mt-6 opacity-0 group-hover:opacity-100 group-hover:translate-x-6 transition-all duration-700 delay-150 pointer-events-auto">
+                                <span class="px-6 py-3 bg-white text-black text-sm font-bold uppercase tracking-widest rounded-full flex items-center gap-2 w-max shadow-lg">
+                                    <i class="fas fa-desktop text-[#5865F2]"></i> Open Web Panel
+                                </span>
+                             </div>
+                        </div>
+                    </div>
+
+                    <div class="w-full max-w-6xl mt-16 border border-[#1e1f22] rounded-2xl overflow-hidden flex flex-col md:flex-row h-[500px] lg:h-[700px] relative z-10 shadow-[0_0_50px_rgba(0,0,0,0.8)] text-left font-sans bg-[#313338]">
                         
                         <div class="flex-1 flex flex-col h-full relative border-r border-[#1e1f22]">
                             <div class="h-14 border-b border-[#1e1f22] flex items-center px-4 shrink-0 bg-[#313338] shadow-sm z-10">
@@ -794,7 +860,7 @@
                                     <span class="px-3 text-[11px] font-bold text-gray-500 mt-[-1px]">Today</span>
                                     <div class="flex-1 h-[1px] bg-[#3f4147]"></div>
                                 </div>
-                                </div>
+                            </div>
                             
                             <div class="p-4 shrink-0 bg-[#313338] relative">
                                 <div id="discord-autocomplete" class="absolute bottom-[calc(100%-10px)] left-4 right-4 bg-[#2b2d31] border border-[#1e1f22] rounded-lg shadow-2xl flex-col hidden overflow-hidden z-20 transition-all duration-200 opacity-0 translate-y-2">
@@ -802,7 +868,7 @@
                                         Matching Commands
                                     </div>
                                     <div id="autocomplete-list" class="max-h-56 overflow-y-auto discord-scrollbar p-2">
-                                        </div>
+                                    </div>
                                 </div>
 
                                 <form id="discord-form" onsubmit="handleDiscordCommand(event)" class="relative">
@@ -877,7 +943,183 @@
             </div> 
 
         </div> 
+
+        <!-- NEW CLIENT TESTIMONIALS SECTION -->
+        <div class="w-full flex flex-col gap-10 gs-reveal mt-20 overflow-hidden relative">
+            <div class="text-center px-4 z-20">
+                <div class="text-accent2 text-xs font-bold tracking-widest uppercase mb-3 flex items-center justify-center gap-2">
+                    <i class="fas fa-comment-dots"></i> Client Testimonials
+                </div>
+                <h2 class="font-display text-4xl lg:text-5xl text-white font-bold tracking-tight drop-shadow-md mb-2">What People Say</h2>
+                <p class="text-gray-400 font-light max-w-lg mx-auto">Real feedback from clients who have experienced my architecture and automation systems firsthand.</p>
+            </div>
+
+            <!-- Fading Edges for Marquee -->
+            <div class="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-[#020202] to-transparent z-10 pointer-events-none"></div>
+            <div class="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-[#020202] to-transparent z-10 pointer-events-none"></div>
+
+            <div class="flex overflow-hidden">
+                <div class="review-scroll-container flex gap-6 px-3">
+                    
+                    <!-- Original Set of 3 -->
+                    <div class="w-[320px] md:w-[450px] shrink-0 bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl backdrop-blur-md flex flex-col justify-between hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+                        <div>
+                            <div class="flex items-center gap-1 mb-4 text-emerald-400 text-sm">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-gray-300 text-sm md:text-base leading-relaxed font-light mb-8 italic">
+                                "I definitely recommend him. Fast, smooth results and the new frontend to showcase my 3D models is insanely quick. Bro knows his architecture inside out."
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-4 border-t border-white/10 pt-5">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center text-white font-bold text-lg shadow-lg">B</div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Blue</h4>
+                                <p class="text-emerald-400 text-xs font-mono uppercase tracking-widest mt-1">Blockbench 3D Artist</p>
+                            </div>
+                            <i class="fas fa-quote-right text-white/10 text-4xl ml-auto"></i>
+                        </div>
+                    </div>
+
+                    <div class="w-[320px] md:w-[450px] shrink-0 bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl backdrop-blur-md flex flex-col justify-between hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+                        <div>
+                            <div class="flex items-center gap-1 mb-4 text-emerald-400 text-sm">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-gray-300 text-sm md:text-base leading-relaxed font-light mb-8 italic">
+                                "Needed a custom web application to display my game art and he delivered exactly what I had in mind. Sleek UI, zero lag, and handles all my assets perfectly."
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-4 border-t border-white/10 pt-5">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-600 to-indigo-900 flex items-center justify-center text-white font-bold text-lg shadow-lg">N</div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Navid</h4>
+                                <p class="text-emerald-400 text-xs font-mono uppercase tracking-widest mt-1">Game Artist</p>
+                            </div>
+                            <i class="fas fa-quote-right text-white/10 text-4xl ml-auto"></i>
+                        </div>
+                    </div>
+
+                    <div class="w-[320px] md:w-[450px] shrink-0 bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl backdrop-blur-md flex flex-col justify-between hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+                        <div>
+                            <div class="flex items-center gap-1 mb-4 text-[#5865F2] text-sm">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-gray-300 text-sm md:text-base leading-relaxed font-light mb-8 italic">
+                                "Wanted a highly functional bot to manage our server operations, but he gave me way better than what I expected. The web dashboard he built to control it blew my mind."
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-4 border-t border-white/10 pt-5">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">J</div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Jishan</h4>
+                                <p class="text-[#5865F2] text-xs font-mono uppercase tracking-widest mt-1">Automation Expert</p>
+                            </div>
+                            <i class="fas fa-quote-right text-white/10 text-4xl ml-auto"></i>
+                        </div>
+                    </div>
+
+                    <div class="w-[320px] md:w-[450px] shrink-0 bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl backdrop-blur-md flex flex-col justify-between hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+                        <div>
+                            <div class="flex items-center gap-1 mb-4 text-yellow-400 text-sm">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-gray-300 text-sm md:text-base leading-relaxed font-light mb-8 italic">
+                                "Friendly dude."
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-4 border-t border-white/10 pt-5">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">S</div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Steve</h4>
+                                <p class="text-yellow-400 text-xs font-mono uppercase tracking-widest mt-1">Digital Store Owner</p>
+                            </div>
+                            <i class="fas fa-quote-right text-white/10 text-4xl ml-auto"></i>
+                        </div>
+                    </div>
+
+                    <!-- Duplicate Set 1 (For Infinite Loop) -->
+                    <div class="w-[320px] md:w-[450px] shrink-0 bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl backdrop-blur-md flex flex-col justify-between hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+                        <div>
+                            <div class="flex items-center gap-1 mb-4 text-emerald-400 text-sm">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-gray-300 text-sm md:text-base leading-relaxed font-light mb-8 italic">
+                                "I definitely recommend him. Fast, smooth results and the new frontend to showcase my 3D models is insanely quick. Bro knows his architecture inside out."
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-4 border-t border-white/10 pt-5">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center text-white font-bold text-lg shadow-lg">B</div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Blue</h4>
+                                <p class="text-emerald-400 text-xs font-mono uppercase tracking-widest mt-1">Blockbench 3D Artist</p>
+                            </div>
+                            <i class="fas fa-quote-right text-white/10 text-4xl ml-auto"></i>
+                        </div>
+                    </div>
+
+                    <div class="w-[320px] md:w-[450px] shrink-0 bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl backdrop-blur-md flex flex-col justify-between hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+                        <div>
+                            <div class="flex items-center gap-1 mb-4 text-emerald-400 text-sm">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-gray-300 text-sm md:text-base leading-relaxed font-light mb-8 italic">
+                                "Needed a custom web application to display my game art and he delivered exactly what I had in mind. Sleek UI, zero lag, and handles all my assets perfectly."
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-4 border-t border-white/10 pt-5">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-600 to-indigo-900 flex items-center justify-center text-white font-bold text-lg shadow-lg">N</div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Navid</h4>
+                                <p class="text-emerald-400 text-xs font-mono uppercase tracking-widest mt-1">Game Artist</p>
+                            </div>
+                            <i class="fas fa-quote-right text-white/10 text-4xl ml-auto"></i>
+                        </div>
+                    </div>
+
+                    <div class="w-[320px] md:w-[450px] shrink-0 bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl backdrop-blur-md flex flex-col justify-between hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+                        <div>
+                            <div class="flex items-center gap-1 mb-4 text-[#5865F2] text-sm">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-gray-300 text-sm md:text-base leading-relaxed font-light mb-8 italic">
+                                "Wanted a highly functional bot to manage our server operations, but he gave me way better than what I expected. The web dashboard he built to control it blew my mind."
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-4 border-t border-white/10 pt-5">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">J</div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Jishan</h4>
+                                <p class="text-[#5865F2] text-xs font-mono uppercase tracking-widest mt-1">Automation Expert</p>
+                            </div>
+                            <i class="fas fa-quote-right text-white/10 text-4xl ml-auto"></i>
+                        </div>
+                    </div>
+
+                    <div class="w-[320px] md:w-[450px] shrink-0 bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl backdrop-blur-md flex flex-col justify-between hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+                        <div>
+                            <div class="flex items-center gap-1 mb-4 text-yellow-400 text-sm">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-gray-300 text-sm md:text-base leading-relaxed font-light mb-8 italic">
+                                "Friendly dude."
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-4 border-t border-white/10 pt-5">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">S</div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Steve</h4>
+                                <p class="text-yellow-400 text-xs font-mono uppercase tracking-widest mt-1">Digital Store Owner</p>
+                            </div>
+                            <i class="fas fa-quote-right text-white/10 text-4xl ml-auto"></i>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
         
+        <!-- Call to Action -->
         <div class="w-full flex flex-col items-center justify-center text-center py-20 gs-reveal relative">
             <h3 class="font-display text-4xl md:text-6xl font-black text-white mb-6 tracking-tighter drop-shadow-2xl">Let's rebuild your imagination.</h3>
             <p class="text-gray-400 text-xl font-light mb-12 max-w-2xl">Ready to turn your complex ideas into flawless digital realities? Contact me directly.</p>
@@ -1535,6 +1777,9 @@
         }
 
         function openPreviewModal(url, title) {
+            // FIX: Remove custom cursor to interact with iframe properly
+            document.body.classList.add('show-default-cursor'); 
+            
             const modal = document.getElementById('preview-modal');
             const content = document.getElementById('preview-modal-content');
             const iframe = document.getElementById('preview-iframe');
@@ -1544,7 +1789,11 @@
             loading.style.display = 'flex'; iframe.src = url; modal.classList.remove('hidden');
             gsap.to(content, { opacity: 1, scale: 1, duration: 0.8, ease: "expo.out" });
         }
+        
         function closePreviewModal() {
+            // FIX: Restore the custom glowing cinematic cursor
+            document.body.classList.remove('show-default-cursor');
+            
             const modal = document.getElementById('preview-modal');
             const content = document.getElementById('preview-modal-content');
             const iframe = document.getElementById('preview-iframe');
