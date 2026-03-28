@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHINYY | Creator Platform Architecture</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'], 
+                        display: ['Manrope', 'sans-serif']
+                    },
+                    colors: {
+                        creator: {
+                            bg: '#09090b',       
+                            surface: '#18181b',  
+                            border: '#27272a',   
+                            accent: '#d946ef',   // Fuchsia 500
+                            accentHover: '#c026d3', // Fuchsia 600
+                            text: '#a1a1aa'      
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #09090b; color: #fafafa; overflow: hidden; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+        /* Toast Animation */
+        .toast-enter { animation: toastIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .toast-leave { animation: toastOut 0.3s ease-in forwards; }
+        @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes toastOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+
+        /* Custom Toggles */
+        .toggle-checkbox:checked { right: 0; border-color: #d946ef; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #d946ef; }
+
+        /* Pure Gradient Media (No Images) */
+        .free-media {
+            background: linear-gradient(135deg, #d946ef, #6b21a8);
+        }
+
+        .premium-media { 
+            background: linear-gradient(135deg, #d946ef, #6b21a8);
+            filter: grayscale(100%) blur(24px);
+            transition: filter 1.5s ease-out, transform 1.5s ease-out; 
+        }
+        
+        .unlocked .premium-media { 
+            filter: grayscale(0%) blur(0px) !important; 
+            transform: scale(1) !important; 
+        }
+        .unlocked .premium-overlay { 
+            opacity: 0; 
+            pointer-events: none; 
+            transition: opacity 1s ease-out; 
+        }
+        
+        /* Payment Tab Active State */
+        .pay-tab.active { border-color: #d946ef; background-color: rgba(217, 70, 239, 0.1); color: white; }
+
+        /* View Switching Animations */
+        .view-section { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="h-screen w-screen flex antialiased relative selection:bg-creator-accent selection:text-white">
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed top-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- MODAL: UPLOAD POST -->
+    <div id="upload-modal" class="fixed inset-0 bg-black/80 z-[85] hidden flex items-center justify-center opacity-0 transition-opacity duration-300 backdrop-blur-sm">
+        <div class="bg-creator-surface w-full max-w-xl rounded-2xl border border-creator-border shadow-2xl p-8 transform scale-95 transition-transform duration-300 flex flex-col" id="upload-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-white">Create New Post</h2>
+                <button onclick="closeUploadModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="border-2 border-dashed border-creator-border rounded-xl p-10 flex flex-col items-center justify-center text-gray-500 hover:border-creator-accent/50 hover:bg-creator-accent/5 transition-colors cursor-pointer mb-4">
+                <i class="fas fa-cloud-upload-alt text-3xl mb-3 text-creator-accent"></i>
+                <p class="text-sm font-medium">Click or drag media here</p>
+                <p class="text-xs mt-1 opacity-60">Supports video, images, and audio</p>
+            </div>
+            
+            <textarea placeholder="Write a caption..." class="w-full bg-[#09090b] border border-creator-border rounded-lg p-3 text-white text-sm focus:outline-none focus:border-creator-accent resize-none h-24 mb-4"></textarea>
+            
+            <div class="flex items-center justify-between bg-[#09090b] border border-creator-border rounded-lg p-4 mb-6">
+                <div>
+                    <div class="text-white font-bold text-sm">Require Subscription</div>
+                    <div class="text-xs text-gray-500">Lock this post for VIP members only</div>
+                </div>
+                <div class="relative inline-block w-10 h-5 align-middle select-none">
+                    <input type="checkbox" id="post-lock-toggle" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 top-0 transition-all duration-300 left-0"/>
+                    <label class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-600 cursor-pointer transition-colors duration-300"></label>
+                </div>
+            </div>
+
+            <button onclick="submitPost()" class="w-full py-3 bg-creator-accent hover:bg-creator-accentHover text-white rounded-lg font-bold transition-all shadow-[0_0_20px_rgba(217,70,239,0.3)] active:scale-95">Publish Post</button>
+        </div>
+    </div>
+
+    <!-- MODAL: SUBSCRIPTION TIERS -->
+    <div id="tiers-modal" class="fixed inset-0 bg-black/80 z-[80] hidden flex items-center justify-center opacity-0 transition-opacity duration-300 backdrop-blur-sm">
+        <div class="bg-creator-surface w-full max-w-4xl rounded-2xl border border-creator-border shadow-2xl p-8 transform translate-y-10 transition-transform duration-500" id="tiers-content">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="text-3xl font-display font-bold text-white tracking-tight">Unlock Exclusive Access</h2>
+                    <p class="text-creator-text mt-1">Select a membership tier to instantly decrypt premium media.</p>
+                </div>
+                <button onclick="closeTiersModal()" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors border border-white/10">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Tier 1 -->
+                <div class="bg-creator-bg border border-creator-border rounded-xl p-6 flex flex-col hover:border-gray-500 transition-colors cursor-pointer group" onclick="openCheckout('Silver Supporter', 5.00)">
+                    <h3 class="text-lg font-bold text-gray-300 mb-1">Silver Supporter</h3>
+                    <div class="text-3xl font-black text-white mb-4">$5 <span class="text-sm text-creator-text font-normal">/ month</span></div>
+                    <ul class="space-y-3 text-sm text-gray-400 flex-1 mb-6">
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-gray-500"></i> Access to locked posts</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-gray-500"></i> Supporter badge</li>
+                    </ul>
+                    <button class="w-full py-2.5 bg-white/5 group-hover:bg-gray-200 group-hover:text-black border border-white/10 rounded-lg font-bold transition-colors">Select Tier</button>
+                </div>
+
+                <!-- Tier 2 -->
+                <div class="bg-gradient-to-b from-creator-accent/20 to-creator-bg border border-creator-accent rounded-xl p-6 flex flex-col transform md:-translate-y-4 shadow-[0_0_30px_rgba(217,70,239,0.15)] relative cursor-pointer group" onclick="openCheckout('Gold VIP', 15.00)">
+                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-creator-accent text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">Most Popular</div>
+                    <h3 class="text-lg font-bold text-fuchsia-400 mb-1">Gold VIP</h3>
+                    <div class="text-3xl font-black text-white mb-4">$15 <span class="text-sm text-creator-text font-normal">/ month</span></div>
+                    <ul class="space-y-3 text-sm text-gray-300 flex-1 mb-6">
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-creator-accent"></i> All Silver perks</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-creator-accent"></i> Full High-Res Galleries</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-creator-accent"></i> Direct Messaging</li>
+                    </ul>
+                    <button class="w-full py-2.5 bg-creator-accent hover:bg-creator-accentHover text-white rounded-lg font-bold transition-colors shadow-lg">Select Tier</button>
+                </div>
+
+                <!-- Tier 3 -->
+                <div class="bg-creator-bg border border-creator-border rounded-xl p-6 flex flex-col hover:border-yellow-500/50 transition-colors cursor-pointer group" onclick="openCheckout('Obsidian Elite', 50.00)">
+                    <h3 class="text-lg font-bold text-yellow-500 mb-1">Obsidian Elite</h3>
+                    <div class="text-3xl font-black text-white mb-4">$50 <span class="text-sm text-creator-text font-normal">/ month</span></div>
+                    <ul class="space-y-3 text-sm text-gray-400 flex-1 mb-6">
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-yellow-500"></i> All Gold perks</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-yellow-500"></i> Custom media requests</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-yellow-500"></i> Private live streams</li>
+                    </ul>
+                    <button class="w-full py-2.5 bg-white/5 group-hover:bg-yellow-500 group-hover:text-black border border-white/10 rounded-lg font-bold transition-colors">Select Tier</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CHECKOUT / PAYWALL -->
+    <div id="checkout-modal" class="fixed inset-0 bg-black/90 z-[90] hidden flex items-center justify-center opacity-0 transition-opacity duration-300 backdrop-blur-md">
+        <div class="bg-creator-surface w-full max-w-xl rounded-2xl border border-creator-border shadow-2xl p-8 transform scale-95 transition-transform duration-300 flex flex-col" id="checkout-content">
+            
+            <div class="flex justify-between items-center mb-6 border-b border-creator-border pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-creator-accent/20 flex items-center justify-center text-creator-accent border border-creator-accent/30"><i class="fas fa-lock"></i></div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white leading-tight">Secure Checkout</h2>
+                        <p class="text-xs text-creator-text" id="checkout-tier-name">Gold VIP Membership</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-2xl font-black text-white" id="checkout-price">$15.00</div>
+                    <div class="text-[10px] text-gray-500 uppercase tracking-widest">Billed Monthly</div>
+                </div>
+            </div>
+
+            <!-- Payment Tabs -->
+            <div class="flex gap-2 mb-6">
+                <button onclick="switchPayTab('card')" id="tab-card" class="pay-tab active flex-1 py-2.5 border border-creator-border rounded-lg text-sm font-medium text-gray-400 transition-colors flex items-center justify-center gap-2"><i class="fas fa-credit-card"></i> Card</button>
+                <button onclick="switchPayTab('crypto')" id="tab-crypto" class="pay-tab flex-1 py-2.5 border border-creator-border rounded-lg text-sm font-medium text-gray-400 transition-colors flex items-center justify-center gap-2"><i class="fab fa-bitcoin"></i> Crypto</button>
+                <button onclick="switchPayTab('paypal')" id="tab-paypal" class="pay-tab flex-1 py-2.5 border border-creator-border rounded-lg text-sm font-medium text-gray-400 transition-colors flex items-center justify-center gap-2"><i class="fab fa-paypal"></i> PayPal</button>
+            </div>
+
+            <!-- Card Form -->
+            <div id="form-card" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Card Information</label>
+                    <div class="border border-creator-border rounded-lg bg-[#09090b] overflow-hidden focus-within:border-creator-accent transition-colors">
+                        <div class="px-4 py-3 border-b border-creator-border flex items-center gap-3">
+                            <i class="fas fa-credit-card text-gray-500"></i>
+                            <input type="text" placeholder="Card number" class="w-full bg-transparent text-white focus:outline-none text-sm placeholder-gray-600" value="4242 4242 4242 4242">
+                        </div>
+                        <div class="flex">
+                            <input type="text" placeholder="MM / YY" class="w-1/2 bg-transparent text-white focus:outline-none px-4 py-3 text-sm placeholder-gray-600 border-r border-creator-border" value="12 / 28">
+                            <input type="text" placeholder="CVC" class="w-1/2 bg-transparent text-white focus:outline-none px-4 py-3 text-sm placeholder-gray-600" value="123">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Cardholder Name</label>
+                    <input type="text" placeholder="Name on card" class="w-full bg-[#09090b] border border-creator-border rounded-lg px-4 py-3 text-white focus:outline-none focus:border-creator-accent transition-colors text-sm" value="Test User">
+                </div>
+            </div>
+
+            <!-- Crypto Form -->
+            <div id="form-crypto" class="hidden space-y-4 text-center py-4">
+                <div class="w-32 h-32 mx-auto bg-white rounded-lg p-2 flex items-center justify-center mb-2">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B" class="w-full h-full object-contain">
+                </div>
+                <p class="text-sm text-gray-400">Send exact amount to:</p>
+                <div class="bg-[#09090b] border border-creator-border rounded-lg p-3 text-xs font-mono text-creator-accent break-all flex justify-between items-center cursor-pointer hover:border-creator-accent/50" onclick="showToast('Address copied to clipboard', 'info')">
+                    0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B <i class="far fa-copy text-gray-500"></i>
+                </div>
+            </div>
+
+            <div class="mt-8 flex gap-3">
+                <button onclick="closeCheckoutModal()" class="px-6 py-3.5 rounded-lg font-bold text-sm text-white hover:bg-white/5 transition-colors border border-transparent hover:border-white/10">Cancel</button>
+                <button id="pay-btn" onclick="processPayment()" class="flex-1 bg-creator-accent hover:bg-creator-accentHover text-white rounded-lg font-bold text-sm transition-all shadow-[0_0_20px_rgba(217,70,239,0.3)] flex items-center justify-center gap-2 relative overflow-hidden group">
+                    <span class="absolute inset-0 w-full h-full bg-white/20 transform -translate-x-full group-hover:translate-x-full transition-transform duration-500 ease-out"></span>
+                    <i class="fas fa-lock"></i> Subscribe securely
+                </button>
+            </div>
+            
+            <div class="text-center mt-4 flex items-center justify-center gap-2 text-[10px] text-gray-500 font-mono">
+                <i class="fas fa-shield-alt"></i> 256-BIT ENCRYPTION • POWERED BY STRIPE
+            </div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="w-20 md:w-64 bg-creator-surface border-r border-creator-border flex flex-col shrink-0 z-20 relative shadow-2xl gs-reveal-left">
+        <div class="h-20 flex items-center justify-center md:justify-start md:px-8 border-b border-creator-border">
+            <i class="fas fa-gem text-creator-accent text-2xl md:mr-3 drop-shadow-[0_0_10px_rgba(217,70,239,0.8)]"></i>
+            <h1 class="font-display font-extrabold text-white text-xl tracking-tighter hidden md:block">EXCLUSIVES</h1>
+        </div>
+
+        <nav class="flex-1 py-8 flex flex-col gap-2 px-4 overflow-y-auto hide-scrollbar">
+            <a href="#" onclick="switchView('feed', this)" class="nav-link flex items-center justify-center md:justify-start gap-4 px-3 md:px-4 py-3 bg-creator-accent/10 border border-creator-accent/30 text-creator-accent rounded-xl cursor-pointer transition-colors relative">
+                <i class="fas fa-home text-lg w-6 text-center"></i>
+                <span class="font-medium text-sm hidden md:block">Home Feed</span>
+            </a>
+            <a href="#" onclick="switchView('messages', this)" class="nav-link flex items-center justify-center md:justify-start gap-4 px-3 md:px-4 py-3 text-creator-text hover:bg-white/5 hover:text-white rounded-xl cursor-pointer transition-colors">
+                <i class="fas fa-envelope text-lg w-6 text-center"></i>
+                <span class="font-medium text-sm hidden md:block">Messages</span>
+                <div class="bg-creator-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-auto hidden md:block">34</div>
+            </a>
+            <a href="#" onclick="switchView('vault', this)" class="nav-link flex items-center justify-center md:justify-start gap-4 px-3 md:px-4 py-3 text-creator-text hover:bg-white/5 hover:text-white rounded-xl cursor-pointer transition-colors">
+                <i class="fas fa-images text-lg w-6 text-center"></i>
+                <span class="font-medium text-sm hidden md:block">Media Vault</span>
+            </a>
+        </nav>
+        
+        <div class="p-6 border-t border-creator-border">
+            <div class="flex items-center gap-3 cursor-pointer group bg-[#09090b] border border-creator-border p-2 rounded-xl">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-700 to-gray-900 border border-gray-600 flex items-center justify-center text-white font-bold text-sm">GU</div>
+                <div class="hidden md:flex flex-col">
+                    <span class="text-sm text-white font-bold">Guest User</span>
+                    <span class="text-[10px] text-gray-500 font-mono" id="sidebar-status">Free Account</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN APP AREA -->
+    <main class="flex-1 flex flex-col h-full relative z-10 bg-creator-bg overflow-y-auto custom-scrollbar" id="main-scroll">
+        
+        <!-- VIEW: HOME FEED -->
+        <div id="view-feed" class="view-section block">
+            <!-- Creator Banner & Profile -->
+            <div class="w-full relative gs-reveal-down">
+                <div class="h-48 md:h-64 w-full relative overflow-hidden bg-gradient-to-br from-fuchsia-900 to-[#09090b]">
+                    <div class="absolute inset-0 bg-gradient-to-t from-creator-bg to-transparent"></div>
+                </div>
+                
+                <div class="max-w-3xl mx-auto px-6 relative -mt-16 md:-mt-20 flex flex-col md:flex-row gap-6 md:items-end pb-8 border-b border-creator-border">
+                    <div class="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-creator-bg overflow-hidden bg-gradient-to-tr from-creator-accent to-purple-800 shadow-[0_0_30px_rgba(217,70,239,0.3)] relative z-10 shrink-0 flex items-center justify-center">
+                        <span class="text-5xl md:text-6xl font-black text-white tracking-tighter drop-shadow-md">NA</span>
+                    </div>
+                    
+                    <div class="flex-1 flex flex-col md:flex-row justify-between md:items-end gap-4 relative z-10">
+                        <div>
+                            <h1 class="text-3xl md:text-4xl font-display font-black text-white flex items-center gap-2">Nexus Art <i class="fas fa-check-circle text-creator-accent text-xl"></i></h1>
+                            <p class="text-gray-400 font-mono text-sm mt-1">@nexus_renders</p>
+                            <p class="text-gray-300 text-sm mt-3 max-w-md">Creating ultra high-end cyberpunk & sci-fi environments. Subscribe to unlock raw project files, 8K media, and tutorials.</p>
+                            
+                            <div class="flex gap-4 mt-4 text-sm font-bold">
+                                <div><span class="text-white">428</span> <span class="text-gray-500 font-normal">Posts</span></div>
+                                <div><span class="text-white">12.5K</span> <span class="text-gray-500 font-normal">Likes</span></div>
+                            </div>
+                        </div>
+                        
+                        <button id="profile-sub-btn" onclick="openTiersModal()" class="w-full md:w-auto px-8 py-3 bg-white text-black hover:bg-gray-200 rounded-full font-bold transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] active:scale-95 flex items-center justify-center gap-2 uppercase tracking-widest text-xs">
+                            Subscribe <i class="fas fa-lock"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feed Content -->
+            <div class="max-w-2xl mx-auto w-full p-6 space-y-8 gs-reveal-up pb-32" id="feed-container">
+                
+                <!-- Free Post -->
+                <div class="bg-creator-surface border border-creator-border rounded-2xl p-5 shadow-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-creator-accent to-purple-800 flex items-center justify-center text-white font-bold text-xs">NA</div>
+                            <div>
+                                <div class="text-white font-bold text-sm">Nexus Art <i class="fas fa-check-circle text-creator-accent text-xs"></i></div>
+                                <div class="text-gray-500 text-xs">2 hours ago</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-ellipsis-h text-gray-500 cursor-pointer hover:text-white"></i>
+                    </div>
+                    <p class="text-gray-200 text-sm mb-4">Sneak peek at the new "Neon Slums" environment I'm building. Full 8K renders and Blender files dropping for VIPs tomorrow! 🌆✨</p>
+                    
+                    <!-- Free Unlocked Gradient -->
+                    <div class="rounded-xl overflow-hidden mb-4 border border-white/5 aspect-video free-media shadow-inner"></div>
+                    
+                    <div class="flex items-center gap-6 border-t border-creator-border pt-4">
+                        <button class="text-gray-400 hover:text-creator-accent transition-colors flex items-center gap-2 text-sm"><i class="far fa-heart text-lg"></i> 1.2K</button>
+                        <button class="text-gray-400 hover:text-white transition-colors flex items-center gap-2 text-sm"><i class="far fa-comment text-lg"></i> 48</button>
+                        <button class="text-gray-400 hover:text-white transition-colors ml-auto"><i class="fas fa-share text-lg"></i></button>
+                    </div>
+                </div>
+
+                <!-- Premium Post 1 -->
+                <div class="post-card bg-creator-surface border border-creator-border rounded-2xl p-5 shadow-lg relative overflow-hidden">
+                    <div class="flex justify-between items-center mb-4 relative z-10">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-creator-accent to-purple-800 flex items-center justify-center text-white font-bold text-xs">NA</div>
+                            <div>
+                                <div class="text-white font-bold text-sm">Nexus Art <i class="fas fa-check-circle text-creator-accent text-xs"></i></div>
+                                <div class="text-gray-500 text-xs">Yesterday</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-200 text-sm mb-4 relative z-10">As promised, here is the full 8K master render and lighting breakdown for the Cyber-Alley project. Enjoy! 🚀</p>
+                    
+                    <!-- Locked Gradient Media -->
+                    <div class="relative rounded-xl overflow-hidden aspect-[4/3] border border-white/5 bg-black cursor-pointer group" onclick="handleLockedMediaClick()">
+                        <div class="premium-media w-full h-full scale-110 opacity-70"></div>
+                        
+                        <div class="premium-overlay absolute inset-0 flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm group-hover:bg-black/40 transition-colors z-20">
+                            <div class="w-16 h-16 rounded-full bg-black/60 border border-creator-accent/50 flex items-center justify-center mb-3 shadow-[0_0_30px_rgba(217,70,239,0.4)]">
+                                <i class="fas fa-lock text-2xl text-creator-accent lock-icon"></i>
+                            </div>
+                            <span class="text-white font-bold uppercase tracking-widest text-xs">Unlock Post</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-6 border-t border-creator-border pt-4 mt-4 relative z-10">
+                        <button class="text-gray-400 flex items-center gap-2 text-sm"><i class="far fa-heart text-lg"></i> 890</button>
+                        <button class="text-gray-400 flex items-center gap-2 text-sm"><i class="far fa-comment text-lg"></i> 124</button>
+                    </div>
+                </div>
+
+                <!-- Premium Post 2 -->
+                <div class="post-card bg-creator-surface border border-creator-border rounded-2xl p-5 shadow-lg relative overflow-hidden">
+                    <div class="flex justify-between items-center mb-4 relative z-10">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-creator-accent to-purple-800 flex items-center justify-center text-white font-bold text-xs">NA</div>
+                            <div>
+                                <div class="text-white font-bold text-sm">Nexus Art <i class="fas fa-check-circle text-creator-accent text-xs"></i></div>
+                                <div class="text-gray-500 text-xs">Oct 12</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-200 text-sm mb-4 relative z-10">Exclusive behind-the-scenes look at the node architecture for my procedural generation setup. 🧬</p>
+                    
+                    <!-- Locked Gradient Media -->
+                    <div class="relative rounded-xl overflow-hidden aspect-video border border-white/5 bg-black cursor-pointer group" onclick="handleLockedMediaClick()">
+                        <div class="premium-media w-full h-full scale-110 opacity-70"></div>
+                        
+                        <div class="premium-overlay absolute inset-0 flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm group-hover:bg-black/40 transition-colors z-20">
+                            <div class="w-16 h-16 rounded-full bg-black/60 border border-creator-accent/50 flex items-center justify-center mb-3 shadow-[0_0_30px_rgba(217,70,239,0.4)]">
+                                <i class="fas fa-lock text-2xl text-creator-accent lock-icon"></i>
+                            </div>
+                            <span class="text-white font-bold uppercase tracking-widest text-xs">Unlock Post</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-6 border-t border-creator-border pt-4 mt-4 relative z-10">
+                        <button class="text-gray-400 flex items-center gap-2 text-sm"><i class="far fa-heart text-lg"></i> 3.4K</button>
+                        <button class="text-gray-400 flex items-center gap-2 text-sm"><i class="far fa-comment text-lg"></i> 312</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- VIEW: MESSAGES -->
+        <div id="view-messages" class="view-section hidden max-w-4xl mx-auto w-full p-6 h-full flex flex-col">
+            <div class="border-b border-creator-border pb-4 mb-6 flex justify-between items-center shrink-0 mt-8">
+                <div>
+                    <h2 class="text-3xl font-display font-bold text-white tracking-tight">Direct Messages</h2>
+                    <p class="text-sm text-creator-text mt-1">You have <span class="text-white font-bold">34</span> pending messages from fans.</p>
+                </div>
+                <button class="w-12 h-12 rounded-full bg-white/5 hover:bg-creator-accent/20 hover:text-creator-accent border border-creator-border flex items-center justify-center transition-colors shadow-lg"><i class="fas fa-pen text-lg"></i></button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar pb-10">
+                <!-- Javascript loops 15 mock messages here -->
+                <script>
+                    for(let i=1; i<=15; i++) {
+                        let isUnread = i <= 5;
+                        let unreadDot = isUnread ? '<div class="w-3 h-3 bg-creator-accent rounded-full shadow-[0_0_10px_rgba(217,70,239,0.8)] shrink-0"></div>' : '';
+                        let opacity = isUnread ? 'opacity-100' : 'opacity-50 hover:opacity-100';
+                        let time = i === 1 ? 'Just now' : (i*12) + 'm ago';
+                        
+                        document.write(`
+                            <div class="p-5 bg-creator-surface border border-creator-border rounded-xl flex items-center gap-4 cursor-pointer hover:border-creator-accent/50 transition-all shadow-md ${opacity}">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-gray-700 to-gray-900 flex items-center justify-center text-white font-bold shrink-0 border border-gray-600 shadow-inner">U${i}</div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <h4 class="text-white font-bold text-sm truncate tracking-wide">User_${Math.floor(Math.random()*9000)+1000}</h4>
+                                        <span class="text-xs text-gray-500 shrink-0 font-mono">${time}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-400 truncate">Hey Nexus, absolutely loved the new neon slums pack! Will you be releasing a tutorial on the lighting setup soon?</p>
+                                </div>
+                                ${unreadDot}
+                            </div>
+                        `);
+                    }
+                </script>
+            </div>
+        </div>
+
+        <!-- VIEW: MEDIA VAULT -->
+        <div id="view-vault" class="view-section hidden p-6 md:p-10 pb-32">
+            <div class="max-w-6xl mx-auto w-full">
+                <div class="flex flex-col md:flex-row justify-between md:items-end border-b border-creator-border pb-6 mb-8 gap-4">
+                    <div>
+                        <h2 class="text-3xl font-display font-bold text-white tracking-tight">Media Vault</h2>
+                        <p class="text-sm text-creator-text mt-1">Manage and upload all your exclusive content in one place.</p>
+                    </div>
+                    <button onclick="openUploadModal()" class="px-6 py-2.5 bg-creator-accent hover:bg-creator-accentHover text-white rounded-lg font-bold text-sm transition-all shadow-[0_0_20px_rgba(217,70,239,0.3)] flex items-center gap-2 w-max">
+                        <i class="fas fa-plus"></i> Quick Upload
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6" id="vault-grid">
+                    <!-- Upload Card Generator -->
+                    <div onclick="openUploadModal()" class="aspect-[4/5] border-2 border-dashed border-creator-border rounded-2xl flex flex-col items-center justify-center text-gray-500 hover:border-creator-accent hover:text-creator-accent hover:bg-creator-accent/5 cursor-pointer transition-all shadow-sm">
+                        <i class="fas fa-cloud-upload-alt text-4xl mb-3"></i>
+                        <span class="text-sm font-bold tracking-wide">New Post</span>
+                    </div>
+
+                    <!-- Javascript loops mock vault items -->
+                    <script>
+                        for(let i=0; i<14; i++) {
+                            let isLocked = i % 3 === 0 || i % 4 === 0;
+                            let icon = isLocked ? '<i class="fas fa-lock text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] text-2xl"></i>' : '<i class="fas fa-image text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] text-2xl"></i>';
+                            let gradient = isLocked ? 'bg-gradient-to-br from-gray-700 to-gray-900 grayscale blur-sm' : 'bg-gradient-to-br from-fuchsia-500 to-purple-600';
+                            
+                            document.write(`
+                                <div class="aspect-[4/5] rounded-2xl overflow-hidden relative group border border-creator-border shadow-lg cursor-pointer">
+                                    <div class="absolute inset-0 ${gradient} scale-110 group-hover:scale-100 transition-transform duration-500"></div>
+                                    <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors flex flex-col items-center justify-center">
+                                        <div class="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-4 group-hover:translate-y-0">
+                                            ${icon}
+                                        </div>
+                                    </div>
+                                    ${isLocked ? '<div class="absolute top-3 left-3 bg-black/60 backdrop-blur-sm border border-creator-accent/30 text-creator-accent text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded">Locked</div>' : ''}
+                                </div>
+                            `);
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Animations setup
+        gsap.from(".gs-reveal-left", { x: -50, opacity: 0, duration: 0.8, ease: "power3.out" });
+        gsap.from(".gs-reveal-down", { y: -20, opacity: 0, duration: 0.6, ease: "power3.out", delay: 0.2 });
+        gsap.from(".gs-reveal-up", { y: 30, opacity: 0, duration: 0.8, stagger: 0.1, ease: "power3.out", delay: 0.3 });
+
+        let isSubscribed = false;
+
+        // View Switching Logic
+        function switchView(viewId, element) {
+            // Update nav links styling
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('bg-creator-accent/10', 'border-creator-accent/30', 'text-creator-accent');
+                link.classList.add('text-creator-text', 'hover:bg-white/5', 'hover:text-white', 'border-transparent');
+            });
+
+            if (element) {
+                element.classList.remove('text-creator-text', 'hover:bg-white/5', 'hover:text-white', 'border-transparent');
+                element.classList.add('bg-creator-accent/10', 'border-creator-accent/30', 'text-creator-accent');
+            }
+
+            // Hide all views, then show the target view
+            document.querySelectorAll('.view-section').forEach(view => {
+                view.classList.add('hidden');
+                view.classList.remove('block');
+            });
+            
+            const targetView = document.getElementById(`view-${viewId}`);
+            targetView.classList.remove('hidden');
+            targetView.classList.add('block');
+        }
+
+        // Upload Modal Logic
+        function openUploadModal() {
+            const modal = document.getElementById('upload-modal');
+            const content = document.getElementById('upload-content');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeUploadModal() {
+            const modal = document.getElementById('upload-modal');
+            const content = document.getElementById('upload-content');
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function submitPost() {
+            closeUploadModal();
+            showToast('Post uploaded and encrypted successfully!', 'success');
+            
+            const isLocked = document.getElementById('post-lock-toggle').checked;
+            const vaultGrid = document.getElementById('vault-grid');
+            const feedContainer = document.getElementById('feed-container');
+            
+            // 1. Add to Vault Grid dynamically
+            if(vaultGrid) {
+                const newCard = document.createElement('div');
+                newCard.className = "aspect-[4/5] rounded-2xl overflow-hidden relative group border border-creator-border shadow-lg cursor-pointer";
+                
+                const icon = isLocked ? '<i class="fas fa-lock text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] text-2xl"></i>' : '<i class="fas fa-image text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] text-2xl"></i>';
+                const gradient = isLocked ? 'bg-gradient-to-br from-gray-700 to-gray-900 grayscale blur-sm' : 'bg-gradient-to-br from-fuchsia-500 to-purple-600';
+                const lockBadge = isLocked ? '<div class="absolute top-3 left-3 bg-black/60 backdrop-blur-sm border border-creator-accent/30 text-creator-accent text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded">Locked</div>' : '';
+                
+                newCard.innerHTML = `
+                    <div class="absolute inset-0 ${gradient} scale-110 group-hover:scale-100 transition-transform duration-500"></div>
+                    <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors flex flex-col items-center justify-center">
+                        <div class="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-4 group-hover:translate-y-0">
+                            ${icon}
+                        </div>
+                    </div>
+                    ${lockBadge}
+                `;
+                
+                // Insert directly after the Upload button
+                vaultGrid.insertBefore(newCard, vaultGrid.children[1]);
+            }
+
+            // 2. Add to Home Feed dynamically
+            if(feedContainer) {
+                const newPost = document.createElement('div');
+                newPost.className = "bg-creator-surface border border-creator-border rounded-2xl p-5 shadow-lg relative overflow-hidden mt-8 mb-8";
+                
+                let mediaHtml = '';
+                if(isLocked) {
+                    // Only apply 'unlocked' state if user is already VIP
+                    const unlockedClass = isSubscribed ? 'unlocked' : '';
+                    mediaHtml = `
+                        <div class="relative rounded-xl overflow-hidden aspect-[4/3] border border-white/5 bg-black cursor-pointer group ${unlockedClass}" onclick="handleLockedMediaClick(this)">
+                            <div class="premium-media w-full h-full scale-110 opacity-70"></div>
+                            <div class="premium-overlay absolute inset-0 flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm group-hover:bg-black/40 transition-colors z-20">
+                                <div class="w-16 h-16 rounded-full bg-black/60 border border-creator-accent/50 flex items-center justify-center mb-3 shadow-[0_0_30px_rgba(217,70,239,0.4)]">
+                                    <i class="fas ${isSubscribed ? 'fa-unlock text-green-400' : 'fa-lock text-creator-accent'} text-2xl lock-icon"></i>
+                                </div>
+                                <span class="text-white font-bold uppercase tracking-widest text-xs">${isSubscribed ? 'Access Granted' : 'Unlock Post'}</span>
+                            </div>
+                        </div>
+                    `;
+                    // If it's locked and we aren't subscribed, ensure it acts as a premium post for unlocking later
+                    if(!isSubscribed) newPost.classList.add('post-card');
+                } else {
+                    mediaHtml = `<div class="rounded-xl overflow-hidden border border-white/5 aspect-video free-media shadow-inner"></div>`;
+                }
+
+                newPost.innerHTML = `
+                    <div class="flex justify-between items-center mb-4 relative z-10">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-creator-accent to-purple-800 flex items-center justify-center text-white font-bold text-xs">NA</div>
+                            <div>
+                                <div class="text-white font-bold text-sm">Nexus Art <i class="fas fa-check-circle text-creator-accent text-xs"></i></div>
+                                <div class="text-creator-accent text-xs font-bold uppercase tracking-widest">Just Now</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-ellipsis-h text-gray-500 cursor-pointer hover:text-white"></i>
+                    </div>
+                    <p class="text-gray-200 text-sm mb-4 relative z-10">Just uploaded a brand new piece to the vault! Let me know what you guys think. 🔥</p>
+                    ${mediaHtml}
+                    <div class="flex items-center gap-6 border-t border-creator-border pt-4 mt-4 relative z-10">
+                        <button class="text-gray-400 hover:text-creator-accent transition-colors flex items-center gap-2 text-sm"><i class="far fa-heart text-lg"></i> 0</button>
+                        <button class="text-gray-400 hover:text-white transition-colors flex items-center gap-2 text-sm"><i class="far fa-comment text-lg"></i> 0</button>
+                        <button class="text-gray-400 hover:text-white transition-colors ml-auto"><i class="fas fa-share text-lg"></i></button>
+                    </div>
+                `;
+
+                // Insert at the top of the feed (after the banner)
+                feedContainer.insertBefore(newPost, feedContainer.firstChild);
+            }
+        }
+
+        // Toast Notifications
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let icon = 'fa-check-circle';
+            let bgClass = 'bg-creator-surface border-l-creator-accent';
+            let iconColor = 'text-creator-accent';
+            
+            if(type === 'error') { icon = 'fa-exclamation-circle'; bgClass = 'bg-creator-surface border-l-red-500'; iconColor = 'text-red-500'; }
+            if(type === 'info') { icon = 'fa-info-circle'; bgClass = 'bg-creator-surface border-l-blue-400'; iconColor = 'text-blue-400'; }
+
+            toast.className = `${bgClass} border-l-[3px] border border-creator-border px-4 py-3 rounded-lg shadow-2xl flex items-center gap-3 toast-enter text-sm relative overflow-hidden z-[100]`;
+            toast.innerHTML = `<i class="fas ${icon} ${iconColor} text-lg"></i><span class="text-white">${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.replace('toast-enter', 'toast-leave');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Handle clicks on locked posts
+        function handleLockedMediaClick(element) {
+            if (!isSubscribed) {
+                openTiersModal();
+            } else {
+                showToast("You already have access to this content.", "info");
+            }
+        }
+
+        // Tiers Modal Logic
+        function openTiersModal() {
+            if (isSubscribed) return;
+            const modal = document.getElementById('tiers-modal');
+            const content = document.getElementById('tiers-content');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('translate-y-10');
+            }, 10);
+        }
+
+        function closeTiersModal() {
+            const modal = document.getElementById('tiers-modal');
+            const content = document.getElementById('tiers-content');
+            modal.classList.add('opacity-0');
+            content.classList.add('translate-y-10');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        // Checkout Logic
+        function openCheckout(tierName, price) {
+            document.getElementById('checkout-tier-name').innerText = `${tierName} Membership`;
+            document.getElementById('checkout-price').innerText = `$${price.toFixed(2)}`;
+            
+            closeTiersModal();
+            setTimeout(() => {
+                const modal = document.getElementById('checkout-modal');
+                const content = document.getElementById('checkout-content');
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    content.classList.remove('scale-95');
+                }, 10);
+            }, 300); // Wait for tiers to close
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkout-modal');
+            const content = document.getElementById('checkout-content');
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function switchPayTab(type) {
+            document.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`tab-${type}`).classList.add('active');
+            
+            if (type === 'card' || type === 'paypal') {
+                document.getElementById('form-card').classList.remove('hidden');
+                document.getElementById('form-crypto').classList.add('hidden');
+            } else if (type === 'crypto') {
+                document.getElementById('form-card').classList.add('hidden');
+                document.getElementById('form-crypto').classList.remove('hidden');
+            }
+        }
+
+        function processPayment() {
+            const btn = document.getElementById('pay-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Processing Securely...`;
+            
+            // Fake API delay
+            setTimeout(() => {
+                btn.innerHTML = `<i class="fas fa-check"></i> Payment Confirmed`;
+                btn.classList.replace('bg-creator-accent', 'bg-green-500');
+                btn.classList.replace('hover:bg-creator-accentHover', 'hover:bg-green-400');
+                btn.style.boxShadow = '0 0 20px rgba(34,197,94,0.4)';
+                
+                showToast('Payment successful! Content unlocked.', 'success');
+                
+                setTimeout(() => {
+                    closeCheckoutModal();
+                    triggerUnlockSequence();
+                }, 1500);
+
+            }, 2000);
+        }
+
+        function triggerUnlockSequence() {
+            isSubscribed = true;
+
+            // 1. Change Sidebar Status
+            document.getElementById('sidebar-status').innerText = 'VIP Member';
+            document.getElementById('sidebar-status').classList.replace('text-gray-500', 'text-creator-accent');
+            
+            // 2. Change Profile Button
+            const subBtn = document.getElementById('profile-sub-btn');
+            subBtn.innerHTML = `Subscribed <i class="fas fa-check"></i>`;
+            subBtn.classList.replace('bg-white', 'bg-creator-surface');
+            subBtn.classList.replace('text-black', 'text-creator-accent');
+            subBtn.classList.replace('hover:bg-gray-200', 'hover:bg-creator-border');
+            subBtn.classList.add('border', 'border-creator-accent/30');
+            subBtn.style.boxShadow = 'none';
+            subBtn.onclick = null; // Remove modal trigger
+
+            // 3. Cinematic Unlock Animation on Posts
+            const premiumPosts = document.querySelectorAll('.post-card');
+            
+            premiumPosts.forEach((post, index) => {
+                setTimeout(() => {
+                    // Turn lock icon to unlock before fading
+                    const icon = post.querySelector('.lock-icon');
+                    if(icon) {
+                        icon.classList.remove('fa-lock');
+                        icon.classList.add('fa-unlock');
+                        icon.classList.replace('text-creator-accent', 'text-green-400');
+                    }
+                    
+                    const overlaySpan = post.querySelector('.premium-overlay span');
+                    if(overlaySpan) {
+                        overlaySpan.innerText = "Access Granted";
+                        overlaySpan.classList.add('text-green-400');
+                    }
+
+                    // Apply the unlocked class to trigger CSS transitions (removes blur)
+                    setTimeout(() => {
+                        post.classList.add('unlocked');
+                    }, 400);
+
+                }, index * 300); // 300ms stagger between posts
+            });
+
+            // Scroll up slightly to show the unblur effect
+            document.getElementById('main-scroll').scrollTo({
+                top: 250,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+</body>
+</html>
