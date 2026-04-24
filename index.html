@@ -80,7 +80,8 @@
             cursor: auto !important;
         }
         body.show-default-cursor #cursor-dot, body.show-default-cursor #cursor-ring {
-            display: none !important;
+            opacity: 0 !important;
+            transform: translate(-50%, -50%) scale(0.1) !important;
         }
 
         /* Cinematic Vignette */
@@ -180,12 +181,15 @@
         #cursor-dot, #cursor-ring {
             position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;
             transform: translate(-50%, -50%); border-radius: 50%;
-            will-change: transform, left, top;
+            will-change: transform, left, top, opacity;
         }
-        #cursor-dot { width: 6px; height: 6px; background-color: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.8); }
+        #cursor-dot { 
+            width: 6px; height: 6px; background-color: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.8); 
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
         #cursor-ring {
             width: 34px; height: 34px; border: 1px solid rgba(255,255,255,0.4);
-            transition: width 0.3s, height 0.3s, background-color 0.3s, border-color 0.3s;
+            transition: width 0.3s ease, height 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
         }
         body:not(.show-default-cursor):hover #cursor-ring, body:not(.show-default-cursor):hover #cursor-dot { opacity: 1; }
@@ -197,7 +201,7 @@
         body.hide-custom-cursor #cursor-dot, 
         body.hide-custom-cursor #cursor-ring {
             opacity: 0 !important;
-            transition: opacity 0.3s ease;
+            transform: translate(-50%, -50%) scale(0.1) !important;
         }
 
         /* Offset for smooth scrolling automation */
@@ -562,6 +566,87 @@
                                 <iframe data-src="security.html" class="lazy-iframe absolute inset-0 w-full h-full z-10 transition-opacity duration-700 opacity-0" frameborder="0" onload="this.classList.remove('opacity-0')"></iframe>
                             </div>
                         </div>
+
+                        <!-- 6. Social Platforms -->
+                        <div class="project-showcase w-full flex flex-col gap-6">
+                            <div class="px-4 md:px-8 flex justify-between items-end">
+                                <div>
+                                    <h3 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 drop-shadow-2xl">Social Platforms.</h3>
+                                    <p class="text-pink-400 text-lg font-light drop-shadow-md">Real-time feeds & active user databases.</p>
+                                </div>
+                                <button onclick="openPreviewModal('social.html', 'Social Platforms')" class="hidden md:flex px-6 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-colors items-center gap-2 cursor-pointer">
+                                    Fullscreen <i class="fas fa-expand text-pink-500"></i>
+                                </button>
+                            </div>
+                            <div class="iframe-wrapper w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
+                                <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
+                                    <i class="fas fa-circle-notch fa-spin text-4xl mb-4 text-pink-500/50"></i>
+                                    <span class="text-xs uppercase tracking-widest font-bold">Mounting Architecture...</span>
+                                </div>
+                                <iframe data-src="social.html" class="lazy-iframe absolute inset-0 w-full h-full z-10 transition-opacity duration-700 opacity-0" frameborder="0" onload="this.classList.remove('opacity-0')"></iframe>
+                            </div>
+                        </div>
+
+                        <!-- 7. Media Streaming -->
+                        <div class="project-showcase w-full flex flex-col gap-6">
+                            <div class="px-4 md:px-8 flex justify-between items-end">
+                                <div>
+                                    <h3 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 drop-shadow-2xl">Media Streaming.</h3>
+                                    <p class="text-violet-400 text-lg font-light drop-shadow-md">VOD delivery, custom players & scalable CDNs.</p>
+                                </div>
+                                <button onclick="openPreviewModal('media.html', 'Media Streaming')" class="hidden md:flex px-6 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-colors items-center gap-2 cursor-pointer">
+                                    Fullscreen <i class="fas fa-expand text-violet-500"></i>
+                                </button>
+                            </div>
+                            <div class="iframe-wrapper w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
+                                <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
+                                    <i class="fas fa-circle-notch fa-spin text-4xl mb-4 text-violet-500/50"></i>
+                                    <span class="text-xs uppercase tracking-widest font-bold">Mounting Architecture...</span>
+                                </div>
+                                <iframe data-src="media.html" class="lazy-iframe absolute inset-0 w-full h-full z-10 transition-opacity duration-700 opacity-0" frameborder="0" onload="this.classList.remove('opacity-0')"></iframe>
+                            </div>
+                        </div>
+
+                        <!-- 8. Corporate & Consultation -->
+                        <div class="project-showcase w-full flex flex-col gap-6">
+                            <div class="px-4 md:px-8 flex justify-between items-end">
+                                <div>
+                                    <h3 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 drop-shadow-2xl">Corporate & Consultation.</h3>
+                                    <p class="text-emerald-400 text-lg font-light drop-shadow-md">High-end enterprise layouts that command authority and trust.</p>
+                                </div>
+                                <button onclick="openPreviewModal('corporate.html', 'Corporate Sites')" class="hidden md:flex px-6 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-colors items-center gap-2 cursor-pointer">
+                                    Fullscreen <i class="fas fa-expand text-emerald-500"></i>
+                                </button>
+                            </div>
+                            <div class="iframe-wrapper w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
+                                <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
+                                    <i class="fas fa-circle-notch fa-spin text-4xl mb-4 text-emerald-500/50"></i>
+                                    <span class="text-xs uppercase tracking-widest font-bold">Mounting Architecture...</span>
+                                </div>
+                                <iframe data-src="corporate.html" class="lazy-iframe absolute inset-0 w-full h-full z-10 transition-opacity duration-700 opacity-0" frameborder="0" onload="this.classList.remove('opacity-0')"></iframe>
+                            </div>
+                        </div>
+
+                        <!-- 9. Creator Platforms -->
+                        <div class="project-showcase w-full flex flex-col gap-6">
+                            <div class="px-4 md:px-8 flex justify-between items-end">
+                                <div>
+                                    <h3 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 drop-shadow-2xl">Creator Platforms.</h3>
+                                    <p class="text-fuchsia-400 text-lg font-light drop-shadow-md">Subscription tiers & secure media paywalls.</p>
+                                </div>
+                                <button onclick="openPreviewModal('creator.html', 'Creator Platforms')" class="hidden md:flex px-6 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-colors items-center gap-2 cursor-pointer">
+                                    Fullscreen <i class="fas fa-expand text-fuchsia-500"></i>
+                                </button>
+                            </div>
+                            <div class="iframe-wrapper w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
+                                <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
+                                    <i class="fas fa-circle-notch fa-spin text-4xl mb-4 text-fuchsia-500/50"></i>
+                                    <span class="text-xs uppercase tracking-widest font-bold">Mounting Architecture...</span>
+                                </div>
+                                <iframe data-src="creator.html" class="lazy-iframe absolute inset-0 w-full h-full z-10 transition-opacity duration-700 opacity-0" frameborder="0" onload="this.classList.remove('opacity-0')"></iframe>
+                            </div>
+                        </div>
+
                         <!-- 10. FinTech Dashboards -->
                         <div class="project-showcase w-full flex flex-col gap-6">
                             <div class="px-4 md:px-8 flex justify-between items-end">
@@ -609,7 +694,7 @@
                                     </a>
                                     
                                     <h3 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter drop-shadow-2xl">Celestial Roleplay</h3>
-                                    <p class="text-gray-400 text-lg font-light drop-shadow-md max-w-2xl">Engineered a custom, high-performance GTA ROLEPLAY website for team crp including seamless user experience forntend and fast backend</p>
+                                    <p class="text-gray-400 text-lg font-light drop-shadow-md max-w-2xl">Engineered a custom, high-performance GTA ROLEPLAY website for team crp including seamless user experience frontend and fast backend.</p>
                                     
                                     <!-- Tech Stack & Metrics -->
                                     <div class="flex flex-wrap gap-2 mt-2">
@@ -639,23 +724,6 @@
                         </div>
 
                     </div>
-                </div>
-
-                <div onclick="openAiModal()" class="w-full flex flex-col items-center justify-center min-h-[400px] group cursor-pointer overflow-hidden relative gs-reveal ai-mesh-bg rounded-[3rem] border border-white/10 shadow-2xl hover-3d transform-style-3d mt-10 strict-clip">
-                    <div class="absolute inset-0 bg-black/60 backdrop-blur-[6px] group-hover:backdrop-blur-sm transition-all duration-1000 z-0"></div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-fuchsia-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 z-0 pointer-events-none"></div>
-                    
-                    <div class="relative z-20 text-center px-4 max-w-4xl mx-auto translate-z-40 pointer-events-none">
-                        <div class="text-fuchsia-400 text-sm font-bold tracking-widest uppercase mb-4 flex items-center justify-center gap-2">
-                            <i class="fas fa-wand-magic-sparkles animate-pulse"></i> Generative Services
-                        </div>
-                        <h3 class="font-display text-4xl md:text-5xl lg:text-6xl font-black mb-6 text-white tracking-tighter drop-shadow-2xl">How I can help you with AI</h3>
-                        <p class="text-gray-300 text-lg md:text-xl leading-relaxed font-light mb-8">From complex generative workflows to flawless media synthesis. Click to explore my complete arsenal of artificial intelligence capabilities.</p>
-                        <div class="inline-flex items-center gap-3 px-8 py-3.5 rounded-2xl bg-white/5 border border-fuchsia-500/30 text-white font-bold tracking-widest uppercase text-xs backdrop-blur-md transition-all group-hover:bg-fuchsia-500/20 group-hover:border-fuchsia-500/50 group-hover:scale-105 shadow-[0_0_20px_rgba(217,70,239,0.2)]">
-                            <i class="fas fa-layer-group text-fuchsia-400"></i> View AI Capabilities
-                        </div>
-                    </div>
-                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-fuchsia-600/10 filter blur-[100px] pointer-events-none z-0"></div>
                 </div>
 
             </div> 
@@ -1031,6 +1099,24 @@
 
                 </div>
             </div>
+        </div>
+
+        <!-- AI Generative Services -->
+        <div onclick="openAiModal()" class="w-full flex flex-col items-center justify-center min-h-[400px] group cursor-pointer overflow-hidden relative gs-reveal ai-mesh-bg rounded-[3rem] border border-white/10 shadow-2xl hover-3d transform-style-3d mt-20 mb-10 strict-clip">
+            <div class="absolute inset-0 bg-black/60 backdrop-blur-[6px] group-hover:backdrop-blur-sm transition-all duration-1000 z-0"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-fuchsia-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 z-0 pointer-events-none"></div>
+            
+            <div class="relative z-20 text-center px-4 max-w-4xl mx-auto translate-z-40 pointer-events-none">
+                <div class="text-fuchsia-400 text-sm font-bold tracking-widest uppercase mb-4 flex items-center justify-center gap-2">
+                    <i class="fas fa-wand-magic-sparkles animate-pulse"></i> Generative Services
+                </div>
+                <h3 class="font-display text-4xl md:text-5xl lg:text-6xl font-black mb-6 text-white tracking-tighter drop-shadow-2xl">How I can help you with AI</h3>
+                <p class="text-gray-300 text-lg md:text-xl leading-relaxed font-light mb-8">From complex generative workflows to flawless media synthesis. Click to explore my complete arsenal of artificial intelligence capabilities.</p>
+                <div class="inline-flex items-center gap-3 px-8 py-3.5 rounded-2xl bg-white/5 border border-fuchsia-500/30 text-white font-bold tracking-widest uppercase text-xs backdrop-blur-md transition-all group-hover:bg-fuchsia-500/20 group-hover:border-fuchsia-500/50 group-hover:scale-105 shadow-[0_0_20px_rgba(217,70,239,0.2)]">
+                    <i class="fas fa-layer-group text-fuchsia-400"></i> View AI Capabilities
+                </div>
+            </div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-fuchsia-600/10 filter blur-[100px] pointer-events-none z-0"></div>
         </div>
         
         <!-- Call to Action -->
@@ -1518,15 +1604,18 @@
         window.addEventListener('mousemove', (e) => {
             mouseX = e.clientX; mouseY = e.clientY;
             cursorDot.style.left = `${mouseX}px`; cursorDot.style.top = `${mouseY}px`;
-
-            // FIX: Instantly hide custom cursor when mouse hits the iframe wrapper
-            if (e.target.closest('.iframe-wrapper')) {
-                document.body.classList.add('hide-custom-cursor');
-            } else {
-                document.body.classList.remove('hide-custom-cursor');
-            }
         }, { passive: true });
         
+        // FIX: Ultra-smooth, non-scrappy cursor fading when interacting with Iframes
+        document.querySelectorAll('.iframe-wrapper').forEach(wrapper => {
+            wrapper.addEventListener('mouseenter', () => document.body.classList.add('hide-custom-cursor'));
+            wrapper.addEventListener('mouseleave', () => document.body.classList.remove('hide-custom-cursor'));
+        });
+
+        // Ensure cursor hides/shows gracefully if leaving the window completely
+        document.addEventListener('mouseleave', () => document.body.classList.add('hide-custom-cursor'));
+        document.addEventListener('mouseenter', () => document.body.classList.remove('hide-custom-cursor'));
+
         function animateCursor() {
             ringX += (mouseX - ringX) * 0.15; ringY += (mouseY - ringY) * 0.15;
             cursorRing.style.left = `${ringX}px`; cursorRing.style.top = `${ringY}px`;
