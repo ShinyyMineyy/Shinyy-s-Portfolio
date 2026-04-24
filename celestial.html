@@ -24,7 +24,7 @@
                         display: ['Manrope', 'sans-serif'],
                     },
                     colors: {
-                        brand: '#06b6d4', // Cyan accent (Tailwind cyan-500)
+                        brand: '#06b6d4', // Cyan accent
                         darkBase: '#030305'
                     }
                 }
@@ -45,7 +45,7 @@
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
 
-        /* Premium Glassmorphism - Cyan Glows */
+        /* Premium Glassmorphism */
         .glass-card {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -79,7 +79,7 @@
 </head>
 <body class="antialiased min-h-screen selection:bg-brand/30 selection:text-white p-4 md:p-10">
 
-    <!-- Subtle Background Glow - Cyan & Sky Blue -->
+    <!-- Subtle Background Glow -->
     <div class="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-brand/10 blur-[150px] rounded-full pointer-events-none z-0"></div>
     <div class="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-sky-500/10 blur-[150px] rounded-full pointer-events-none z-0"></div>
 
@@ -98,46 +98,36 @@
             </p>
         </header>
 
-        <!-- 1. Hero Interface (Single GIF) -->
+        <!-- 1. Hero Interface -->
         <section class="flex flex-col gap-3 reveal-element">
             <h3 class="text-white font-display font-bold text-xl ml-2 uppercase tracking-widest text-brand">Main Interface</h3>
-            <div class="w-full aspect-[16/9] rounded-3xl glass-card overflow-hidden relative group cursor-pointer" onclick="openLightbox('main.gif')">
-                <img src="main.gif" alt="Main Interface" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105" onerror="this.style.display='none'">
-            </div>
+            <div class="lightbox-trigger w-full aspect-[16/9] rounded-3xl glass-card overflow-hidden relative group cursor-pointer" data-media="main.gif"></div>
         </section>
 
-        <!-- 2. Smooth Interactions (2 GIFs) -->
+        <!-- 2. Smooth Interactions -->
         <section class="flex flex-col gap-6 reveal-element">
             <h3 class="text-white font-display font-bold text-xl ml-2 uppercase tracking-widest text-brand border-b border-white/10 pb-2">Smooth Interactions</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Interaction 1 -->
-                <div class="w-full aspect-video rounded-2xl glass-card overflow-hidden relative group cursor-pointer" onclick="openLightbox('smooth1.gif')">
-                    <img src="smooth1.gif" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105" onerror="this.style.display='none'">
-                </div>
+                <div class="lightbox-trigger w-full aspect-video rounded-2xl glass-card overflow-hidden relative group cursor-pointer" data-media="smooth1.gif"></div>
                 <!-- Interaction 2 -->
-                <div class="w-full aspect-video rounded-2xl glass-card overflow-hidden relative group cursor-pointer" onclick="openLightbox('smooth2.gif')">
-                    <img src="smooth2.gif" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105" onerror="this.style.display='none'">
-                </div>
+                <div class="lightbox-trigger w-full aspect-video rounded-2xl glass-card overflow-hidden relative group cursor-pointer" data-media="smooth2.gif"></div>
             </div>
         </section>
 
-        <!-- 3. Core Platforms (5 GIFs) -->
+        <!-- 3. Core Platforms -->
         <section class="flex flex-col gap-6 reveal-element">
             <h3 class="text-white font-display font-bold text-xl ml-2 uppercase tracking-widest text-brand border-b border-white/10 pb-2">Platform Modules</h3>
             <!-- Top Row: 2 items -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <!-- Hub -->
                 <div class="flex flex-col gap-2">
-                    <div class="w-full aspect-[4/3] rounded-2xl glass-card overflow-hidden relative group cursor-pointer" onclick="openLightbox('hub.gif')">
-                        <img src="hub.gif" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105" onerror="this.style.display='none'">
-                    </div>
+                    <div class="lightbox-trigger w-full aspect-[4/3] rounded-2xl glass-card overflow-hidden relative group cursor-pointer" data-media="hub.gif"></div>
                     <div class="px-2 text-sm font-bold tracking-wide text-gray-300"><i class="fas fa-home text-brand mr-1"></i> The Hub</div>
                 </div>
                 <!-- Store -->
                 <div class="flex flex-col gap-2">
-                    <div class="w-full aspect-[4/3] rounded-2xl glass-card overflow-hidden relative group cursor-pointer" onclick="openLightbox('store.gif')">
-                        <img src="store.gif" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105" onerror="this.style.display='none'">
-                    </div>
+                    <div class="lightbox-trigger w-full aspect-[4/3] rounded-2xl glass-card overflow-hidden relative group cursor-pointer" data-media="store.gif"></div>
                     <div class="px-2 text-sm font-bold tracking-wide text-gray-300"><i class="fas fa-shopping-bag text-brand mr-1"></i> Premium Store</div>
                 </div>
             </div>
@@ -145,23 +135,17 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Businesses -->
                 <div class="flex flex-col gap-2">
-                    <div class="w-full aspect-[4/3] md:aspect-square rounded-2xl glass-card overflow-hidden relative group cursor-pointer" onclick="openLightbox('business.gif')">
-                        <img src="business.gif" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105" onerror="this.style.display='none'">
-                    </div>
+                    <div class="lightbox-trigger w-full aspect-[4/3] md:aspect-square rounded-2xl glass-card overflow-hidden relative group cursor-pointer" data-media="business.gif"></div>
                     <div class="px-2 text-sm font-bold tracking-wide text-gray-300"><i class="fas fa-briefcase text-brand mr-1"></i> Businesses</div>
                 </div>
                 <!-- Departments -->
                 <div class="flex flex-col gap-2">
-                    <div class="w-full aspect-[4/3] md:aspect-square rounded-2xl glass-card overflow-hidden relative group cursor-pointer" onclick="openLightbox('departments.gif')">
-                        <img src="departments.gif" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105" onerror="this.style.display='none'">
-                    </div>
+                    <div class="lightbox-trigger w-full aspect-[4/3] md:aspect-square rounded-2xl glass-card overflow-hidden relative group cursor-pointer" data-media="departments.gif"></div>
                     <div class="px-2 text-sm font-bold tracking-wide text-gray-300"><i class="fas fa-shield-alt text-brand mr-1"></i> Departments</div>
                 </div>
                 <!-- Underground -->
                 <div class="flex flex-col gap-2">
-                    <div class="w-full aspect-[4/3] md:aspect-square rounded-2xl glass-card overflow-hidden relative group cursor-pointer" onclick="openLightbox('underground.gif')">
-                        <img src="underground.gif" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105" onerror="this.style.display='none'">
-                    </div>
+                    <div class="lightbox-trigger w-full aspect-[4/3] md:aspect-square rounded-2xl glass-card overflow-hidden relative group cursor-pointer" data-media="underground.gif"></div>
                     <div class="px-2 text-sm font-bold tracking-wide text-gray-300"><i class="fas fa-skull text-brand mr-1"></i> Underground</div>
                 </div>
             </div>
@@ -184,84 +168,55 @@
         <!-- 5. Dashboard 10 Modules Grid -->
         <section class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 reveal-element">
             
-            <!-- Dashboard Item 1 -->
+            <!-- Dashboard Items -->
             <div class="flex flex-col gap-3 group/dash">
                 <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-users text-brand"></i> Player Roster</h4>
-                <div class="w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer group/img" onclick="openLightbox('player.gif')">
-                    <img src="player.gif" class="w-full h-full object-cover transition-all duration-500 group-hover/img:scale-105" onerror="this.style.display='none'">
-                </div>
+                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="player.gif"></div>
             </div>
 
-            <!-- Dashboard Item 2 -->
             <div class="flex flex-col gap-3 group/dash">
                 <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-user-circle text-brand"></i> Website Users</h4>
-                <div class="w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer group/img" onclick="openLightbox('website.gif')">
-                    <img src="website.gif" class="w-full h-full object-cover transition-all duration-500 group-hover/img:scale-105" onerror="this.style.display='none'">
-                </div>
+                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="website.gif"></div>
             </div>
 
-            <!-- Dashboard Item 3 -->
             <div class="flex flex-col gap-3 group/dash">
                 <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-terminal text-brand"></i> System Console</h4>
-                <div class="w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer group/img" onclick="openLightbox('console.gif')">
-                    <img src="console.gif" class="w-full h-full object-cover transition-all duration-500 group-hover/img:scale-105" onerror="this.style.display='none'">
-                </div>
+                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="console.gif"></div>
             </div>
 
-            <!-- Dashboard Item 4 -->
             <div class="flex flex-col gap-3 group/dash">
                 <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fab fa-discord text-brand"></i> Discord Webhooks</h4>
-                <div class="w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer group/img" onclick="openLightbox('webhooks.gif')">
-                    <img src="webhooks.gif" class="w-full h-full object-cover transition-all duration-500 group-hover/img:scale-105" onerror="this.style.display='none'">
-                </div>
+                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="webhooks.gif"></div>
             </div>
 
-            <!-- Dashboard Item 5 -->
             <div class="flex flex-col gap-3 group/dash">
                 <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-database text-brand"></i> System Backups</h4>
-                <div class="w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer group/img" onclick="openLightbox('backups.gif')">
-                    <img src="backups.gif" class="w-full h-full object-cover transition-all duration-500 group-hover/img:scale-105" onerror="this.style.display='none'">
-                </div>
+                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="backups.gif"></div>
             </div>
 
-            <!-- Dashboard Item 6 -->
             <div class="flex flex-col gap-3 group/dash">
                 <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-store text-brand"></i> Store Management</h4>
-                <div class="w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer group/img" onclick="openLightbox('store_management.gif')">
-                    <img src="store_management.gif" class="w-full h-full object-cover transition-all duration-500 group-hover/img:scale-105" onerror="this.style.display='none'">
-                </div>
+                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="store_management.gif"></div>
             </div>
 
-            <!-- Dashboard Item 7 -->
             <div class="flex flex-col gap-3 group/dash">
                 <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-briefcase text-brand"></i> Businesses Manager</h4>
-                <div class="w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer group/img" onclick="openLightbox('business_manager.gif')">
-                    <img src="business_manager.gif" class="w-full h-full object-cover transition-all duration-500 group-hover/img:scale-105" onerror="this.style.display='none'">
-                </div>
+                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="business_manager.gif"></div>
             </div>
 
-            <!-- Dashboard Item 8 -->
             <div class="flex flex-col gap-3 group/dash">
                 <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-shield-alt text-brand"></i> Departments Config</h4>
-                <div class="w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer group/img" onclick="openLightbox('departments_config.gif')">
-                    <img src="departments_config.gif" class="w-full h-full object-cover transition-all duration-500 group-hover/img:scale-105" onerror="this.style.display='none'">
-                </div>
+                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="departments_config.gif"></div>
             </div>
 
-            <!-- Dashboard Item 9 -->
             <div class="flex flex-col gap-3 group/dash">
                 <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-skull text-brand"></i> Underground Log</h4>
-                <div class="w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer group/img" onclick="openLightbox('underground_log.gif')">
-                    <img src="underground_log.gif" class="w-full h-full object-cover transition-all duration-500 group-hover/img:scale-105" onerror="this.style.display='none'">
-                </div>
+                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="underground_log.gif"></div>
             </div>
 
-            <!-- Dashboard Item 10 -->
             <div class="flex flex-col gap-3 group/dash">
                 <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-users-cog text-brand"></i> Team CRP Panel</h4>
-                <div class="w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer group/img" onclick="openLightbox('team.gif')">
-                    <img src="team.gif" class="w-full h-full object-cover transition-all duration-500 group-hover/img:scale-105" onerror="this.style.display='none'">
-                </div>
+                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="team.gif"></div>
             </div>
 
         </section>
@@ -278,38 +233,83 @@
     <!-- Fullscreen Lightbox Modal -->
     <div id="lightbox" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
         <div class="absolute inset-0 bg-black/90 backdrop-blur-md cursor-pointer" onclick="closeLightbox()"></div>
-        <button onclick="closeLightbox()" class="absolute top-6 right-6 md:top-10 md:right-10 text-white bg-white/10 hover:bg-white/20 w-12 h-12 rounded-full flex items-center justify-center z-10 transition-colors border border-white/10">
+        <button onclick="closeLightbox()" class="absolute top-6 right-6 md:top-10 md:right-10 text-white bg-white/10 hover:bg-white/20 w-12 h-12 rounded-full flex items-center justify-center z-20 transition-colors border border-white/10">
             <i class="fas fa-times text-xl"></i>
         </button>
-        <img id="lightbox-img" src="" alt="Expanded View" class="max-w-[95vw] max-h-[90vh] object-contain relative z-10 rounded-xl shadow-2xl border border-white/10 transform scale-95 transition-transform duration-300">
+        <!-- The clicked media is dynamically injected into this container -->
+        <div id="lightbox-media-container" class="relative z-10 w-full h-full flex items-center justify-center p-4 md:p-12 pointer-events-none"></div>
     </div>
 
-    <!-- GSAP & JS Logic -->
+    <!-- Universal Media Engine & GSAP Logic -->
     <script>
-        // Lightbox Functions
+        // 1. Universal Media Injector (Supports GIF, PNG, JPG, MP4, WEBM)
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll('.lightbox-trigger').forEach(container => {
+                const src = container.getAttribute('data-media');
+                if (!src) return;
+                
+                const isVideo = src.match(/\.(mp4|webm|ogg)$/i);
+                const mediaEl = document.createElement(isVideo ? 'video' : 'img');
+                
+                mediaEl.src = src;
+                mediaEl.className = "w-full h-full object-cover transition-all duration-500 group-hover:scale-105";
+                
+                // If it's a video, make it behave exactly like a GIF
+                if (isVideo) {
+                    mediaEl.autoplay = true;
+                    mediaEl.loop = true;
+                    mediaEl.muted = true;
+                    mediaEl.playsInline = true;
+                }
+
+                container.appendChild(mediaEl);
+                
+                // Auto-bind the click event for the Lightbox
+                container.onclick = () => openLightbox(src);
+            });
+        });
+
+        // 2. Lightbox Functions (Also supports universal media)
         function openLightbox(src) {
             const lightbox = document.getElementById('lightbox');
-            const lightboxImg = document.getElementById('lightbox-img');
+            const container = document.getElementById('lightbox-media-container');
             
-            lightboxImg.src = src;
+            // Clear previous media
+            container.innerHTML = '';
+            
+            const isVideo = src.match(/\.(mp4|webm|ogg)$/i);
+            const mediaEl = document.createElement(isVideo ? 'video' : 'img');
+            
+            mediaEl.src = src;
+            mediaEl.className = "max-w-[95vw] max-h-[90vh] object-contain rounded-xl shadow-2xl border border-white/10 transform scale-95 transition-transform duration-300 pointer-events-auto";
+            
+            // If viewing video in lightbox, give them controls
+            if (isVideo) {
+                mediaEl.autoplay = true;
+                mediaEl.loop = true;
+                mediaEl.controls = true;
+            }
+            
+            container.appendChild(mediaEl);
             lightbox.classList.add('lightbox-enter');
             
-            // Short delay to trigger transform animation after display
+            // Trigger scale animation
             setTimeout(() => {
-                lightboxImg.classList.add('lightbox-img-enter');
+                mediaEl.classList.add('lightbox-img-enter');
             }, 10);
         }
 
         function closeLightbox() {
             const lightbox = document.getElementById('lightbox');
-            const lightboxImg = document.getElementById('lightbox-img');
+            const container = document.getElementById('lightbox-media-container');
+            const mediaEl = container.firstElementChild;
             
             lightbox.classList.remove('lightbox-enter');
-            lightboxImg.classList.remove('lightbox-img-enter');
+            if (mediaEl) mediaEl.classList.remove('lightbox-img-enter');
             
-            // Clear source after fade out to stop playback/reset state
+            // Clear source after fade out to stop video playback & reset memory
             setTimeout(() => {
-                lightboxImg.src = '';
+                container.innerHTML = '';
             }, 300);
         }
 
@@ -320,7 +320,7 @@
             }
         });
 
-        // GSAP Scroll Animations
+        // 3. GSAP Scroll Animations
         window.addEventListener("DOMContentLoaded", () => {
             if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
                 gsap.registerPlugin(ScrollTrigger);
@@ -329,7 +329,7 @@
                     gsap.to(element, {
                         scrollTrigger: {
                             trigger: element,
-                            start: "top 90%", // Triggers when the top of the element hits 90% down the viewport
+                            start: "top 90%",
                             toggleActions: "play none none none"
                         },
                         opacity: 1,
@@ -339,7 +339,6 @@
                     });
                 });
             } else {
-                // Fallback if scripts don't load
                 document.querySelectorAll('.reveal-element').forEach(el => {
                     el.style.opacity = '1';
                     el.style.transform = 'translateY(0)';
