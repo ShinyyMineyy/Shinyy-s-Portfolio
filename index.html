@@ -684,42 +684,51 @@
                         
                         <!-- Client Project 1 -->
                         <div class="project-showcase w-full flex flex-col gap-6">
-                            <div class="px-4 md:px-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-                                <div class="flex flex-col gap-3">
-                                    <!-- Premium Client Badge (Clickable) -->
-                                    <a href="https://kaiserfahim.me/" target="_blank" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 w-max backdrop-blur-md shadow-lg hover:bg-white/10 hover:border-white/30 transition-all cursor-pointer">
-                                        <div class="w-5 h-5 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-[10px] font-black text-white italic">K</div>
-                                        <span class="text-[10px] font-bold uppercase tracking-widest text-gray-300">Client: KAISER FAHIM</span>
-                                        <i class="fas fa-external-link-alt text-[8px] text-gray-400 ml-1"></i>
+                            <div class="px-4 md:px-8 flex flex-col gap-4">
+                                
+                                <!-- Title & Client Badge Row -->
+                                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 w-full">
+                                    <h3 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter drop-shadow-2xl">Celestial Roleplay.</h3>
+                                    
+                                    <!-- Premium Client Badge (Clickable) - Right Aligned -->
+                                    <a href="https://kaiserfahim.me/" target="_blank" class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/30 w-max backdrop-blur-md shadow-[0_0_20px_rgba(99,102,241,0.2)] hover:bg-indigo-500/20 hover:border-indigo-500/50 hover:shadow-[0_0_30px_rgba(99,102,241,0.4)] transition-all cursor-pointer shrink-0">
+                                        <div class="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-[11px] font-black text-white italic">K</div>
+                                        <span class="text-xs font-bold uppercase tracking-widest text-indigo-100">Client: KAISER FAHIM</span>
+                                        <i class="fas fa-external-link-alt text-[10px] text-indigo-300"></i>
                                     </a>
-                                    
-                                    <h3 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter drop-shadow-2xl">Celestial Roleplay</h3>
-                                    <p class="text-gray-400 text-lg font-light drop-shadow-md max-w-2xl">Engineered a custom, high-performance GTA ROLEPLAY website for team crp including seamless user experience frontend and fast backend.</p>
-                                    
-                                    <!-- Tech Stack & Metrics -->
-                                    <div class="flex flex-wrap gap-2 mt-2">
-                                        <span class="text-[10px] font-bold uppercase tracking-widest border border-emerald-500/30 text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded">E-Commerce</span>
-                                        <span class="text-[10px] font-bold uppercase tracking-widest border border-blue-500/30 text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded">Web Architecture</span>
-                                        <span class="text-[10px] font-bold uppercase tracking-widest border border-yellow-500/30 text-yellow-400 bg-yellow-500/10 px-2.5 py-1 rounded">Live Deployment</span>
-                                        <span class="text-[10px] font-bold uppercase tracking-widest border border-purple-500/30 text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded">Animations</span>
-                                        <span class="text-[10px] font-bold uppercase tracking-widest border border-rose-500/30 text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded">Dashboard</span>
+                                </div>
+
+                                <!-- Description & Actions Row -->
+                                <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mt-2">
+                                    <div class="flex flex-col gap-4">
+                                        <p class="text-gray-400 text-lg font-light drop-shadow-md max-w-3xl leading-relaxed">Engineered a custom, high-performance GTA ROLEPLAY website for team crp including seamless user experience frontend and fast backend.</p>
+                                        
+                                        <!-- Tech Stack & Metrics -->
+                                        <div class="flex flex-wrap gap-2">
+                                            <span class="text-[10px] font-bold uppercase tracking-widest border border-emerald-500/30 text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded">E-Commerce</span>
+                                            <span class="text-[10px] font-bold uppercase tracking-widest border border-blue-500/30 text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded">Web Architecture</span>
+                                            <span class="text-[10px] font-bold uppercase tracking-widest border border-yellow-500/30 text-yellow-400 bg-yellow-500/10 px-2.5 py-1 rounded">Live Deployment</span>
+                                            <span class="text-[10px] font-bold uppercase tracking-widest border border-purple-500/30 text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded">Animations</span>
+                                            <span class="text-[10px] font-bold uppercase tracking-widest border border-rose-500/30 text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded">Dashboard</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-3 mt-4 md:mt-0">
+                                        <a href="https://crpstore.kaiserfahim.me/" target="_blank" class="hidden md:flex px-6 py-3 bg-indigo-600/20 border border-indigo-500/50 hover:bg-indigo-600/40 text-indigo-200 text-xs font-bold uppercase tracking-widest rounded-xl transition-colors items-center gap-2 cursor-pointer shrink-0 shadow-lg">
+                                            Visit Live Site <i class="fas fa-external-link-alt text-indigo-400"></i>
+                                        </a>
+                                        <button onclick="openPreviewModal('celestial.html', 'KAISER FAHIM Store')" class="hidden md:flex px-6 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-colors items-center gap-2 cursor-pointer shrink-0 shadow-lg">
+                                            Fullscreen <i class="fas fa-expand text-indigo-400"></i>
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="flex gap-3">
-                                    <a href="https://crpstore.kaiserfahim.me/" target="_blank" class="hidden md:flex px-6 py-3 bg-indigo-600/20 border border-indigo-500/50 hover:bg-indigo-600/40 text-indigo-300 text-xs font-bold uppercase tracking-widest rounded-xl transition-colors items-center gap-2 cursor-pointer shrink-0 shadow-lg">
-                                        Visit Live Site <i class="fas fa-external-link-alt text-indigo-400"></i>
-                                    </a>
-                                    <button onclick="openPreviewModal('celestial.html', 'KAISER FAHIM Store')" class="hidden md:flex px-6 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-colors items-center gap-2 cursor-pointer shrink-0 shadow-lg">
-                                        Fullscreen <i class="fas fa-expand text-indigo-400"></i>
-                                    </button>
-                                </div>
                             </div>
-                            <div class="iframe-wrapper w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-indigo-500/20 overflow-hidden relative shadow-[0_0_40px_rgba(99,102,241,0.15)] bg-zinc-950">
+                            <div class="iframe-wrapper w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-indigo-500/30 overflow-hidden relative shadow-[0_0_40px_rgba(99,102,241,0.2)] bg-zinc-950 mt-4">
                                 <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
                                     <i class="fas fa-circle-notch fa-spin text-4xl mb-4 text-indigo-500/50"></i>
                                     <span class="text-xs uppercase tracking-widest font-bold">Mounting Client Environment...</span>
                                 </div>
-                                <iframe data-src="celestial.html" class="lazy-iframe absolute inset-0 w-full h-full z-10 transition-opacity duration-700 opacity-0" frameborder="0" onload="this.classList.remove('opacity-0')"></iframe>
+                                <!-- FIX: Hardcoded 'src' to guarantee loading -->
+                                <iframe src="celestial.html" data-src="celestial.html" class="absolute inset-0 w-full h-full z-10 transition-opacity duration-700 opacity-0" frameborder="0" onload="this.classList.remove('opacity-0')"></iframe>
                             </div>
                         </div>
 
