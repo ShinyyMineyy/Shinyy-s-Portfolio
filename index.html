@@ -66,9 +66,13 @@
         body, html {
             background-color: #020202;
             color: #fafafa;
-            overflow-x: hidden;
+            overflow-x: clip; /* FIX: Changed from hidden to clip to fix scroll snapping bugs */
             cursor: none; 
             scroll-behavior: smooth;
+        }
+
+        html {
+            scroll-snap-type: y proximity; /* NATIVE CSS SNAP: Smooth, built-in scrolling automation */
         }
 
         /* Override cursor when in iframe preview */
@@ -187,6 +191,19 @@
         body:not(.show-default-cursor):hover #cursor-ring, body:not(.show-default-cursor):hover #cursor-dot { opacity: 1; }
         a:hover ~ #cursor-ring, button:hover ~ #cursor-ring, .cursor-pointer:hover ~ #cursor-ring {
             width: 50px; height: 50px; background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.8);
+        }
+
+        /* Hide Custom Cursor over Iframes */
+        body.hide-custom-cursor #cursor-dot, 
+        body.hide-custom-cursor #cursor-ring {
+            opacity: 0 !important;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Offset for smooth scrolling automation */
+        .project-showcase {
+            scroll-margin-top: 6rem;
+            scroll-snap-align: start;
         }
         
         /* AI Animated Mesh Background */
@@ -444,10 +461,10 @@
                     <h2 class="font-display text-4xl lg:text-5xl text-white font-bold tracking-tight drop-shadow-md px-4 mb-4">Selected Architectures</h2>
                     
                     <!-- NEW VERTICAL IFRAME LAYOUT -->
-                    <div class="flex flex-col gap-24 w-full mt-6">
+                    <div class="project-showcase-container flex flex-col gap-24 w-full mt-6">
                         
                         <!-- 1. E-Commerce -->
-                        <div class="w-full flex flex-col gap-6">
+                        <div class="project-showcase w-full flex flex-col gap-6">
                             <div class="px-4 md:px-8 flex justify-between items-end">
                                 <div>
                                     <h3 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 drop-shadow-2xl">E-Commerce.</h3>
@@ -457,7 +474,7 @@
                                     Fullscreen <i class="fas fa-expand text-orange-500"></i>
                                 </button>
                             </div>
-                            <div class="w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
+                            <div class="iframe-wrapper w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
                                 <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
                                     <i class="fas fa-circle-notch fa-spin text-4xl mb-4 text-orange-500/50"></i>
                                     <span class="text-xs uppercase tracking-widest font-bold">Mounting Architecture...</span>
@@ -467,7 +484,7 @@
                         </div>
 
                         <!-- 2. Enterprise SaaS -->
-                        <div class="w-full flex flex-col gap-6">
+                        <div class="project-showcase w-full flex flex-col gap-6">
                             <div class="px-4 md:px-8 flex justify-between items-end">
                                 <div>
                                     <h3 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 drop-shadow-2xl">Enterprise SaaS.</h3>
@@ -477,7 +494,7 @@
                                     Fullscreen <i class="fas fa-expand text-cyan-500"></i>
                                 </button>
                             </div>
-                            <div class="w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
+                            <div class="iframe-wrapper w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
                                 <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
                                     <i class="fas fa-circle-notch fa-spin text-4xl mb-4 text-cyan-500/50"></i>
                                     <span class="text-xs uppercase tracking-widest font-bold">Mounting Architecture...</span>
@@ -487,7 +504,7 @@
                         </div>
 
                         <!-- 3. Crypto Exchange -->
-                        <div class="w-full flex flex-col gap-6">
+                        <div class="project-showcase w-full flex flex-col gap-6">
                             <div class="px-4 md:px-8 flex justify-between items-end">
                                 <div>
                                     <h3 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 drop-shadow-2xl">Crypto Exchange.</h3>
@@ -497,7 +514,7 @@
                                     Fullscreen <i class="fas fa-expand text-blue-500"></i>
                                 </button>
                             </div>
-                            <div class="w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
+                            <div class="iframe-wrapper w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
                                 <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
                                     <i class="fas fa-circle-notch fa-spin text-4xl mb-4 text-blue-500/50"></i>
                                     <span class="text-xs uppercase tracking-widest font-bold">Mounting Architecture...</span>
@@ -507,7 +524,7 @@
                         </div>
 
                         <!-- 4. Game Sites -->
-                        <div class="w-full flex flex-col gap-6">
+                        <div class="project-showcase w-full flex flex-col gap-6">
                             <div class="px-4 md:px-8 flex justify-between items-end">
                                 <div>
                                     <h3 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 drop-shadow-2xl">Game Sites.</h3>
@@ -517,7 +534,7 @@
                                     Fullscreen <i class="fas fa-expand text-rose-500"></i>
                                 </button>
                             </div>
-                            <div class="w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
+                            <div class="iframe-wrapper w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
                                 <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
                                     <i class="fas fa-circle-notch fa-spin text-4xl mb-4 text-rose-500/50"></i>
                                     <span class="text-xs uppercase tracking-widest font-bold">Mounting Architecture...</span>
@@ -527,7 +544,7 @@
                         </div>
 
                         <!-- 5. Command Center -->
-                        <div class="w-full flex flex-col gap-6">
+                        <div class="project-showcase w-full flex flex-col gap-6">
                             <div class="px-4 md:px-8 flex justify-between items-end">
                                 <div>
                                     <h3 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 drop-shadow-2xl">Command Center.</h3>
@@ -537,7 +554,7 @@
                                     Fullscreen <i class="fas fa-expand text-teal-500"></i>
                                 </button>
                             </div>
-                            <div class="w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
+                            <div class="iframe-wrapper w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
                                 <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
                                     <i class="fas fa-circle-notch fa-spin text-4xl mb-4 text-teal-500/50"></i>
                                     <span class="text-xs uppercase tracking-widest font-bold">Mounting Architecture...</span>
@@ -547,7 +564,7 @@
                         </div>
 
                         <!-- 6. Social Platforms -->
-                        <div class="w-full flex flex-col gap-6">
+                        <div class="project-showcase w-full flex flex-col gap-6">
                             <div class="px-4 md:px-8 flex justify-between items-end">
                                 <div>
                                     <h3 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 drop-shadow-2xl">Social Platforms.</h3>
@@ -557,7 +574,7 @@
                                     Fullscreen <i class="fas fa-expand text-pink-500"></i>
                                 </button>
                             </div>
-                            <div class="w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
+                            <div class="iframe-wrapper w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
                                 <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
                                     <i class="fas fa-circle-notch fa-spin text-4xl mb-4 text-pink-500/50"></i>
                                     <span class="text-xs uppercase tracking-widest font-bold">Mounting Architecture...</span>
@@ -567,7 +584,7 @@
                         </div>
 
                         <!-- 7. Media Streaming -->
-                        <div class="w-full flex flex-col gap-6">
+                        <div class="project-showcase w-full flex flex-col gap-6">
                             <div class="px-4 md:px-8 flex justify-between items-end">
                                 <div>
                                     <h3 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 drop-shadow-2xl">Media Streaming.</h3>
@@ -577,7 +594,7 @@
                                     Fullscreen <i class="fas fa-expand text-violet-500"></i>
                                 </button>
                             </div>
-                            <div class="w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
+                            <div class="iframe-wrapper w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
                                 <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
                                     <i class="fas fa-circle-notch fa-spin text-4xl mb-4 text-violet-500/50"></i>
                                     <span class="text-xs uppercase tracking-widest font-bold">Mounting Architecture...</span>
@@ -587,7 +604,7 @@
                         </div>
 
                         <!-- 8. Corporate Sites -->
-                        <div class="w-full flex flex-col gap-6">
+                        <div class="project-showcase w-full flex flex-col gap-6">
                             <div class="px-4 md:px-8 flex justify-between items-end">
                                 <div>
                                     <h3 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 drop-shadow-2xl">Corporate Sites.</h3>
@@ -597,7 +614,7 @@
                                     Fullscreen <i class="fas fa-expand text-emerald-500"></i>
                                 </button>
                             </div>
-                            <div class="w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
+                            <div class="iframe-wrapper w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
                                 <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
                                     <i class="fas fa-circle-notch fa-spin text-4xl mb-4 text-emerald-500/50"></i>
                                     <span class="text-xs uppercase tracking-widest font-bold">Mounting Architecture...</span>
@@ -607,7 +624,7 @@
                         </div>
 
                         <!-- 9. Creator Platforms -->
-                        <div class="w-full flex flex-col gap-6">
+                        <div class="project-showcase w-full flex flex-col gap-6">
                             <div class="px-4 md:px-8 flex justify-between items-end">
                                 <div>
                                     <h3 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 drop-shadow-2xl">Creator Platforms.</h3>
@@ -617,7 +634,7 @@
                                     Fullscreen <i class="fas fa-expand text-fuchsia-500"></i>
                                 </button>
                             </div>
-                            <div class="w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
+                            <div class="iframe-wrapper w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
                                 <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
                                     <i class="fas fa-circle-notch fa-spin text-4xl mb-4 text-fuchsia-500/50"></i>
                                     <span class="text-xs uppercase tracking-widest font-bold">Mounting Architecture...</span>
@@ -627,7 +644,7 @@
                         </div>
 
                         <!-- 10. FinTech & Escrow -->
-                        <div class="w-full flex flex-col gap-6">
+                        <div class="project-showcase w-full flex flex-col gap-6">
                             <div class="px-4 md:px-8 flex justify-between items-end">
                                 <div>
                                     <h3 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 drop-shadow-2xl">FinTech Dashboards.</h3>
@@ -637,7 +654,7 @@
                                     Fullscreen <i class="fas fa-expand text-amber-500"></i>
                                 </button>
                             </div>
-                            <div class="w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
+                            <div class="iframe-wrapper w-full h-[500px] md:h-[700px] rounded-[2.5rem] border border-white/10 overflow-hidden relative shadow-2xl bg-zinc-950">
                                 <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
                                     <i class="fas fa-circle-notch fa-spin text-4xl mb-4 text-amber-500/50"></i>
                                     <span class="text-xs uppercase tracking-widest font-bold">Mounting Architecture...</span>
@@ -1526,6 +1543,13 @@
         window.addEventListener('mousemove', (e) => {
             mouseX = e.clientX; mouseY = e.clientY;
             cursorDot.style.left = `${mouseX}px`; cursorDot.style.top = `${mouseY}px`;
+
+            // FIX: Instantly hide custom cursor when mouse hits the iframe wrapper
+            if (e.target.closest('.iframe-wrapper')) {
+                document.body.classList.add('hide-custom-cursor');
+            } else {
+                document.body.classList.remove('hide-custom-cursor');
+            }
         }, { passive: true });
         
         function animateCursor() {
