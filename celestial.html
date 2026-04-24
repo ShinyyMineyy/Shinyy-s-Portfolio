@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Celestial Roleplay | Case Study</title>
+    <title>Celestial Roleplay | Immersive Case Study</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +25,8 @@
                     },
                     colors: {
                         brand: '#06b6d4', // Cyan accent
-                        darkBase: '#030305'
+                        darkBase: '#000000', // Absolute black for contrast
+                        surface: '#0a0a0a'
                     }
                 }
             }
@@ -33,223 +34,406 @@
     </script>
 
     <style>
-        body {
-            background-color: #030305;
+        body, html {
+            background-color: #000000;
             color: #e5e7eb;
             overflow-x: hidden;
+            cursor: none; /* Hide default cursor */
         }
         
+        /* Premium Film Grain */
+        .bg-noise {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.08"/%3E%3C/svg%3E');
+            z-index: 0; pointer-events: none; mix-blend-mode: overlay;
+        }
+
+        /* Animated Ambient Blobs */
+        @keyframes float-blob {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            100% { transform: translate(5%, 10%) scale(1.1) rotate(5deg); }
+        }
+        .blob-anim {
+            animation: float-blob 20s infinite cubic-bezier(0.4, 0, 0.2, 1) alternate;
+            will-change: transform;
+        }
+
+        /* Custom Cinematic Cursor */
+        #cursor-dot, #cursor-ring {
+            position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%); border-radius: 50%;
+            will-change: transform, left, top, width, height, opacity;
+        }
+        #cursor-dot { 
+            width: 6px; height: 6px; background-color: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.8); 
+            transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #cursor-ring {
+            width: 36px; height: 36px; border: 1px solid rgba(255,255,255,0.4);
+            transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease, border-color 0.4s ease;
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+        }
+        #cursor-text {
+            opacity: 0; font-family: 'Manrope', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: #fff; text-transform: uppercase;
+            transition: opacity 0.3s ease; transform: scale(0.8);
+        }
+        
+        /* Cursor Hover States */
+        body.hover-media #cursor-ring {
+            width: 80px; height: 80px; background-color: rgba(6, 182, 212, 0.2); border-color: rgba(6, 182, 212, 0.8); backdrop-filter: blur(4px); box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
+        }
+        body.hover-media #cursor-dot { opacity: 0; }
+        body.hover-media #cursor-text { opacity: 1; transform: scale(1); transition-delay: 0.1s; }
+
         /* Custom Scrollbar - Cyan */
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #030305; }
+        ::-webkit-scrollbar-track { background: #000000; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
 
-        /* Premium Glassmorphism */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.02);
+        /* Editorial Glassmorphism & 3D Environment */
+        .editorial-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: border-color 0.5s ease, box-shadow 0.5s ease;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            will-change: transform;
         }
         
-        .glass-card:hover {
+        .editorial-card:hover {
             border-color: rgba(6, 182, 212, 0.4);
-            box-shadow: 0 10px 40px rgba(6, 182, 212, 0.15);
-            transform: translateY(-4px);
+            box-shadow: 0 30px 60px -15px rgba(6, 182, 212, 0.2);
+        }
+
+        /* Media Effects (Parallax Scale) */
+        .media-zoom img, .media-zoom video {
+            transform: scale(1.1); /* Start slightly scaled up for parallax room */
+            transition: filter 0.7s ease;
+            filter: brightness(0.85) contrast(1.1);
+            will-change: transform;
+        }
+        .media-zoom:hover img, .media-zoom:hover video {
+            filter: brightness(1.1) contrast(1.05);
         }
 
         /* Element initial state for GSAP */
-        .reveal-element {
-            opacity: 0;
-            transform: translateY(40px);
-            will-change: transform, opacity;
-        }
+        .reveal-up { opacity: 0; transform: translateY(60px); }
+        .reveal-left { opacity: 0; transform: translateX(-60px); }
+        .reveal-right { opacity: 0; transform: translateX(60px); }
+        .reveal-scale { opacity: 0; transform: scale(0.95); }
+        .hero-anim { opacity: 0; transform: translateY(30px); }
         
         /* Lightbox transitions */
-        .lightbox-enter {
-            opacity: 1 !important;
-            pointer-events: auto !important;
-        }
-        .lightbox-img-enter {
-            transform: scale(1) !important;
-        }
+        .lightbox-enter { opacity: 1 !important; pointer-events: auto !important; }
+        .lightbox-img-enter { transform: scale(1) !important; }
     </style>
 </head>
-<body class="antialiased min-h-screen selection:bg-brand/30 selection:text-white p-4 md:p-10">
+<body class="antialiased min-h-screen selection:bg-brand/30 selection:text-white pb-24">
 
-    <!-- Subtle Background Glow -->
-    <div class="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-brand/10 blur-[150px] rounded-full pointer-events-none z-0"></div>
-    <div class="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-sky-500/10 blur-[150px] rounded-full pointer-events-none z-0"></div>
+    <!-- Cinematic Custom Cursor -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"><span id="cursor-text">View</span></div>
 
-    <div class="max-w-5xl mx-auto flex flex-col gap-20 pb-24 relative z-10">
+    <!-- Global Ambient Background Elements -->
+    <div class="bg-noise"></div>
+    <div class="fixed top-[-20%] left-[-10%] w-[60%] h-[60%] bg-brand/10 blur-[150px] rounded-full pointer-events-none z-0 blob-anim"></div>
+    <div class="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-blue-600/10 blur-[150px] rounded-full pointer-events-none z-0 blob-anim" style="animation-delay: -5s;"></div>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="relative z-10 flex flex-col gap-32 pt-20">
         
-        <!-- Header -->
-        <header class="flex flex-col gap-4 text-center items-center mt-8 reveal-element">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand/10 border border-brand/20 text-brand text-xs font-bold uppercase tracking-widest">
-                <i class="fas fa-satellite"></i> Project Showcase
+        <!-- 1. IMMERSIVE HERO SECTION -->
+        <header class="flex flex-col gap-12 text-center items-center w-full px-4">
+            <div class="flex flex-col items-center gap-6">
+                <div class="hero-anim inline-flex items-center gap-2 px-5 py-2 rounded-full bg-brand/10 border border-brand/20 text-brand text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(6,182,212,0.2)]">
+                    <span class="w-2 h-2 rounded-full bg-brand animate-pulse"></span> Flagship Architecture
+                </div>
+                
+                <h1 class="hero-anim font-display text-6xl md:text-8xl lg:text-[7rem] font-black tracking-tighter uppercase leading-[0.9] flex flex-col">
+                    <span class="text-transparent" style="-webkit-text-stroke: 1px rgba(255,255,255,0.4);">Celestial</span>
+                    <span class="text-white drop-shadow-[0_0_40px_rgba(6,182,212,0.3)]">Roleplay.</span>
+                </h1>
+
+                <!-- Client Reveal Animation -->
+                <div class="hero-anim-client mt-2">
+                    <div class="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-gradient-to-r from-brand/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <span class="text-gray-400 text-sm italic font-serif tracking-wide relative z-10">Commissioned by</span>
+                        <div class="flex items-center gap-2 relative z-10">
+                            <div class="w-6 h-6 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-[10px] font-black text-white italic shadow-[0_0_15px_rgba(6,182,212,0.5)]">K</div>
+                            <span class="text-white font-bold tracking-widest uppercase text-sm drop-shadow-md">KAISER FAHIM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="hero-anim text-gray-400 text-lg md:text-xl font-light max-w-3xl leading-relaxed mt-4">
+                    A cinematic, ultra-high-performance web architecture bridging the gap between immersive gaming ecosystems and flawless, automated digital e-commerce.
+                </p>
             </div>
-            <h1 class="font-display text-5xl md:text-6xl font-black tracking-tighter text-white drop-shadow-lg">
-                Celestial Roleplay
-            </h1>
-            <p class="text-gray-400 text-lg font-light max-w-2xl leading-relaxed">
-                A custom-built, fully animated GTA RP storefront and centralized management dashboard.
-            </p>
+
+            <!-- Massive Cinematic Parallax Frame -->
+            <div class="w-full max-w-[1600px] mx-auto reveal-scale px-4 md:px-8 mt-4">
+                <div class="w-full aspect-[21/9] md:aspect-[16/7] rounded-[2rem] editorial-card overflow-hidden relative shadow-[0_0_100px_rgba(6,182,212,0.15)] lightbox-trigger media-zoom" data-media="main.png">
+                    <!-- Universal Engine Injects Media Here -->
+                </div>
+                
+                <!-- Metrics Bar -->
+                <div class="flex flex-wrap justify-center gap-6 md:gap-16 mt-10 text-center border-b border-white/10 pb-12">
+                    <div class="flex flex-col gap-1 reveal-up"><span class="text-brand font-mono font-bold text-2xl md:text-4xl drop-shadow-[0_0_15px_rgba(6,182,212,0.4)]">React.js</span><span class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Frontend Engine</span></div>
+                    <div class="w-px h-12 bg-white/10 hidden md:block"></div>
+                    <div class="flex flex-col gap-1 reveal-up" style="transition-delay: 100ms;"><span class="text-white font-mono font-bold text-2xl md:text-4xl drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">Express</span><span class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Backend API</span></div>
+                    <div class="w-px h-12 bg-white/10 hidden md:block"></div>
+                    <div class="flex flex-col gap-1 reveal-up" style="transition-delay: 200ms;"><span class="text-white font-mono font-bold text-2xl md:text-4xl drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">MongoDB</span><span class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Database System</span></div>
+                </div>
+            </div>
         </header>
 
-        <!-- 1. Hero Interface -->
-        <section class="flex flex-col gap-3 reveal-element">
-            <h3 class="text-white font-display font-bold text-xl ml-2 uppercase tracking-widest text-brand">Main Interface</h3>
-            <!-- TO USE PNG OR MP4: Change "main.gif" to "main.png", "main.jpg", or "main.mp4" -->
-            <div class="lightbox-trigger w-full aspect-[16/9] rounded-3xl glass-card overflow-hidden relative group cursor-pointer" data-media="main.png"></div>
-        </section>
-
-        <!-- 2. Smooth Interactions -->
-        <section class="flex flex-col gap-6 reveal-element">
-            <h3 class="text-white font-display font-bold text-xl ml-2 uppercase tracking-widest text-brand border-b border-white/10 pb-2">Smooth Interactions</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Interaction 1 -->
-                <!-- TO USE PNG OR MP4: Change "smooth1.gif" below -->
-                <div class="lightbox-trigger w-full aspect-video rounded-2xl glass-card overflow-hidden relative group cursor-pointer" data-media="smooth1.png"></div>
+        <!-- 2. EDITORIAL SPLIT: SMOOTH INTERACTIONS -->
+        <section class="max-w-[1400px] mx-auto w-full px-4 md:px-8">
+            <div class="flex flex-col lg:flex-row gap-12 lg:gap-24 items-center">
                 
-                <!-- Interaction 2 -->
-                <!-- TO USE PNG OR MP4: Change "smooth2.gif" below -->
-                <div class="lightbox-trigger w-full aspect-video rounded-2xl glass-card overflow-hidden relative group cursor-pointer" data-media="smooth2.png"></div>
+                <!-- Text Left -->
+                <div class="flex-1 reveal-left">
+                    <h2 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter mb-6">Fluid Dynamics & <br><span class="text-brand">Micro-Interactions.</span></h2>
+                    <p class="text-gray-400 text-lg font-light leading-relaxed mb-6">
+                        The architecture relies heavily on bespoke CSS and JS animations. Every hover, click, and page transition was engineered to feel instantaneous and premium.
+                    </p>
+                    <p class="text-gray-400 text-lg font-light leading-relaxed mb-8">
+                        By utilizing GPU-accelerated transforms, we ensured that the massive glassmorphism overlays and dynamic rendering don't cause layout thrashing or drop frames, even on lower-end devices.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-center gap-4 text-sm font-medium text-gray-300 border border-white/5 bg-white/5 px-4 py-3 rounded-xl shadow-lg"><i class="fas fa-bolt text-brand animate-pulse"></i> Zero-layout-thrashing animations</li>
+                        <li class="flex items-center gap-4 text-sm font-medium text-gray-300 border border-white/5 bg-white/5 px-4 py-3 rounded-xl shadow-lg"><i class="fas fa-layer-group text-brand animate-pulse"></i> Hardware-accelerated glassmorphism</li>
+                    </ul>
+                </div>
+                
+                <!-- Offset Images Right with 3D Tilt -->
+                <div class="flex-1 relative w-full h-[500px] md:h-[600px] reveal-right">
+                    <!-- Image 1 (Back/Top) -->
+                    <div class="absolute top-0 right-0 w-[80%] aspect-video editorial-card rounded-2xl overflow-hidden shadow-2xl z-10 lightbox-trigger media-zoom" data-media="smooth1.png"></div>
+                    <!-- Image 2 (Front/Bottom Offset) -->
+                    <div class="absolute bottom-0 left-0 w-[70%] aspect-video editorial-card rounded-2xl overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.8)] z-20 border-brand/30 lightbox-trigger media-zoom" data-media="smooth2.png"></div>
+                </div>
+                
             </div>
         </section>
 
-        <!-- 3. Core Platforms -->
-        <section class="flex flex-col gap-6 reveal-element">
-            <h3 class="text-white font-display font-bold text-xl ml-2 uppercase tracking-widest text-brand border-b border-white/10 pb-2">Platform Modules</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <!-- Hub -->
-                <div class="flex flex-col gap-2">
-                    <!-- TO USE PNG OR MP4: Change "hub.gif" below -->
-                    <div class="lightbox-trigger w-full aspect-[4/3] rounded-2xl glass-card overflow-hidden relative group cursor-pointer" data-media="hub.png"></div>
-                    <div class="px-2 text-sm font-bold tracking-wide text-gray-300"><i class="fas fa-home text-brand mr-1"></i> The Hub</div>
-                </div>
-                <!-- Store -->
-                <div class="flex flex-col gap-2">
-                    <!-- TO USE PNG OR MP4: Change "store.gif" below -->
-                    <div class="lightbox-trigger w-full aspect-[4/3] rounded-2xl glass-card overflow-hidden relative group cursor-pointer" data-media="store.png"></div>
-                    <div class="px-2 text-sm font-bold tracking-wide text-gray-300"><i class="fas fa-shopping-bag text-brand mr-1"></i> Premium Store</div>
-                </div>
+        <!-- 3. IMMERSIVE BENTO GRID: PLATFORM MODULES -->
+        <section class="max-w-[1400px] mx-auto w-full px-4 md:px-8 flex flex-col gap-10">
+            <div class="reveal-up text-center max-w-3xl mx-auto mb-6">
+                <h2 class="font-display text-4xl md:text-5xl font-black text-white tracking-tighter mb-4">The Frontend Ecosystem</h2>
+                <p class="text-gray-400 text-lg font-light">A unified web experience broken down into 5 massive front-end modules, all routed through a single, seamless entry point utilizing advanced client-side routing.</p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Businesses -->
-                <div class="flex flex-col gap-2">
-                    <!-- TO USE PNG OR MP4: Change "business.gif" below -->
-                    <div class="lightbox-trigger w-full aspect-[4/3] md:aspect-square rounded-2xl glass-card overflow-hidden relative group cursor-pointer" data-media="business.png"></div>
-                    <div class="px-2 text-sm font-bold tracking-wide text-gray-300"><i class="fas fa-briefcase text-brand mr-1"></i> Businesses</div>
+
+            <!-- 12-Column Grid System -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                
+                <!-- Hub (Large - 8 cols) -->
+                <div class="md:col-span-8 reveal-up flex flex-col p-4 editorial-card rounded-[2.5rem] bg-[#050505]/50">
+                    <div class="lightbox-trigger w-full h-[300px] md:h-[450px] rounded-2xl overflow-hidden media-zoom bg-black border border-white/5" data-media="hub.png"></div>
+                    <div class="flex flex-col gap-2 px-3 pt-5 pb-2">
+                        <div class="flex justify-between items-start">
+                            <h4 class="text-2xl font-bold text-white tracking-tight"><i class="fas fa-home text-brand mr-2"></i> The Central Hub</h4>
+                            <span class="text-[10px] font-mono text-brand uppercase tracking-widest px-2.5 py-1 bg-brand/10 border border-brand/20 rounded">React Router</span>
+                        </div>
+                        <p class="text-gray-400 text-sm font-light leading-relaxed max-w-2xl">The main entry point designed to cleanly route thousands of concurrent players to their respective dashboards. It utilizes dynamic pre-fetching to ensure instantaneous load times when navigating between the complex sub-applications.</p>
+                    </div>
                 </div>
-                <!-- Departments -->
-                <div class="flex flex-col gap-2">
-                    <!-- TO USE PNG OR MP4: Change "departments.gif" below -->
-                    <div class="lightbox-trigger w-full aspect-[4/3] md:aspect-square rounded-2xl glass-card overflow-hidden relative group cursor-pointer" data-media="departments.png"></div>
-                    <div class="px-2 text-sm font-bold tracking-wide text-gray-300"><i class="fas fa-shield-alt text-brand mr-1"></i> Departments</div>
+
+                <!-- Store (Tall - 4 cols) -->
+                <div class="md:col-span-4 reveal-up flex flex-col p-4 editorial-card rounded-[2.5rem] bg-[#050505]/50" style="transition-delay: 100ms;">
+                    <div class="lightbox-trigger w-full h-[300px] md:h-[450px] rounded-2xl overflow-hidden media-zoom bg-black border border-white/5" data-media="store.png"></div>
+                    <div class="flex flex-col gap-2 px-3 pt-5 pb-2">
+                        <div class="flex justify-between items-start">
+                            <h4 class="text-xl font-bold text-white tracking-tight"><i class="fas fa-shopping-bag text-brand mr-2"></i> Premium Store</h4>
+                            <span class="text-[10px] font-mono text-emerald-400 uppercase tracking-widest px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded">Stripe API</span>
+                        </div>
+                        <p class="text-gray-400 text-sm font-light leading-relaxed">Fully automated digital asset delivery system. Secure webhook callbacks verify purchases instantly, unlocking game assets in real-time without human intervention.</p>
+                    </div>
                 </div>
-                <!-- Underground -->
-                <div class="flex flex-col gap-2">
-                    <!-- TO USE PNG OR MP4: Change "underground.gif" below -->
-                    <div class="lightbox-trigger w-full aspect-[4/3] md:aspect-square rounded-2xl glass-card overflow-hidden relative group cursor-pointer" data-media="underground.png"></div>
-                    <div class="px-2 text-sm font-bold tracking-wide text-gray-300"><i class="fas fa-skull text-brand mr-1"></i> Underground</div>
+
+                <!-- Businesses (4 cols) -->
+                <div class="md:col-span-4 reveal-up flex flex-col p-3 editorial-card rounded-[2rem] bg-[#050505]/50" style="transition-delay: 0ms;">
+                    <div class="lightbox-trigger w-full aspect-video md:aspect-[4/3] rounded-xl overflow-hidden media-zoom bg-black border border-white/5" data-media="business.png"></div>
+                    <div class="flex flex-col gap-2 px-3 pt-4 pb-2">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-lg font-bold text-white"><i class="fas fa-briefcase text-brand/70 mr-2"></i> Businesses</h4>
+                            <span class="text-[9px] font-mono text-blue-400 uppercase tracking-widest px-2 py-0.5 border border-blue-500/30 rounded">WebSockets</span>
+                        </div>
+                        <p class="text-gray-500 text-xs font-light mt-1">Real-time enterprise management for in-game organizations, syncing ledgers and employee rosters.</p>
+                    </div>
                 </div>
+
+                <!-- Departments (4 cols) -->
+                <div class="md:col-span-4 reveal-up flex flex-col p-3 editorial-card rounded-[2rem] bg-[#050505]/50" style="transition-delay: 100ms;">
+                    <div class="lightbox-trigger w-full aspect-video md:aspect-[4/3] rounded-xl overflow-hidden media-zoom bg-black border border-white/5" data-media="departments.png"></div>
+                    <div class="flex flex-col gap-2 px-3 pt-4 pb-2">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-lg font-bold text-white"><i class="fas fa-shield-alt text-brand/70 mr-2"></i> Departments</h4>
+                            <span class="text-[9px] font-mono text-orange-400 uppercase tracking-widest px-2 py-0.5 border border-orange-500/30 rounded">OAuth2 JWT</span>
+                        </div>
+                        <p class="text-gray-500 text-xs font-light mt-1">Highly secure portals for Police/EMS factions, enforcing strict Role-Based Access Control (RBAC).</p>
+                    </div>
+                </div>
+
+                <!-- Underground (4 cols) -->
+                <div class="md:col-span-4 reveal-up flex flex-col p-3 editorial-card rounded-[2rem] bg-[#050505]/50" style="transition-delay: 200ms;">
+                    <div class="lightbox-trigger w-full aspect-video md:aspect-[4/3] rounded-xl overflow-hidden media-zoom bg-black border border-white/5" data-media="underground.png"></div>
+                    <div class="flex flex-col gap-2 px-3 pt-4 pb-2">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-lg font-bold text-white"><i class="fas fa-skull text-brand/70 mr-2"></i> Underground</h4>
+                            <span class="text-[9px] font-mono text-purple-400 uppercase tracking-widest px-2 py-0.5 border border-purple-500/30 rounded">Encryption</span>
+                        </div>
+                        <p class="text-gray-500 text-xs font-light mt-1">Encrypted black-market ledgers built with obfuscated routing for secure faction communications.</p>
+                    </div>
+                </div>
+
             </div>
         </section>
 
-        <div class="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent my-4 reveal-element"></div>
+        <!-- DASHBOARD ENTRY TRANSITION -->
+        <div class="w-full flex justify-center py-10 reveal-up">
+            <div class="h-32 w-px bg-gradient-to-b from-brand/50 to-transparent"></div>
+        </div>
 
-        <!-- 4. Dashboard Intro -->
-        <section class="text-center flex flex-col items-center gap-4 reveal-element">
-            <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shadow-lg">
-                <i class="fas fa-server text-2xl text-brand"></i>
+        <!-- 4. COMMAND CENTER (MASONRY DASHBOARD) -->
+        <section class="w-full bg-[#050505] border-y border-white/5 py-24 relative overflow-hidden">
+            <!-- Inner grid background -->
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CjxwYXRoIGQ9Ik0wIDBoNDB2NDBIMHoiIGZpbGw9Im5vbmUiLz4KPHBhdGggZD0iTTAgNDBoNDBWMHoiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAyKSIvPgo8L3N2Zz4=')] z-0 pointer-events-none opacity-50"></div>
+
+            <div class="max-w-[1400px] mx-auto px-4 md:px-8 relative z-10 flex flex-col gap-16">
+                
+                <!-- Dashboard Header -->
+                <div class="flex flex-col md:flex-row justify-between items-end gap-6 reveal-up">
+                    <div>
+                        <div class="w-16 h-16 rounded-2xl bg-brand/10 border border-brand/20 flex items-center justify-center shadow-[0_0_30px_rgba(6,182,212,0.3)] mb-6">
+                            <i class="fas fa-server text-2xl text-brand"></i>
+                        </div>
+                        <h2 class="font-display text-4xl md:text-6xl font-black text-white tracking-tighter drop-shadow-lg">System Backend<br>& Dashboards.</h2>
+                    </div>
+                    <div class="max-w-md border-l border-brand/30 pl-5 py-2 flex flex-col gap-3">
+                        <p class="text-gray-400 font-light text-sm md:text-base leading-relaxed">
+                            10 distinct admin control modules giving the development team absolute power over player data, live economies, and API integrations.
+                        </p>
+                        <div class="flex gap-2 mt-2">
+                            <span class="px-2 py-1 bg-[#1e1f22] border border-[#2b2d31] rounded text-[10px] font-bold text-brand tracking-widest uppercase shadow-md">Node.js</span>
+                            <span class="px-2 py-1 bg-[#1e1f22] border border-[#2b2d31] rounded text-[10px] font-bold text-gray-300 tracking-widest uppercase shadow-md">Express API</span>
+                            <span class="px-2 py-1 bg-[#1e1f22] border border-[#2b2d31] rounded text-[10px] font-bold text-gray-300 tracking-widest uppercase shadow-md">MongoDB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Asymmetrical 10-Item Masonry Grid -->
+                <!-- Layout Pattern: 2 wide -> 3 medium -> 2 wide -> 3 medium -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    
+                    <!-- Row 1 (2 Items) -->
+                    <div class="md:col-span-6 reveal-up flex flex-col p-3 editorial-card rounded-[2rem] bg-black/60 backdrop-blur-md">
+                        <div class="lightbox-trigger w-full aspect-[16/10] rounded-[1.5rem] overflow-hidden media-zoom border border-white/5" data-media="player.png"></div>
+                        <div class="px-3 pt-4 pb-2">
+                            <h4 class="text-white font-bold tracking-wide flex items-center gap-2 mb-1"><i class="fas fa-users text-brand/70"></i> Player Roster</h4>
+                            <p class="text-xs text-gray-400 font-light leading-relaxed">Live player states synced directly from the game server database, allowing real-time ban/kick enforcement.</p>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-6 reveal-up flex flex-col p-3 editorial-card rounded-[2rem] bg-black/60 backdrop-blur-md" style="transition-delay: 100ms;">
+                        <div class="lightbox-trigger w-full aspect-[16/10] rounded-[1.5rem] overflow-hidden media-zoom border border-white/5" data-media="website.png"></div>
+                        <div class="px-3 pt-4 pb-2">
+                            <h4 class="text-white font-bold tracking-wide flex items-center gap-2 mb-1"><i class="fas fa-user-circle text-brand/70"></i> Website Users</h4>
+                            <p class="text-xs text-gray-400 font-light leading-relaxed">OAuth2 Discord integration managing web-permissions, linked accounts, and total purchase histories.</p>
+                        </div>
+                    </div>
+
+                    <!-- Row 2 (3 Items) -->
+                    <div class="md:col-span-4 reveal-up flex flex-col p-3 editorial-card rounded-[1.5rem] bg-black/60 backdrop-blur-md">
+                        <div class="lightbox-trigger w-full aspect-[4/3] rounded-xl overflow-hidden media-zoom border border-white/5" data-media="console.png"></div>
+                        <div class="px-2 pt-3 pb-1">
+                            <h4 class="text-white text-sm font-bold tracking-wide flex items-center gap-2"><i class="fas fa-terminal text-brand/70"></i> System Console</h4>
+                            <p class="text-[11px] text-gray-500 mt-1">Live server terminal execution via secure WebSocket tunnels.</p>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-4 reveal-up flex flex-col p-3 editorial-card rounded-[1.5rem] bg-black/60 backdrop-blur-md" style="transition-delay: 100ms;">
+                        <div class="lightbox-trigger w-full aspect-[4/3] rounded-xl overflow-hidden media-zoom border border-white/5" data-media="webhooks.png"></div>
+                        <div class="px-2 pt-3 pb-1">
+                            <h4 class="text-white text-sm font-bold tracking-wide flex items-center gap-2"><i class="fab fa-discord text-brand/70"></i> Discord Webhooks</h4>
+                            <p class="text-[11px] text-gray-500 mt-1">Automated logging, purchase alerts, and system routing logic.</p>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-4 reveal-up flex flex-col p-3 editorial-card rounded-[1.5rem] bg-black/60 backdrop-blur-md" style="transition-delay: 200ms;">
+                        <div class="lightbox-trigger w-full aspect-[4/3] rounded-xl overflow-hidden media-zoom border border-white/5" data-media="backups.png"></div>
+                        <div class="px-2 pt-3 pb-1">
+                            <h4 class="text-white text-sm font-bold tracking-wide flex items-center gap-2"><i class="fas fa-database text-brand/70"></i> System Backups</h4>
+                            <p class="text-[11px] text-gray-500 mt-1">Automated CRON jobs archiving MongoDB instances off-site.</p>
+                        </div>
+                    </div>
+
+                    <!-- Row 3 (2 Items) -->
+                    <div class="md:col-span-6 reveal-up flex flex-col p-3 editorial-card rounded-[2rem] bg-black/60 backdrop-blur-md">
+                        <div class="lightbox-trigger w-full aspect-[16/10] rounded-[1.5rem] overflow-hidden media-zoom border border-white/5" data-media="store_management.png"></div>
+                        <div class="px-3 pt-4 pb-2">
+                            <h4 class="text-white font-bold tracking-wide flex items-center gap-2 mb-1"><i class="fas fa-store text-brand/70"></i> Store Management</h4>
+                            <p class="text-xs text-gray-400 font-light leading-relaxed">Full CRUD (Create, Read, Update, Delete) interface for digital products, managing stock, discounts, and automated Stripe pricing integration.</p>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-6 reveal-up flex flex-col p-3 editorial-card rounded-[2rem] bg-black/60 backdrop-blur-md" style="transition-delay: 100ms;">
+                        <div class="lightbox-trigger w-full aspect-[16/10] rounded-[1.5rem] overflow-hidden media-zoom border border-white/5" data-media="business_manager.png"></div>
+                        <div class="px-3 pt-4 pb-2">
+                            <h4 class="text-white font-bold tracking-wide flex items-center gap-2 mb-1"><i class="fas fa-briefcase text-brand/70"></i> Businesses Manager</h4>
+                            <p class="text-xs text-gray-400 font-light leading-relaxed">In-depth economy oversight. Allows admins to audit business transactions, adjust corporate vaults, and manage faction leaders.</p>
+                        </div>
+                    </div>
+
+                    <!-- Row 4 (3 Items) -->
+                    <div class="md:col-span-4 reveal-up flex flex-col p-3 editorial-card rounded-[1.5rem] bg-black/60 backdrop-blur-md">
+                        <div class="lightbox-trigger w-full aspect-[4/3] rounded-xl overflow-hidden media-zoom border border-white/5" data-media="departments_config.png"></div>
+                        <div class="px-2 pt-3 pb-1">
+                            <h4 class="text-white text-sm font-bold tracking-wide flex items-center gap-2"><i class="fas fa-shield-alt text-brand/70"></i> Depts Config</h4>
+                            <p class="text-[11px] text-gray-500 mt-1">Dynamic rank, vehicle, and loadout JSON management.</p>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-4 reveal-up flex flex-col p-3 editorial-card rounded-[1.5rem] bg-black/60 backdrop-blur-md" style="transition-delay: 100ms;">
+                        <div class="lightbox-trigger w-full aspect-[4/3] rounded-xl overflow-hidden media-zoom border border-white/5" data-media="underground_log.png"></div>
+                        <div class="px-2 pt-3 pb-1">
+                            <h4 class="text-white text-sm font-bold tracking-wide flex items-center gap-2"><i class="fas fa-skull text-brand/70"></i> Underground Log</h4>
+                            <p class="text-[11px] text-gray-500 mt-1">Encrypted audit trails for illegal faction operations.</p>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-4 reveal-up flex flex-col p-3 editorial-card rounded-[1.5rem] bg-black/60 backdrop-blur-md" style="transition-delay: 200ms;">
+                        <div class="lightbox-trigger w-full aspect-[4/3] rounded-xl overflow-hidden media-zoom border border-white/5" data-media="team.png"></div>
+                        <div class="px-2 pt-3 pb-1">
+                            <h4 class="text-white text-sm font-bold tracking-wide flex items-center gap-2"><i class="fas fa-users-cog text-brand/70"></i> Team CRP Panel</h4>
+                            <p class="text-[11px] text-gray-500 mt-1">Super-admin controls restricted strictly to core developers.</p>
+                        </div>
+                    </div>
+
+                </div>
             </div>
-            <h2 class="font-display text-4xl font-black text-white">System Dashboard</h2>
-            <p class="text-gray-400 font-light max-w-xl">
-                The centralized command hub controlling every aspect of the roleplay ecosystem. 
-            </p>
-        </section>
-
-        <!-- 5. Dashboard 10 Modules Grid -->
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 reveal-element">
-            
-            <div class="flex flex-col gap-3 group/dash">
-                <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-users text-brand"></i> Player Roster</h4>
-                <!-- TO USE PNG OR MP4: Change "player.gif" below -->
-                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="player.png"></div>
-            </div>
-
-            <div class="flex flex-col gap-3 group/dash">
-                <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-user-circle text-brand"></i> Website Users</h4>
-                <!-- TO USE PNG OR MP4: Change "website.gif" below -->
-                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="website.png"></div>
-            </div>
-
-            <div class="flex flex-col gap-3 group/dash">
-                <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-terminal text-brand"></i> System Console</h4>
-                <!-- TO USE PNG OR MP4: Change "console.gif" below -->
-                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="console.png"></div>
-            </div>
-
-            <div class="flex flex-col gap-3 group/dash">
-                <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fab fa-discord text-brand"></i> Discord Webhooks</h4>
-                <!-- TO USE PNG OR MP4: Change "webhooks.gif" below -->
-                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="webhooks.png"></div>
-            </div>
-
-            <div class="flex flex-col gap-3 group/dash">
-                <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-database text-brand"></i> System Backups</h4>
-                <!-- TO USE PNG OR MP4: Change "backups.gif" below -->
-                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="backups.png"></div>
-            </div>
-
-            <div class="flex flex-col gap-3 group/dash">
-                <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-store text-brand"></i> Store Management</h4>
-                <!-- TO USE PNG OR MP4: Change "store_management.gif" below -->
-                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="store_management.png"></div>
-            </div>
-
-            <div class="flex flex-col gap-3 group/dash">
-                <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-briefcase text-brand"></i> Businesses Manager</h4>
-                <!-- TO USE PNG OR MP4: Change "business_manager.gif" below -->
-                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="business_manager.png"></div>
-            </div>
-
-            <div class="flex flex-col gap-3 group/dash">
-                <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-shield-alt text-brand"></i> Departments Config</h4>
-                <!-- TO USE PNG OR MP4: Change "departments_config.gif" below -->
-                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="departments_config.png"></div>
-            </div>
-
-            <div class="flex flex-col gap-3 group/dash">
-                <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-skull text-brand"></i> Underground Log</h4>
-                <!-- TO USE PNG OR MP4: Change "underground_log.gif" below -->
-                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="underground_log.png"></div>
-            </div>
-
-            <div class="flex flex-col gap-3 group/dash">
-                <h4 class="text-white font-bold tracking-wide flex items-center gap-2"><i class="fas fa-users-cog text-brand"></i> Team CRP Panel</h4>
-                <!-- TO USE PNG OR MP4: Change "team.gif" below -->
-                <div class="lightbox-trigger w-full aspect-video rounded-xl glass-card overflow-hidden relative border-white/5 group-hover/dash:border-white/20 cursor-pointer" data-media="team.png"></div>
-            </div>
-
         </section>
 
         <!-- CTA footer for the iframe -->
-        <section class="flex justify-center mt-8 reveal-element pb-10">
-            <a href="https://crpstore.kaiserfahim.me/" target="_blank" class="px-8 py-4 bg-brand hover:bg-cyan-500 text-white font-bold tracking-widest uppercase rounded-2xl shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:shadow-[0_0_50px_rgba(6,182,212,0.6)] transition-all flex items-center gap-3">
-                Visit Live Production Site <i class="fas fa-arrow-right"></i>
-            </a>
+        <section class="flex justify-center mt-12 reveal-up pb-10 w-full px-4">
+            <!-- Magnetic Wrapper for the button -->
+            <div class="magnetic-btn-wrap" style="will-change: transform;">
+                <a href="https://crpstore.kaiserfahim.me/" target="_blank" class="px-10 py-5 bg-white text-black font-display font-black tracking-widest uppercase rounded-2xl shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:shadow-[0_0_60px_rgba(6,182,212,0.6)] hover:bg-brand hover:text-white transition-all duration-500 flex items-center gap-3 text-lg border border-transparent hover:border-brand/50">
+                    Visit Live Environment <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
         </section>
 
     </div>
 
     <!-- Fullscreen Lightbox Modal -->
-    <div id="lightbox" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
-        <div class="absolute inset-0 bg-black/90 backdrop-blur-md cursor-pointer" onclick="closeLightbox()"></div>
-        <button onclick="closeLightbox()" class="absolute top-6 right-6 md:top-10 md:right-10 text-white bg-white/10 hover:bg-white/20 w-12 h-12 rounded-full flex items-center justify-center z-20 transition-colors border border-white/10">
-            <i class="fas fa-times text-xl"></i>
+    <div id="lightbox" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-400 ease-out">
+        <div class="absolute inset-0 bg-black/95 backdrop-blur-2xl cursor-pointer" onclick="closeLightbox()"></div>
+        <button onclick="closeLightbox()" class="absolute top-6 right-6 md:top-10 md:right-10 text-white bg-white/5 hover:bg-white/20 w-14 h-14 rounded-full flex items-center justify-center z-20 transition-colors border border-white/10 hover:border-brand/50 hover:text-brand">
+            <i class="fas fa-times text-2xl"></i>
         </button>
         <!-- The clicked media is dynamically injected into this container -->
         <div id="lightbox-media-container" class="relative z-10 w-full h-full flex items-center justify-center p-4 md:p-12 pointer-events-none"></div>
@@ -257,6 +441,69 @@
 
     <!-- Universal Media Engine & GSAP Logic -->
     <script>
+        // Custom Cinematic Cursor Logic
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorRing = document.getElementById('cursor-ring');
+        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+        let ringX = mouseX, ringY = mouseY;
+        
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX; mouseY = e.clientY;
+            cursorDot.style.left = `${mouseX}px`; cursorDot.style.top = `${mouseY}px`;
+        }, { passive: true });
+        
+        function animateCursor() {
+            ringX += (mouseX - ringX) * 0.15; ringY += (mouseY - ringY) * 0.15;
+            cursorRing.style.left = `${ringX}px`; cursorRing.style.top = `${ringY}px`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Bind custom cursor hover states to media triggers
+        document.querySelectorAll('.lightbox-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hover-media'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hover-media'));
+        });
+
+        // 3D Interactive Hover Effect for Editorial Cards
+        document.querySelectorAll('.editorial-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                if (window.innerWidth < 768) return; // Disable on mobile
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -4; // Max 4 deg rotation
+                const rotateY = ((x - centerX) / centerX) * 4;
+                
+                gsap.to(card, {
+                    rotateX: rotateX,
+                    rotateY: rotateY,
+                    transformPerspective: 1000,
+                    ease: "power2.out",
+                    duration: 0.5
+                });
+            });
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, { rotateX: 0, rotateY: 0, ease: "power3.out", duration: 1 });
+            });
+        });
+
+        // Magnetic Button Logic for the CTA
+        const magneticBtn = document.querySelector('.magnetic-btn-wrap');
+        if (magneticBtn) {
+            magneticBtn.addEventListener('mousemove', (e) => {
+                const rect = magneticBtn.getBoundingClientRect();
+                const x = (e.clientX - rect.left - rect.width / 2) * 0.3;
+                const y = (e.clientY - rect.top - rect.height / 2) * 0.3;
+                gsap.to(magneticBtn, { x: x, y: y, duration: 0.5, ease: "power2.out" });
+            });
+            magneticBtn.addEventListener('mouseleave', () => {
+                gsap.to(magneticBtn, { x: 0, y: 0, duration: 1, ease: "elastic.out(1, 0.3)" });
+            });
+        }
+
         // 1. Universal Media Injector (Supports GIF, PNG, JPG, MP4, WEBM)
         document.addEventListener("DOMContentLoaded", () => {
             document.querySelectorAll('.lightbox-trigger').forEach(container => {
@@ -267,9 +514,9 @@
                 const mediaEl = document.createElement(isVideo ? 'video' : 'img');
                 
                 mediaEl.src = src;
-                mediaEl.className = "w-full h-full object-cover transition-all duration-500 group-hover:scale-105";
+                // Ensures image perfectly covers the premium boundaries
+                mediaEl.className = "w-full h-full object-cover transition-all duration-700 pointer-events-none parallax-media"; 
                 
-                // If it's a video, make it behave exactly like a GIF
                 if (isVideo) {
                     mediaEl.autoplay = true;
                     mediaEl.loop = true;
@@ -278,27 +525,25 @@
                 }
 
                 container.appendChild(mediaEl);
-                
-                // Auto-bind the click event for the Lightbox
                 container.onclick = () => openLightbox(src);
             });
         });
 
-        // 2. Lightbox Functions (Also supports universal media)
+        // 2. Lightbox Functions
         function openLightbox(src) {
+            document.body.classList.remove('hover-media'); // Hide custom view cursor
+            
             const lightbox = document.getElementById('lightbox');
             const container = document.getElementById('lightbox-media-container');
             
-            // Clear previous media
             container.innerHTML = '';
             
             const isVideo = src.match(/\.(mp4|webm|ogg|mov)$/i);
             const mediaEl = document.createElement(isVideo ? 'video' : 'img');
             
             mediaEl.src = src;
-            mediaEl.className = "max-w-[95vw] max-h-[90vh] object-contain rounded-xl shadow-2xl border border-white/10 transform scale-95 transition-transform duration-300 pointer-events-auto";
+            mediaEl.className = "max-w-[95vw] max-h-[90vh] object-contain rounded-2xl shadow-[0_0_100px_rgba(0,0,0,1)] border border-white/10 transform scale-95 transition-all duration-500 ease-out pointer-events-auto";
             
-            // If viewing video in lightbox, give them controls
             if (isVideo) {
                 mediaEl.autoplay = true;
                 mediaEl.loop = true;
@@ -308,7 +553,6 @@
             container.appendChild(mediaEl);
             lightbox.classList.add('lightbox-enter');
             
-            // Trigger scale animation
             setTimeout(() => {
                 mediaEl.classList.add('lightbox-img-enter');
             }, 10);
@@ -322,43 +566,84 @@
             lightbox.classList.remove('lightbox-enter');
             if (mediaEl) mediaEl.classList.remove('lightbox-img-enter');
             
-            // Clear source after fade out to stop video playback & reset memory
             setTimeout(() => {
                 container.innerHTML = '';
-            }, 300);
+            }, 400); // Match CSS transition duration
         }
 
-        // Close lightbox on Escape key
         document.addEventListener('keydown', function(event) {
-            if (event.key === "Escape") {
-                closeLightbox();
-            }
+            if (event.key === "Escape") closeLightbox();
         });
 
-        // 3. GSAP Scroll Animations
+        // 3. Immersive GSAP Scroll Animations
         window.addEventListener("DOMContentLoaded", () => {
-            if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-                gsap.registerPlugin(ScrollTrigger);
+            // Slight delay to ensure DOM and images are injected
+            setTimeout(() => {
+                if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+                    gsap.registerPlugin(ScrollTrigger);
 
-                gsap.utils.toArray('.reveal-element').forEach(element => {
-                    gsap.to(element, {
-                        scrollTrigger: {
-                            trigger: element,
-                            start: "top 90%",
-                            toggleActions: "play none none none"
-                        },
-                        opacity: 1,
-                        y: 0,
-                        duration: 1,
-                        ease: "power3.out"
+                    // Dedicated Hero Intro Timeline
+                    const heroTl = gsap.timeline({ delay: 0.2 });
+                    heroTl.to('.hero-anim', {opacity: 1, y: 0, duration: 1.2, ease: "power4.out", stagger: 0.15})
+                          .to('.hero-anim-client', {opacity: 1, y: 0, duration: 1, ease: "back.out(1.2)"}, "-=0.8");
+
+                    // Parallax Scrolling for all media
+                    gsap.utils.toArray('.media-zoom').forEach(container => {
+                        const img = container.querySelector('.parallax-media');
+                        if (img) {
+                            gsap.to(img, {
+                                yPercent: 15,
+                                ease: "none",
+                                scrollTrigger: {
+                                    trigger: container,
+                                    start: "top bottom",
+                                    end: "bottom top",
+                                    scrub: true
+                                }
+                            });
+                        }
                     });
-                });
-            } else {
-                document.querySelectorAll('.reveal-element').forEach(el => {
-                    el.style.opacity = '1';
-                    el.style.transform = 'translateY(0)';
-                });
-            }
+
+                    // Reveal Up
+                    gsap.utils.toArray('.reveal-up').forEach(element => {
+                        gsap.to(element, {
+                            scrollTrigger: { trigger: element, start: "top 90%", toggleActions: "play none none none" },
+                            opacity: 1, y: 0, duration: 1, ease: "power3.out"
+                        });
+                    });
+                    
+                    // Reveal Left (Slide in from left)
+                    gsap.utils.toArray('.reveal-left').forEach(element => {
+                        gsap.to(element, {
+                            scrollTrigger: { trigger: element, start: "top 90%", toggleActions: "play none none none" },
+                            opacity: 1, x: 0, duration: 1, ease: "power3.out"
+                        });
+                    });
+
+                    // Reveal Right (Slide in from right)
+                    gsap.utils.toArray('.reveal-right').forEach(element => {
+                        gsap.to(element, {
+                            scrollTrigger: { trigger: element, start: "top 90%", toggleActions: "play none none none" },
+                            opacity: 1, x: 0, duration: 1.2, ease: "power3.out"
+                        });
+                    });
+
+                    // Scale Reveal (For massive Hero image)
+                    gsap.utils.toArray('.reveal-scale').forEach(element => {
+                        gsap.to(element, {
+                            scrollTrigger: { trigger: element, start: "top 95%", toggleActions: "play none none none" },
+                            opacity: 1, scale: 1, duration: 1.5, ease: "expo.out", delay: 0.2
+                        });
+                    });
+                    
+                } else {
+                    // Fallbacks
+                    document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right, .reveal-scale, .hero-anim, .hero-anim-client').forEach(el => {
+                        el.style.opacity = '1';
+                        el.style.transform = 'translate(0,0) scale(1)';
+                    });
+                }
+            }, 100);
         });
     </script>
 </body>
