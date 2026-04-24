@@ -1258,6 +1258,12 @@
                         <input type="text" id="client-name" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent2/50 transition-colors placeholder-gray-600" placeholder="John Doe">
                     </div>
                     <div>
+                        <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Email Address</label>
+                        <input type="email" id="client-email" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent2/50 transition-colors placeholder-gray-600" placeholder="john@example.com">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
                         <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Social Link</label>
                         <button type="button" id="add-social-btn" onclick="showSocialInput()" class="w-full bg-white/5 border border-dashed border-white/20 rounded-xl px-4 py-3 text-gray-400 hover:text-white hover:border-white/40 transition-colors flex items-center justify-center gap-2 cursor-pointer outline-none">
                             <i class="fas fa-plus"></i> Add Social Profile
@@ -1278,18 +1284,18 @@
                             <input type="text" id="client-social" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent2/50 transition-colors placeholder-gray-600" placeholder="Select a platform first...">
                         </div>
                     </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Primary Objective</label>
-                    <div class="relative">
-                        <select id="client-objective" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent2/50 transition-colors appearance-none cursor-pointer">
-                            <option value="" disabled selected hidden>Select what you need built...</option>
-                            <option value="Full Stack Web Architecture" class="bg-[#0a0a0c]">Full Stack Web Architecture</option>
-                            <option value="Discord Bot Systems & Automation" class="bg-[#0a0a0c]">Discord Bot Systems & Automation</option>
-                            <option value="AI / Generative Workflow" class="bg-[#0a0a0c]">AI / Generative Workflow</option>
-                            <option value="Other / Consultation" class="bg-[#0a0a0c]">Other / Consultation</option>
-                        </select>
-                        <i class="fas fa-chevron-down absolute right-4 top-4 text-gray-500 pointer-events-none text-xs"></i>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Primary Objective</label>
+                        <div class="relative">
+                            <select id="client-objective" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent2/50 transition-colors appearance-none cursor-pointer">
+                                <option value="" disabled selected hidden>Select what you need built...</option>
+                                <option value="Full Stack Web Architecture" class="bg-[#0a0a0c]">Full Stack Web Architecture</option>
+                                <option value="Discord Bot Systems & Automation" class="bg-[#0a0a0c]">Discord Bot Systems & Automation</option>
+                                <option value="AI / Generative Workflow" class="bg-[#0a0a0c]">AI / Generative Workflow</option>
+                                <option value="Other / Consultation" class="bg-[#0a0a0c]">Other / Consultation</option>
+                            </select>
+                            <i class="fas fa-chevron-down absolute right-4 top-4 text-gray-500 pointer-events-none text-xs"></i>
+                        </div>
                     </div>
                 </div>
                 <div>
@@ -1876,6 +1882,7 @@
             const btn = document.getElementById('contact-submit-btn');
             
             const name = document.getElementById('client-name').value;
+            const email = document.getElementById('client-email').value;
             const objective = document.getElementById('client-objective').value;
             const desc = document.getElementById('client-desc').value;
 
@@ -1902,6 +1909,7 @@
                     color: 3694024,
                     fields: [
                         { name: "👤 Client Name/Alias", value: name, inline: true },
+                        { name: "📧 Email Address", value: email, inline: true },
                         { name: "🔗 Social Contact", value: formattedSocial, inline: true },
                         { name: "🎯 Objective", value: objective, inline: false },
                         { name: "📝 Description", value: desc, inline: false }
@@ -1924,9 +1932,11 @@
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     body: JSON.stringify({
                         Name: name,
+                        Email: email,
                         Social: formattedSocial,
                         Objective: objective,
                         Description: desc,
+                        _replyto: email,
                         _subject: "🔥 New Portfolio Lead: " + name
                     })
                 });
